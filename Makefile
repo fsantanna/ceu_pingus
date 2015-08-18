@@ -32,11 +32,11 @@ ceu:
 		echo "moving <data> into created <build>"; \
 		cp -r data build/data; \
 	fi
-	cd ./src/ceu && ./xxx main.ceu && cp _ceu_app.c .. && cp _ceu_app.h .. && cd ../..
+	cd ./src/ceu && ceu main.ceu && cp _ceu_app.c .. && cp _ceu_app.h .. && cd ../..
 	scons
 
 do_ceu:
-	cd ./src/ceu && ./xxx main.ceu && cp _ceu_app.c .. && cp _ceu_app.h .. && cd ../..
+	cd ./src/ceu && ceu main.ceu && cp _ceu_app.c .. && cp _ceu_app.h .. && cd ../..
 
 build/debug:
 	#please run it only after ./rebuild
