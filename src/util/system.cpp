@@ -726,6 +726,10 @@ System::normalize_path(const std::string& path)
 void
 System::write_file(const std::string& filename, const std::string& content)
 {
+
+// TODO(fsantanna) workaround to avoid crashing
+return;
+
   log_debug("writing %1%", filename);
 
 #ifdef WIN32
