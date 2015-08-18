@@ -99,8 +99,8 @@ class Project:
         self.env.Append(LIBPATH=['/usr/local/lib'])
         self.env.Append(CXXFLAGS=['-Wno-write-strings']) #I don't like those
         self.env.Append(CXXFLAGS=['-DDEBUG']) #for more detailed messages
-        self.env.Append(LINKFLAGS=['-mwindows'])
-        self.env.Append(LIBS=['-lm', '-lpthread', '-lcygwin', '-lSDL2main', '-lSDL2', '-lSDL2_image', '-lSDL2_mixer', '-lSDL2_ttf', '-lSDL2_net', '-lSDL2_gfx'])
+        #self.env.Append(LINKFLAGS=['-mwindows'])
+        self.env.Append(LIBS=['-lm', '-lpthread', '-lSDL2main', '-lSDL2', '-lSDL2_image', '-lSDL2_mixer', '-lSDL2_ttf', '-lSDL2_net', '-lSDL2_gfx'])
         #                  LINKFLAGS = [ '-mwindows' ],
         #                 LIBS = [ 'mingw32', 'SDLmain', "SDL", "SDL_mixer", "SDL_image", "boost_signals", "png",
         #                         'opengl32', 'glu32' ])
