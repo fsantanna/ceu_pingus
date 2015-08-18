@@ -14,9 +14,9 @@ interface IGUIManager with
 
     var _DrawingContext&? drawing_context;
 
-    function (_GUI__Component* comp) => void add;
+    function (_GUI__Component&& comp) => void add;
 
-    event _const_Input__Event* update_event;
+    event _const_Input__Event&& update_event;
 end
 
 #endif

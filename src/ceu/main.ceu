@@ -35,37 +35,37 @@ native @pure _new_Pathname(), _make_std__shared_ptr_Screen(), _new_OptionMenu();
 
 event void e_PINGU_DIED;
 event void e_PINGU_EXITED;
-event _SceneContext* e_PINGU_DRAW_WALKER;
-event _SceneContext* e_PINGU_DRAW_OTHERS;
+event _SceneContext&& e_PINGU_DRAW_WALKER;
+event _SceneContext&& e_PINGU_DRAW_OTHERS;
 
 //global events
-event _SceneContext* draw;
+event _SceneContext&& draw;
 event float update;
 event void push_option_menu;
 event void push_worldmap_tutorial_screen;
 
-input _DemoSession* NEW_DEMO_SESSION;
-input _GameSession* NEW_GAME_SESSION;
-input _StartScreen* NEW_START_SCREEN;
-input _StoryScreen* NEW_STORY_SCREEN;
-input _ResultScreen* NEW_RESULT_SCREEN;
-input _WorldmapNS__WorldmapScreen* NEW_WORLDMAP_SCREEN;
-input _PingusMenu* NEW_PINGUS_MENU;
-input _Credits* NEW_CREDITS;
-input _LevelMenu* NEW_LEVEL_MENU;
-input _Pathname* PUSH_FONT_TEST_SCREEN;
-input _ScreenManager* NEW_SCREEN_MANAGER;
+input _DemoSession&& NEW_DEMO_SESSION;
+input _GameSession&& NEW_GAME_SESSION;
+input _StartScreen&& NEW_START_SCREEN;
+input _StoryScreen&& NEW_STORY_SCREEN;
+input _ResultScreen&& NEW_RESULT_SCREEN;
+input _WorldmapNS__WorldmapScreen&& NEW_WORLDMAP_SCREEN;
+input _PingusMenu&& NEW_PINGUS_MENU;
+input _Credits&& NEW_CREDITS;
+input _LevelMenu&& NEW_LEVEL_MENU;
+input _Pathname&& PUSH_FONT_TEST_SCREEN;
+input _ScreenManager&& NEW_SCREEN_MANAGER;
 
 #define WITH_SCREEN_CEU(CClassName, ClassName, Event) with \
     loop do \
-        var CClassName* p = await Event; \
+        var CClassName&& p = await Event; \
         spawn ClassName with \
             this.me = _PTR2REF(p); \
             this.me.ceu = &this; \
         end; \
     end
 
-var IWorld* world = null;
+var IWorld&& world = null;
 
 par/or do
     await SDL_QUIT;
@@ -85,7 +85,7 @@ with
         worldmap_screen->load(Pathname("worldmaps/tutorial.worldmap", Pathname::DATA_PATH)); //hardcoded tutorial pathname
         ScreenManager::instance()->push_screen(worldmap_screen);
         */
-        var WorldmapScreen*? ws = spawn WorldmapScreen with
+        var WorldmapScreen&&? ws = spawn WorldmapScreen with
             this.me = _new_GUIScreen();
             this.me.ceu = &this;            
         end;
@@ -98,7 +98,7 @@ with
     end
 with
     every push_option_menu do
-        var OptionMenu*? os = spawn OptionMenu with
+        var OptionMenu&&? os = spawn OptionMenu with
             this.me = _new_OptionMenu();
             this.me.ceu = &this;
         end;

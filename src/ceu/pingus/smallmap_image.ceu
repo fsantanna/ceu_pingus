@@ -24,7 +24,7 @@ class SmallMapImage with
     /* The canvas that represents the small-colmap */
     var _Surface&? canvas;
 
-    function @rec (void) => _Sprite* get_surface;
+    function @rec (void) => _Sprite&& get_surface;
 
     event float e_UPDATE;
 do
@@ -110,7 +110,7 @@ do
         sur = _cSprite(canvas.clone());
     end
 
-    function @rec (void) => _Sprite* get_surface do
+    function @rec (void) => _Sprite&& get_surface do
         if not sur then
             call/rec update_surface();
         end

@@ -23,7 +23,7 @@ do
 
     call/rec global:world:add_object(&this);
 
-    function (_FileReader* reader) => void construct do end;
+    function (_FileReader&& reader) => void construct do end;
 
     function (void) => float get_z_pos do return 100; end
     function (Vector3f p) => void set_pos do pos = p; end
@@ -31,7 +31,7 @@ do
 
     finalize with _delete_obj(m_target); end;
 
-    var ISwitchDoorDoor* m_door = null;
+    var ISwitchDoorDoor&& m_door = null;
 
     par/or do
          every e_STARTUP do

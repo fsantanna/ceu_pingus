@@ -19,11 +19,11 @@ end
 native @pure _new_CaptureRectangle(), _AN_get_char(), _strutil_to_string(), _do_Vector2i();
 
 class CaptureRectangle with
-    var IGameSession* session;
-    function @rec (IPingu*) => void set_pingu;
-    event _SceneContext* draw;
+    var IGameSession&& session;
+    function @rec (IPingu&&) => void set_pingu;
+    event _SceneContext&& draw;
 do
-    var IPingu* pingu = null;
+    var IPingu&& pingu = null;
     var _std__string&? action_str = _new_String();
     finalize with _delete_obj(action_str); end;
 
@@ -36,7 +36,7 @@ do
     finalize with _delete_obj(arrow_left); end;
     finalize with _delete_obj(arrow_right); end;
 
-    function @rec (IPingu* p) => void set_pingu do
+    function @rec (IPingu&& p) => void set_pingu do
         pingu = p;
 
         if pingu then
@@ -63,7 +63,7 @@ do
         end
     end
 
-    function @rec (_SceneContext* gc) => void f_draw do        
+    function @rec (_SceneContext&& gc) => void f_draw do        
         if pingu then
             if pingu:ceu_action:catchable then
                 // Draw the capture rectangle

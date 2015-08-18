@@ -39,17 +39,17 @@ native @pure _new_PingusCounter(), _new_GUI_Component(), _new_RectComponent(),
              _new_Server(), _ScreenManager__instance(), _addr(),
              _new_BButton(), _std__bind(), _std__make_shared_DemoSession();
 
-input _ComponentUpdatePackage* DEMO_SESSION_UPDATE_SERVER;
-input _DemoSession* DEMO_SESSION_UPDATE;
-input _DemoSession* DELETE_DEMO_SESSION;
-input _DemoSession* RESTART_DEMO_SESSION;
-input _Vector2i* DEMO_SESSION_ON_SCROLLER_MOVE;
+input _ComponentUpdatePackage&& DEMO_SESSION_UPDATE_SERVER;
+input _DemoSession&& DEMO_SESSION_UPDATE;
+input _DemoSession&& DELETE_DEMO_SESSION;
+input _DemoSession&& RESTART_DEMO_SESSION;
+input _Vector2i&& DEMO_SESSION_ON_SCROLLER_MOVE;
 
 class DemoSession with
     interface Screen;
     event void update_demo;
 do
-    var _DemoSession&? demo_session = (_DemoSession*)&me;
+    var _DemoSession&? demo_session = (_DemoSession&&)&me;
 
     var GUIManager gui_manager with
         this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
@@ -171,7 +171,7 @@ do
         end
     with
         every gc in draw_background do
-            var _GUI_RectComponent* rect = (_GUI_RectComponent*)&playfield.me;
+            var _GUI_RectComponent&& rect = (_GUI_RectComponent&&)&playfield.me;
 
             if rect:get_rect() != _Rect(_Vector2i(0,0), _Size(gc:get_width(), gc:get_height())) then
                 // Draw a black border around the playfield when the playfield is smaller then the screen                
@@ -198,7 +198,7 @@ do
             //well, I think it isn't
         end
     with
-        var _DemoSession* e = await RESTART_DEMO_SESSION until (e == &demo_session);
+        var _DemoSession&& e = await RESTART_DEMO_SESSION until (e == &demo_session);
 
         //await 10ms;                
         _ScreenManager__instance():replace_screen(_std__make_shared_DemoSession(demo_session.pathname));
@@ -206,7 +206,7 @@ do
         e = await DELETE_DEMO_SESSION until (e == &demo_session);
     with
         every (width, height) in resize do
-            ((_GUI_RectComponent*)&playfield.me):set_rect(
+            ((_GUI_RectComponent&&)&playfield.me):set_rect(
                 _Rect(
                     _Vector2i(
                         _Math__max((width  - global:world:get_width())/2,  0),
@@ -226,7 +226,7 @@ do
             small_map.rect.set_rect(_Rect(_Vector2i(5, height - 105), _Size(175, 100)));
         end
     with
-        var _DemoSession* e = await DELETE_DEMO_SESSION until (e == &demo_session);
+        var _DemoSession&& e = await DELETE_DEMO_SESSION until (e == &demo_session);
         emit server.e_DELETE;
     end
 end

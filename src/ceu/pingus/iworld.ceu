@@ -26,15 +26,15 @@ native/pre do
 end
 
 interface IWorld with
-    function (void) => _GroundMap* get_gfx_map;
-    function (void) => _CollisionMap* get_colmap;
+    function (void) => _GroundMap&& get_gfx_map;
+    function (void) => _CollisionMap&& get_colmap;
     function (void) => IPinguHolder&? get_pingus;
-    function (void) => IPinguParticlesHolder* get_pingu_particles_holder;
-    function (void) => IRainParticlesHolder* get_rain_particles_holder;
-    function (void) => ISmokeParticlesHolder* get_smoke_particles_holder;
-    function (void) => ISnowParticlesHolder* get_snow_particles_holder;
-    function (_const_char_string id) => ITeleporterTarget* get_teleporter_target;
-    function (_const_char_string id) => ISwitchDoorDoor* get_switch_door_door;
+    function (void) => IPinguParticlesHolder&& get_pingu_particles_holder;
+    function (void) => IRainParticlesHolder&& get_rain_particles_holder;
+    function (void) => ISmokeParticlesHolder&& get_smoke_particles_holder;
+    function (void) => ISnowParticlesHolder&& get_snow_particles_holder;
+    function (_const_char_string id) => ITeleporterTarget&& get_teleporter_target;
+    function (_const_char_string id) => ISwitchDoorDoor&& get_switch_door_door;
     function (void) => float get_gravity;
 
     function (void) => bool check_armageddon;
@@ -54,17 +54,17 @@ interface IWorld with
     */
     function (_const_char_string name, Vector3f pos, float volume) => void play_sound;
 
-    function (_CollisionMask* mask, int x, int y, int t) => void put;
-    function (_CollisionMask* mask, int x, int y) => void remove;
+    function (_CollisionMask&& mask, int x, int y, int t) => void put;
+    function (_CollisionMask&& mask, int x, int y) => void remove;
     function (_const_char_string mask, int x, int y, int t) => void put_str;
     function (_const_char_string mask, int x, int y) => void remove_str;
 
-    function @rec (IWorldObj* o) => void add_object;
-    function (IWorldObj* o) => void remove_object;
+    function @rec (IWorldObj&& o) => void add_object;
+    function (IWorldObj&& o) => void remove_object;
 
     event void e_CREATE;
-    event _SceneContext* e_DRAW;
-    event ISmallMap* e_DRAW_SMALLMAP;
+    event _SceneContext&& e_DRAW;
+    event ISmallMap&& e_DRAW_SMALLMAP;
     event void e_ARMAGEDDON;
     event void e_DELETE;
 

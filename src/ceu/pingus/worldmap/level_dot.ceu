@@ -56,8 +56,8 @@ native @pure _ScreenManager__instance(), _SavegameManager__instance(), _std__mak
 
 class LevelDot with
     interface Dot;
-    var _FileReader* reader;
-    function (void) => _PingusLevel* get_plf;
+    var _FileReader&& reader;
+    function (void) => _PingusLevel&& get_plf;
 do
     var Sprite green_dot_sur;
     var Sprite red_dot_sur;
@@ -80,7 +80,7 @@ do
     end
     _delete_obj(resname);
 
-    function (void) => _PingusLevel* get_plf do
+    function (void) => _PingusLevel&& get_plf do
         return &plf;
     end
 
@@ -89,7 +89,7 @@ do
     end
 
     function (void) => bool finished do
-        var _Savegame* savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
+        var _Savegame&& savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
         if savegame and savegame:get_status() == _Savegame__FINISHED then
             return true;
         else
@@ -98,7 +98,7 @@ do
     end
 
     function (void) => bool accessible do
-        var _Savegame* savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
+        var _Savegame&& savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
         if savegame and savegame:get_status() != _Savegame__NONE then
             return true;
         else
@@ -107,7 +107,7 @@ do
     end
 
     function (void) => void unlock do
-        var _Savegame* savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
+        var _Savegame&& savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
         if not savegame or savegame:get_status() == _Savegame__NONE then            
             var _Savegame&? sg = _new_Savegame2(plf.get_resname(), _Savegame__ACCESSIBLE, 0, 0);
             _SavegameManager__instance():store(_deref(sg));
@@ -133,7 +133,7 @@ do
                 highlight = true;
             end
 
-            var _Savegame* savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
+            var _Savegame&& savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
             if savegame and (savegame:get_status() == _Savegame__FINISHED or savegame:get_status() == _Savegame__ACCESSIBLE) then
                 if savegame:get_status() == _Savegame__FINISHED then
                     if highlight then

@@ -12,7 +12,7 @@ class LinearMover with
     function (void) => Vector3f get_pos;
     function (void) => Vector3f remaining;
     function (void) => bool collided;
-    function @rec (Vector3f move, PinguCollider* collider) => void* update;
+    function @rec (Vector3f move, PinguCollider&& collider) => void&& update;
 do
     remaining_move.x = 0;
     remaining_move.y = 0;
@@ -30,7 +30,7 @@ do
         return collision;
     end
 
-    function @rec (Vector3f move, PinguCollider* collider) => void* update do
+    function @rec (Vector3f move, PinguCollider&& collider) => void&& update do
         var Vector3f target_pos = pos;
         target_pos.x = target_pos.x + move.x;
         target_pos.y = target_pos.y + move.y;

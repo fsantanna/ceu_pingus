@@ -49,7 +49,7 @@ class SurfaceBackground with
 do
     call/rec global:world:add_object(&this);
 
-    function (_FileReader* reader) => void construct do end;
+    function (_FileReader&& reader) => void construct do end;
 
     function (void) => float get_z_pos do
         return pos.z;

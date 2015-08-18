@@ -37,8 +37,8 @@ native/pre do
     #define StringUtil__to_string StringUtil::to_string
 end
 
-output _SceneContext* PINGU_DRAW_WALKER;
-output _SceneContext* PINGU_DRAW_OTHERS;
+output _SceneContext&& PINGU_DRAW_WALKER;
+output _SceneContext&& PINGU_DRAW_OTHERS;
 
 native @pure _PA_get_activation_mode(), _StringUtil__to_string();
 

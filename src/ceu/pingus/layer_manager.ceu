@@ -13,7 +13,7 @@ native/pre do
 end
 
 interface ILayerManager with
-    event _DrawingContext* draw;
+    event _DrawingContext&& draw;
 end;
 
 class Layer with
@@ -28,11 +28,11 @@ class Layer with
     var float x_offset = 0;
     var float y_offset = 0;
 
-    function (_Surface* s) => void load;
+    function (_Surface&& s) => void load;
 do
     var Sprite2 sur;
 
-    function (_Surface* s) => void load do
+    function (_Surface&& s) => void load do
         sur.reload_by_surface(s);
     end
     
@@ -59,7 +59,7 @@ end
 class LayerManager with
     interface ILayerManager;    
 
-    event (_Surface*, float, float, float, float) add_layer;
+    event (_Surface&&, float, float, float, float) add_layer;
     event void respawn;
 do
     loop do
@@ -67,7 +67,7 @@ do
 
         par/or do
             every (sprite, x_o, y_o, x_u, y_u) in add_layer do
-                var Layer*? l = spawn Layer in layers with            
+                var Layer&&? l = spawn Layer in layers with            
                     this.x_update = x_u;
                     this.y_update = y_u;
                     this.x_offset = x_o;

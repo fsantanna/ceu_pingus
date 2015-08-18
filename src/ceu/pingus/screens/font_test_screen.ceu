@@ -35,7 +35,7 @@ native @pure _new_Font();
 
 class FontTestScreen with
     interface Screen;
-    var _Pathname* fontfile;
+    var _Pathname&& fontfile;
 do
     var GUIManager gui_manager with
         this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));

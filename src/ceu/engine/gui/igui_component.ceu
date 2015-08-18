@@ -19,7 +19,7 @@ native @pure _new_GUI__RectComponent();
 
 #define RECT_IS_AT(comp) \
 function @rec (Vector2i pos) => bool is_at_func do \
-    return ((_GUI__RectComponent*)comp):rect.contains(_Vector2i(pos.x, pos.y)); \
+    return ((_GUI__RectComponent&&)comp):rect.contains(_Vector2i(pos.x, pos.y)); \
 end
 
 interface IGUI_Component with
@@ -27,8 +27,8 @@ interface IGUI_Component with
 
     function @rec (Vector2i pos) => bool is_at_func;
 
-    event _DrawingContext* draw;
-    event _ComponentIsAtPackage* is_at;
+    event _DrawingContext&& draw;
+    event _ComponentIsAtPackage&& is_at;
 
     event void mouse_enter;
     event void mouse_leave;
@@ -44,8 +44,8 @@ interface IGUI_Component with
     event (int, int) mouse_secondary_click;
     event void mouse_secondary_double_click;
 
-    event _const_Input__KeyboardEvent* key_pressed;
-    event _const_Input__TextInputEvent* text_input;
+    event _const_Input__KeyboardEvent&& key_pressed;
+    event _const_Input__TextInputEvent&& text_input;
 end
 
 class Relay with

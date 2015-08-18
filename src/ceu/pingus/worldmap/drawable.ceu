@@ -12,7 +12,7 @@ end
 interface Drawable with
     var _std__string&? name;
 
-    event _DrawingContext* draw;
+    event _DrawingContext&& draw;
     event float update;
     event void delete;
 end

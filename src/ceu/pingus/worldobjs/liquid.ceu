@@ -15,7 +15,7 @@ class Liquid with
 do
     call/rec global:world:add_object(&this);
 
-    function (_FileReader* reader) => void construct do end;
+    function (_FileReader&& reader) => void construct do end;
     function (void) => float get_z_pos do return pos.z; end
     function (Vector3f p) => void set_pos do pos = p; end
     function @rec (void) => Vector3f get_pos do return pos; end
@@ -32,7 +32,7 @@ do
 
     par/or do
         every e_STARTUP do
-            var _CollisionMask* mask = _new_CollisionMask("liquids/water_cmap");
+            var _CollisionMask&& mask = _new_CollisionMask("liquids/water_cmap");
 
             loop/2500 i in width do
                 _colmap_put(global:world:get_colmap(), mask, (int)(pos.x + (float)i), (int)pos.y, _GT_WATER);

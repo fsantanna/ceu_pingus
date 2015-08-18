@@ -7,7 +7,7 @@ native/pre do
 end
 
 interface ISmallMap with
-    function @rec (_Sprite* sprite, _Vector3f pos) => void draw_sprite;
+    function @rec (_Sprite&& sprite, _Vector3f pos) => void draw_sprite;
 end
 
 #endif

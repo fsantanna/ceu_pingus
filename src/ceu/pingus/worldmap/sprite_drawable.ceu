@@ -22,7 +22,7 @@ native @pure _Worldmap__current(), _reader_read_vector();
 
 class SpriteDrawable with
     interface Drawable;
-    var _FileReader* reader;
+    var _FileReader&& reader;
     var IWorldmap& worldmap;
 do
     finalize with _delete_obj(name); end
@@ -31,7 +31,7 @@ do
     var Vector3f pos;
     var bool auto_uncover = false;
 
-    var _ResDescriptor* desc = _new_ResDescriptor();
+    var _ResDescriptor&& desc = _new_ResDescriptor();
     reader:read_desc  ("surface", _deref(desc));
     _reader_read_vector(reader, pos);
     reader:read_bool  ("auto-uncover", auto_uncover);

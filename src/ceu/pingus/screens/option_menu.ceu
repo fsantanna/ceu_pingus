@@ -157,7 +157,7 @@ end
         this.me.ceu = &this; \
         this.label = _new_String(__(str)); \
     end; \
-    add_item((_GUI_RectComponent*)&labelname.me, (_GUI_RectComponent*)&control.me, type);
+    add_item((_GUI_RectComponent&&)&labelname.me, (_GUI_RectComponent&&)&control.me, type);
 
 class OptionMenu with
     interface IOptionMenu;
@@ -166,7 +166,7 @@ do
         this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
         this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
-    var _OptionMenu&? option_menu = (_OptionMenu*)&me;
+    var _OptionMenu&? option_menu = (_OptionMenu&&)&me;
 
     var OptionMenuCloseButton ok_button with
         this.me = _new_GUI_Component();
@@ -240,7 +240,7 @@ do
         _delete_obj(langs);
     end
 
-    function (_GUI_RectComponent* label_component, _GUI_RectComponent* control, int type) => void add_item do
+    function (_GUI_RectComponent&& label_component, _GUI_RectComponent&& control, int type) => void add_item do
         //type == 1 - CheckBox
         //type == 2, 3 - SliderBox, ChoiceBox
 

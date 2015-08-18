@@ -30,7 +30,7 @@ do
 
     call/rec global:world:add_object(&this);
 
-    function (_FileReader* reader) => void construct do end
+    function (_FileReader&& reader) => void construct do end
     function (void) => float get_z_pos do return pos.z; end
     function (Vector3f p) => void set_pos do pos = p; end
     function @rec (void) => Vector3f get_pos do return pos; end
@@ -55,7 +55,7 @@ do
         end
     with
         every e_STARTUP do
-            var _CollisionMask* mask = _new_CollisionMask("worldobjs/conveyorbelt_cmap");
+            var _CollisionMask&& mask = _new_CollisionMask("worldobjs/conveyorbelt_cmap");
 
             loop/100 i in width+2 do
                 global:world:put(mask, (int)pos.x + 15*i, (int)pos.y, _GT_SOLID);

@@ -35,7 +35,7 @@ native @pure _stream_print();
 class Server with
     interface IServer;    
     function @rec (void) => bool is_finished;    
-    event _ServerEvent* e_EVENT_SEND;    
+    event _ServerEvent&& e_EVENT_SEND;    
     event void e_FINISH_EVENT;
     event void e_DELETE;    
 do

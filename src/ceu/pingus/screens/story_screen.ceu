@@ -46,19 +46,19 @@ native @pure _new_GUI_Component(), _ScreenManager__instance(), _std__make_shared
              _Display__get_width(), _Display__get_height(), _new_StoryPage(),
              _UTF8__length(), _UTF8__substr(), _new_Vector_StoryPage();
 
-input _StoryScreen* DELETE_STORY_SCREEN;
+input _StoryScreen&& DELETE_STORY_SCREEN;
 
 interface IStoryScreenComponent with
     function @rec (void) => void next_text;
     function @rec (void) => void skip_story;
-    function (void) => _WorldmapNS__WorldmapStory* get_story;
+    function (void) => _WorldmapNS__WorldmapStory&& get_story;
 end
 
 ////////////////////////////////////////////////
 
 class StoryScreenSkipButton with
     interface IGUI_Component;
-    var IStoryScreenComponent* story_comp;
+    var IStoryScreenComponent&& story_comp;
 
     function @rec (int x, int y) => void set_pos;
 do
@@ -146,7 +146,7 @@ end
 class StoryScreenComponent with
     interface IStoryScreenComponent;
     interface IGUI_Component;
-    var _WorldmapNS__WorldmapStory* story;
+    var _WorldmapNS__WorldmapStory&& story;
     var bool m_credits;
 do
     RECT_IS_AT(&me);
@@ -205,7 +205,7 @@ do
         call/rec next_text();
     end
 
-    function (void) => _WorldmapNS__WorldmapStory* get_story do
+    function (void) => _WorldmapNS__WorldmapStory&& get_story do
         return story;
     end
 
@@ -272,7 +272,7 @@ do
         this.me = _new_GUI_Component();
         this.me.ceu = &this;
 
-        var _StoryScreen&? story_screen = (_StoryScreen*)&me;
+        var _StoryScreen&? story_screen = (_StoryScreen&&)&me;
         this.story = _PTR2REF(story_screen.story.get());
         this.m_credits = story_screen.m_credits;
     end;
@@ -286,7 +286,7 @@ do
     gui_manager.add(&story_comp.me);
     gui_manager.add(&continue_button.me);
 
-    var StoryScreenSkipButton*? skip_button = null;
+    var StoryScreenSkipButton&&? skip_button = null;
 
     if _globals__developer_mode then
         skip_button = spawn StoryScreenSkipButton with
@@ -318,7 +318,7 @@ do
             end
         end
     with
-        var _StoryScreen* e = await DELETE_STORY_SCREEN until (e == &me);
+        var _StoryScreen&& e = await DELETE_STORY_SCREEN until (e == &me);
     end
 end
 

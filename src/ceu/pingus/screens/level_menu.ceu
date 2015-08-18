@@ -54,7 +54,7 @@ native @pure _new_GUI_Component(), _ScreenManager__instance(), _std__make_shared
              _Display__get_width(), _Display__get_height(), _level_completion(), _levels_count(),
              _new_Vector_Levelset(), _fill_levelsets();
 
-input _LevelMenu* DELETE_LEVEL_MENU;
+input _LevelMenu&& DELETE_LEVEL_MENU;
 
 interface ILevelMenu with
     interface Screen;
@@ -62,7 +62,7 @@ interface ILevelMenu with
     function (void) => void close_screen;
     function (void) => void prev_page;
     function (void) => void next_page;
-    function @rec (_Levelset* levelset) => void set_levelset;
+    function @rec (_Levelset&& levelset) => void set_levelset;
 end
 
 ////////////////////////////////////////////////
@@ -160,12 +160,12 @@ class LevelsetSelector with
 
     function (void) => void prev_page;
     function (void) => void next_page;
-    function (_Levelset* levelset_) => void set_levelset;
+    function (_Levelset&& levelset_) => void set_levelset;
 do
     RECT_IS_AT(&rect);
 
     var _std__vector_Levelset&? levelsets = _new_Vector_Levelset();
-    var _Levelset* current_levelset = null;    
+    var _Levelset&& current_levelset = null;    
     var int page = 0;
 
     _fill_levelsets(_deref(levelsets));
@@ -234,7 +234,7 @@ do
                     break;
                 end
 
-                var _Levelset* levelset = _PTR2REF(levelsets.at(i));
+                var _Levelset&& levelset = _PTR2REF(levelsets.at(i));
             
                 if levelset == current_levelset then   
                     gc:draw(_deref(marker.get()), _Vector2i(15, y - 5));
@@ -281,11 +281,11 @@ class LevelSelector with
 
     function (void) => void prev_page;
     function (void) => void next_page;
-    function (_Levelset* levelset_) => void set_levelset;
+    function (_Levelset&& levelset_) => void set_levelset;
 do
     RECT_IS_AT(&rect);
 
-    var _Levelset* levelset = null;
+    var _Levelset&& levelset = null;
     var int current_level = -1;
     var int page = 0;
 
@@ -317,7 +317,7 @@ do
         end
     end
 
-    function (_Levelset* levelset_) => void set_levelset do
+    function (_Levelset&& levelset_) => void set_levelset do
         page = 0;
         levelset = _PTR2REF(levelset_);
     end
@@ -438,7 +438,7 @@ end
 class LevelMenu with
     interface ILevelMenu;    
 do
-    var _LevelMenu&? level_menu = (_LevelMenu*)&me;
+    var _LevelMenu&? level_menu = (_LevelMenu&&)&me;
     var GUIManager gui_manager with
         this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
         this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
@@ -525,7 +525,7 @@ do
         end
     end
 
-    function @rec (_Levelset* levelset) => void set_levelset do
+    function @rec (_Levelset&& levelset) => void set_levelset do
         if levelset then  
             level_selector.set_levelset(levelset);
             levelset_selector.rect.hide();
@@ -578,7 +578,7 @@ do
             call/rec abort_button.set_pos(width/2 - 300, height/2 + 200);
         end
     with
-        var _LevelMenu* e = await DELETE_LEVEL_MENU until (e == &level_menu);
+        var _LevelMenu&& e = await DELETE_LEVEL_MENU until (e == &level_menu);
     end
 end 
 

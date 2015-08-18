@@ -58,18 +58,18 @@ as we don't have different constructors, we must imitate them using these rules
 class GUIManager with
     interface IGUIManager;
 
-    function @rec (Vector2i pos) => _GUI_Component* component_at;
+    function @rec (Vector2i pos) => _GUI_Component&& component_at;
 do
     var Vector2i mouse_pos;
     mouse_pos.x = 400;
     mouse_pos.y = 300;
 
     var _std__vector_Component&? children = _new_Vector_Component();
-    var _GUI__Component* mouse_over_comp = null;
-    var _GUI__Component* focused_comp = null;
-    var _GUI__Component* grabbed_comp = null;
-    var _GUI__Component* primary_pressed_comp = null;
-    var _GUI__Component* secondary_pressed_comp = null;
+    var _GUI__Component&& mouse_over_comp = null;
+    var _GUI__Component&& focused_comp = null;
+    var _GUI__Component&& grabbed_comp = null;
+    var _GUI__Component&& primary_pressed_comp = null;
+    var _GUI__Component&& secondary_pressed_comp = null;
 
     finalize with   
         loop i in children.size() do
@@ -80,8 +80,8 @@ do
         _delete_obj(children);
     end
 
-    function (_GUI__Component* comp) => void add do
-        comp:set_parent((_GUI__RectComponent*)&me);
+    function (_GUI__Component&& comp) => void add do
+        comp:set_parent((_GUI__RectComponent&&)&me);
         children.push_back(comp);
     end
 
@@ -92,10 +92,10 @@ do
     function @rec (Vector2i pos) => bool is_at_func do        
         var Vector2i mpos;
         _readVector2i(mpos, drawing_context.screen_to_world(_Vector2i(pos.x, pos.y)));
-        return (((_GUI__RectComponent*)&me):is_at(pos.x, pos.y) or call/rec component_at(mpos)); //return false if anything goes wrong
+        return (((_GUI__RectComponent&&)&me):is_at(pos.x, pos.y) or call/rec component_at(mpos)); //return false if anything goes wrong
     end
 
-    function @rec (Vector2i pos) => _GUI_Component* component_at do
+    function @rec (Vector2i pos) => _GUI_Component&& component_at do
         var int i = children.size()-1;
         loop do
             if i < 0 then
@@ -107,7 +107,7 @@ do
             if children.at(i):ceu == null then
                 at = children.at(i):is_at(pos.x, pos.y);
             else
-                at = call/rec ((IGUI_Component*)children.at(i):ceu):is_at_func(pos);
+                at = call/rec ((IGUI_Component&&)children.at(i):ceu):is_at_func(pos);
             end
 
             if children.at(i):is_visible() and at then
@@ -137,7 +137,7 @@ do
                         _log_warn("draw/ceu==null\n");
                         children.at(i):draw(_deref(drawing_context));
                     else
-                        emit ((IGUI_Component*)children.at(i):ceu):draw => &drawing_context;
+                        emit ((IGUI_Component&&)children.at(i):ceu):draw => &drawing_context;
                     end
                 end
             end
@@ -198,16 +198,16 @@ do
                     _log_error("/ceu==null");
                     grabbed_comp:on_primary_button_press(mpos.x, mpos.y);
                 else
-                    emit ((IGUI_Component*)grabbed_comp:ceu):mouse_press => (mpos.x, mpos.y);
+                    emit ((IGUI_Component&&)grabbed_comp:ceu):mouse_press => (mpos.x, mpos.y);
                 end
             else
-                var _GUI_Component* comp = _PTR2REF(call/rec component_at(mpos));
+                var _GUI_Component&& comp = _PTR2REF(call/rec component_at(mpos));
                 if comp then
                     if comp:ceu == null then
                         _log_error("/ceu==null");
                         comp:on_primary_button_press(mpos.x, mpos.y);
                     else
-                        emit ((IGUI_Component*)comp:ceu):mouse_press => (mpos.x, mpos.y);
+                        emit ((IGUI_Component&&)comp:ceu):mouse_press => (mpos.x, mpos.y);
                     end
 
                     if focused_comp then
@@ -234,17 +234,17 @@ do
                     _log_error("/ceu==null");
                     grabbed_comp:on_primary_button_release(mpos.x, mpos.y);
                 else
-                    emit ((IGUI_Component*)grabbed_comp:ceu):mouse_release => (mpos.x, mpos.y);
+                    emit ((IGUI_Component&&)grabbed_comp:ceu):mouse_release => (mpos.x, mpos.y);
                 end
             else
-                var _GUI_Component* comp = _PTR2REF(call/rec component_at(mpos));
+                var _GUI_Component&& comp = _PTR2REF(call/rec component_at(mpos));
       
                 if primary_pressed_comp then
                     if primary_pressed_comp:ceu == null then
                         _log_error("/ceu==null");
                         primary_pressed_comp:on_primary_button_release(mpos.x, mpos.y);
                     else
-                        emit ((IGUI_Component*)primary_pressed_comp:ceu):mouse_release => (mpos.x, mpos.y);
+                        emit ((IGUI_Component&&)primary_pressed_comp:ceu):mouse_release => (mpos.x, mpos.y);
                     end
 
                     if comp == primary_pressed_comp then
@@ -252,7 +252,7 @@ do
                             _log_error("/ceu==null");
                             primary_pressed_comp:on_primary_button_click(mpos.x, mpos.y);
                         else
-                            emit ((IGUI_Component*)primary_pressed_comp:ceu):mouse_click => (mpos.x, mpos.y);
+                            emit ((IGUI_Component&&)primary_pressed_comp:ceu):mouse_click => (mpos.x, mpos.y);
                         end
                     end
 
@@ -263,7 +263,7 @@ do
                             _log_error("/ceu==null");
                             comp:on_primary_button_release(mpos.x, mpos.y);
                         else
-                            emit ((IGUI_Component*)comp:ceu):mouse_release => (mpos.x, mpos.y);
+                            emit ((IGUI_Component&&)comp:ceu):mouse_release => (mpos.x, mpos.y);
                         end
                     end
                 end
@@ -279,16 +279,16 @@ do
                     _log_error("/ceu==null");
                     grabbed_comp:on_secondary_button_press(mpos.x, mpos.y);
                 else
-                    emit ((IGUI_Component*)grabbed_comp:ceu):mouse_secondary_press => (mpos.x, mpos.y);
+                    emit ((IGUI_Component&&)grabbed_comp:ceu):mouse_secondary_press => (mpos.x, mpos.y);
                 end
             else            
-                var _GUI_Component* comp = _PTR2REF(call/rec component_at(mpos));
+                var _GUI_Component&& comp = _PTR2REF(call/rec component_at(mpos));
                 if comp then
                     if comp:ceu == null then
                         _log_error("/ceu==null");
                         comp:on_secondary_button_press(mpos.x, mpos.y);
                     else
-                        emit ((IGUI_Component*)comp:ceu):mouse_secondary_press => (mpos.x, mpos.y);
+                        emit ((IGUI_Component&&)comp:ceu):mouse_secondary_press => (mpos.x, mpos.y);
                     end
                 end
 
@@ -302,21 +302,21 @@ do
             var Vector2i mpos;
             _readVector2i(mpos, drawing_context.screen_to_world(_Vector2i(x, y)));
 
-            var _GUI_Component* comp = _PTR2REF(call/rec component_at(mpos));
+            var _GUI_Component&& comp = _PTR2REF(call/rec component_at(mpos));
               
             if grabbed_comp then
                 if grabbed_comp:ceu == null then
                     _log_error("/ceu==null");
                     grabbed_comp:on_secondary_button_release(mpos.x, mpos.y);
                 else
-                    emit ((IGUI_Component*)grabbed_comp:ceu):mouse_secondary_release => (mpos.x, mpos.y);
+                    emit ((IGUI_Component&&)grabbed_comp:ceu):mouse_secondary_release => (mpos.x, mpos.y);
                 end
             else/if secondary_pressed_comp then
                 if secondary_pressed_comp:ceu == null then
                     _log_error("/ceu==null");
                     secondary_pressed_comp:on_secondary_button_release(mpos.x, mpos.y);
                 else
-                    emit ((IGUI_Component*)secondary_pressed_comp:ceu):mouse_secondary_release => (mpos.x, mpos.y);
+                    emit ((IGUI_Component&&)secondary_pressed_comp:ceu):mouse_secondary_release => (mpos.x, mpos.y);
                 end
                   
                 if comp == secondary_pressed_comp then
@@ -324,7 +324,7 @@ do
                         _log_error("/ceu==null");
                         secondary_pressed_comp:on_secondary_button_click(mpos.x, mpos.y);
                     else
-                        emit ((IGUI_Component*)secondary_pressed_comp:ceu):mouse_secondary_click => (mpos.x, mpos.y);
+                        emit ((IGUI_Component&&)secondary_pressed_comp:ceu):mouse_secondary_click => (mpos.x, mpos.y);
                     end
                 end
                   
@@ -335,7 +335,7 @@ do
                         _log_error("/ceu==null");
                         comp:on_secondary_button_release(mpos.x, mpos.y);
                     else
-                        emit ((IGUI_Component*)comp:ceu):mouse_secondary_release => (mpos.x, mpos.y);
+                        emit ((IGUI_Component&&)comp:ceu):mouse_secondary_release => (mpos.x, mpos.y);
                     end
                 end
             end
@@ -350,30 +350,30 @@ do
                     _log_error("/ceu==null");
                     grabbed_comp:on_pointer_move(mpos.x, mpos.y);
                 else
-                    emit ((IGUI_Component*)grabbed_comp:ceu):mouse_move => (mpos.x, mpos.y);
+                    emit ((IGUI_Component&&)grabbed_comp:ceu):mouse_move => (mpos.x, mpos.y);
                 end
             else/if primary_pressed_comp then  
                 if primary_pressed_comp:ceu == null then
                     _log_error("/ceu==null");
                     primary_pressed_comp:on_pointer_move(mpos.x, mpos.y);
                 else
-                    emit ((IGUI_Component*)primary_pressed_comp:ceu):mouse_move => (mpos.x, mpos.y);
+                    emit ((IGUI_Component&&)primary_pressed_comp:ceu):mouse_move => (mpos.x, mpos.y);
                 end
             else/if secondary_pressed_comp then  
                 if secondary_pressed_comp:ceu == null then
                     _log_error("/ceu==null");
                     secondary_pressed_comp:on_pointer_move(mpos.x, mpos.y);
                 else
-                    emit ((IGUI_Component*)secondary_pressed_comp:ceu):mouse_move => (mpos.x, mpos.y);
+                    emit ((IGUI_Component&&)secondary_pressed_comp:ceu):mouse_move => (mpos.x, mpos.y);
                 end
             else  
-                var _GUI_Component* comp = _PTR2REF(call/rec component_at(mpos));
+                var _GUI_Component&& comp = _PTR2REF(call/rec component_at(mpos));
                 if comp then
                     if comp:ceu == null then
                         _log_error("/ceu==null");
                         comp:on_pointer_move(mpos.x, mpos.y);
                     else
-                        emit ((IGUI_Component*)comp:ceu):mouse_move => (mpos.x, mpos.y);
+                        emit ((IGUI_Component&&)comp:ceu):mouse_move => (mpos.x, mpos.y);
                     end
                 end
 
@@ -384,7 +384,7 @@ do
                             _log_error("/ceu==null");
                             mouse_over_comp:on_pointer_leave();
                         else
-                            emit ((IGUI_Component*)mouse_over_comp:ceu):mouse_leave;
+                            emit ((IGUI_Component&&)mouse_over_comp:ceu):mouse_leave;
                         end
                     end
                   
@@ -394,7 +394,7 @@ do
                             _log_error("/ceu==null");
                             comp:on_pointer_enter();
                         else
-                            emit ((IGUI_Component*)comp:ceu):mouse_enter;
+                            emit ((IGUI_Component&&)comp:ceu):mouse_enter;
                         end
                     end
                 end
@@ -411,7 +411,7 @@ do
                         _log_error("/ceu==null");
                         mouse_over_comp:on_pointer_leave();
                     else
-                        emit ((IGUI_Component*)mouse_over_comp:ceu):mouse_leave;
+                        emit ((IGUI_Component&&)mouse_over_comp:ceu):mouse_leave;
                     end
                 end
                 mouse_over_comp = null;
@@ -423,19 +423,19 @@ do
                 if grabbed_comp:ceu == null then
                     grabbed_comp:on_key_pressed(_deref(kev));
                 else
-                    emit ((IGUI_Component*)grabbed_comp:ceu):key_pressed => kev;
+                    emit ((IGUI_Component&&)grabbed_comp:ceu):key_pressed => kev;
                 end
             else/if focused_comp then
                 if focused_comp:ceu == null then
                     focused_comp:on_key_pressed(_deref(kev));
                 else
-                    emit ((IGUI_Component*)focused_comp:ceu):key_pressed => kev;
+                    emit ((IGUI_Component&&)focused_comp:ceu):key_pressed => kev;
                 end
             else/if mouse_over_comp then
                 if mouse_over_comp:ceu == null then
                     mouse_over_comp:on_key_pressed(_deref(kev));
                 else
-                    emit ((IGUI_Component*)mouse_over_comp:ceu):key_pressed => kev;
+                    emit ((IGUI_Component&&)mouse_over_comp:ceu):key_pressed => kev;
                 end
             end
         end
@@ -445,19 +445,19 @@ do
                 if grabbed_comp:ceu == null then
                     grabbed_comp:on_text_input(_deref(tev));
                 else
-                    emit ((IGUI_Component*)grabbed_comp:ceu):text_input => tev;
+                    emit ((IGUI_Component&&)grabbed_comp:ceu):text_input => tev;
                 end
             else/if focused_comp then
                 if focused_comp:ceu == null then
                     focused_comp:on_text_input(_deref(tev));
                 else
-                    emit ((IGUI_Component*)focused_comp:ceu):text_input => tev;
+                    emit ((IGUI_Component&&)focused_comp:ceu):text_input => tev;
                 end
             else/if mouse_over_comp then
                 if mouse_over_comp:ceu == null then
                     mouse_over_comp:on_text_input(_deref(tev));
                 else
-                    emit ((IGUI_Component*)mouse_over_comp:ceu):text_input => tev; 
+                    emit ((IGUI_Component&&)mouse_over_comp:ceu):text_input => tev; 
                 end
             end
         end
@@ -472,14 +472,14 @@ GroupComponent::update_layout()
 }
 
 void
-GroupComponent::grab(Component* comp)
+GroupComponent::grab(Component&& comp)
 {
   grabbed_comp = comp;
   Component::grab();
 }
 
 void
-GroupComponent::ungrab(Component* comp)
+GroupComponent::ungrab(Component&& comp)
 {
   grabbed_comp = 0;
   Component::ungrab();

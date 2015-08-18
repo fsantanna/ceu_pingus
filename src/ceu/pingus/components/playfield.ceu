@@ -34,8 +34,8 @@ native/pre do
     ##define new_SceneContextDrawingRequest(a, b, c) new SceneContextDrawingRequest(a, b, c)
 end
 
-input _Vector2i* PLAYFIELD_CLICK;
-input _GUI_RectComponent* RECT_COMPONENT_UPDATE_LAYOUT;
+input _Vector2i&& PLAYFIELD_CLICK;
+input _GUI_RectComponent&& RECT_COMPONENT_UPDATE_LAYOUT;
 
 native @pure _get_uint(), _read_coords(), _new_SceneContextDrawingRequest();
 
@@ -45,9 +45,9 @@ class Playfield with
     var _SceneContext&? scene_context;
     var _GraphicContextState&? state;
     var IServer& server;
-    var IGameSession* session;
+    var IGameSession&& session;
 do
-    var _GUI_RectComponent&? playfield = (_GUI_RectComponent*)&me;
+    var _GUI_RectComponent&? playfield = (_GUI_RectComponent&&)&me;
 
     finalize with
         _delete_obj(scene_context);
@@ -70,16 +70,16 @@ do
         this.session = session;
     end;
 
-    var IPingu* current_pingu = null;
+    var IPingu&& current_pingu = null;
     var bool mouse_scrolling = false;
     var Vector2i scroll_center;
     var Vector2i mouse_pos;
     var Vector2i old_state_pos;
 
-    function @rec (int mx, int my) => IPingu* current_pingu_find do
+    function @rec (int mx, int my) => IPingu&& current_pingu_find do
         var float min_dist = 500.0;
         var float dist;
-        var IPingu* c_pingu = null;
+        var IPingu&& c_pingu = null;
 
         loop pingu in global:world:get_pingus().all_pingus do
             if call/rec pingu:is_over(mx, my) then
@@ -95,13 +95,13 @@ do
         return c_pingu;
     end
 
-    function @rec (void) => IPingu* current_pingu_find_mouse do
+    function @rec (void) => IPingu&& current_pingu_find_mouse do
         var Vector2i m;
         _readVector2i(m, state.screen2world(_toVector2i(mouse_pos)));
         return call/rec current_pingu_find(m.x, m.y);
     end
 
-    function (void) => IPingu* get_current_pingu do
+    function (void) => IPingu&& get_current_pingu do
         return current_pingu;
     end
 
@@ -169,15 +169,15 @@ do
                 _read_coords(px, py, state.screen2world(_toVector2i(mouse_pos)));
 
                 if _get_uint(keystate, _SDL_SCANCODE_DELETE) then
-                    var _CollisionMask* mask = _new_CollisionMask("other/bash_radius_gfx");
+                    var _CollisionMask&& mask = _new_CollisionMask("other/bash_radius_gfx");
                     global:world:remove(mask, px - mask:get_width()/2, py - mask:get_height()/2);
                     _delete_obj(mask);
                 else/if _get_uint(keystate, _SDL_SCANCODE_INSERT) then
-                    var _CollisionMask* mask = _new_CollisionMask("other/bash_radius_gfx");
+                    var _CollisionMask&& mask = _new_CollisionMask("other/bash_radius_gfx");
                     global:world:put(mask, px - mask:get_width()/2, py - mask:get_height()/2, _GT_GROUND);
                     _delete_obj(mask);
                 else/if _get_uint(keystate, _SDL_SCANCODE_HOME) then
-                    var _CollisionMask* mask = _new_CollisionMask("other/bash_radius_gfx");
+                    var _CollisionMask&& mask = _new_CollisionMask("other/bash_radius_gfx");
                     global:world:put(mask, px - mask:get_width()/2, py - mask:get_height()/2, _GT_BRIDGE);
                     _delete_obj(mask);
                 end

@@ -28,14 +28,14 @@ end
 
 native @pure _Display__get_framebuffer(), _Display__flip_display(), _Display__get_width(), _Display__get_height();
 
-input _ScreenManagerUpdatePackage* SCREEN_MANAGER_UPDATE;
-input _ScreenManager* DELETE_SCREEN_MANAGER;
+input _ScreenManagerUpdatePackage&& SCREEN_MANAGER_UPDATE;
+input _ScreenManager&& DELETE_SCREEN_MANAGER;
 
 class ScreenManager with
     //interface IScreenManager;
     var _ScreenManager&? screen_manager;
 
-    event (_Screen*, _Screen*) fade_over;
+    event (_Screen&&, _Screen&&) fade_over;
 do
     var FPSCounter fps_counter;
     var Vector2i mouse_pos;
@@ -52,7 +52,7 @@ do
             end
 
             var bool do_fade_over = false;
-            var Screen*? screen;
+            var Screen&&? screen;
 
             loop i in package:events.size() do
                 if package:events.at(i).type == _Input__POINTER_EVENT_TYPE and package:events.at(i).pointer.name == _Input__STANDARD_POINTER then
@@ -60,7 +60,7 @@ do
                     mouse_pos.y = package:events.at(i).pointer.y;
                 end
 
-                screen = _PTR2REF((Screen*)package:screen:ceu);
+                screen = _PTR2REF((Screen&&)package:screen:ceu);
                 if screen then
                     emit screen:call_update_event => _addr(package:events.at(i));
                 else
@@ -80,7 +80,7 @@ do
 
             emit global:update => package:delta;
             
-            screen = _PTR2REF((Screen*)package:screen:ceu);
+            screen = _PTR2REF((Screen&&)package:screen:ceu);
             if not screen then
                 _log_error("Screen has no `ceu` organism binded!");
                 package:screen:update(package:delta) finalize with end;
@@ -92,7 +92,7 @@ do
             end
 
             // Draw screen to DrawingContext
-            screen = _PTR2REF((Screen*)screen_manager.get_current_screen():ceu);
+            screen = _PTR2REF((Screen&&)screen_manager.get_current_screen():ceu);
             if screen then
                 emit screen:call_draw => screen_manager.display_gc.get();
             else
@@ -142,7 +142,7 @@ do
                     old_screen:draw(*screen_manager.display_gc) finalize with end;
                 else            
                     _fflush(_stdout);
-                    emit ((Screen*)old_screen:ceu):call_draw => screen_manager.display_gc.get();
+                    emit ((Screen&&)old_screen:ceu):call_draw => screen_manager.display_gc.get();
                 end
                 screen_manager.display_gc:render({*Display::get_framebuffer(), Rect(Vector2i(0, 0), Size(Display::get_width(), Display::get_height()))});
                 screen_manager.display_gc:clear();
@@ -155,7 +155,7 @@ do
                 if new_screen:ceu == null then
                     new_screen:draw(*screen_manager.display_gc) finalize with end;
                 else            
-                    emit ((Screen*)new_screen:ceu):call_draw => screen_manager.display_gc.get();
+                    emit ((Screen&&)new_screen:ceu):call_draw => screen_manager.display_gc.get();
                 end
                 screen_manager.display_gc:render({*Display::get_framebuffer(), Rect(Vector2i(0, 0), Size(Display::get_width(), Display::get_height()))});
                 screen_manager.display_gc:clear();
@@ -170,7 +170,7 @@ do
             screen_manager.input_manager.refresh();
         end
     with
-        var _ScreenManager* e = await DELETE_SCREEN_MANAGER until (e == &screen_manager);
+        var _ScreenManager&& e = await DELETE_SCREEN_MANAGER until (e == &screen_manager);
     end
 end
 

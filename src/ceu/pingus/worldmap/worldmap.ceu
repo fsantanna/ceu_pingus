@@ -98,12 +98,12 @@ do
 
     // Create all objects
     loop i in pingus_worldmap:get_objects():size() do  
-        var Drawable*? drawable = null;
+        var Drawable&&? drawable = null;
 
         //_DrawableFactory__create(pingus_worldmap:get_objects():at(i));
         if pingus_worldmap:get_objects():at(i).get_name() == "surface" then  
             spawn SpriteDrawable with                
-                this.reader = (_FileReader*)_addr(pingus_worldmap:get_objects():at(i));
+                this.reader = (_FileReader&&)_addr(pingus_worldmap:get_objects():at(i));
                 this.worldmap = outer;
 
                 this.name = _new_String();
@@ -138,7 +138,7 @@ do
     add_drawable(&pingus);
     gc_state.set_limit(_Rect(_Vector2i(0, 0), _Size(pingus_worldmap:get_width(), pingus_worldmap:get_height())));
 
-    function (void) => IPingus* get_pingus do
+    function (void) => IPingus&& get_pingus do
         return &pingus;
     end
 
@@ -146,7 +146,7 @@ do
         // See if the user has played this map before.  If not, use the <default-node>
         // tag from the XML file.
         var int id;
-        var _std__string* node_name = _new_String();
+        var _std__string&& node_name = _new_String();
 
         if _StatManager__instance():get_string(_scc2(_deref(pingus_worldmap:get_short_name()), "-current-node"), _deref(node_name)) then
             // Just in case that level doesn't exist, look it up.
@@ -162,17 +162,17 @@ do
 
         call/rec pingus.set_position(id);
 
-        var Dot* dot = _PTR2REF(path_graph.get_dot_by_id(id));
+        var Dot&& dot = _PTR2REF(path_graph.get_dot_by_id(id));
         if dot then        
             dot:unlock();
         end        
     end
 
-    function (Drawable* a) => void add_drawable do
+    function (Drawable&& a) => void add_drawable do
         drawables.push_back(a);
     end
 
-    function (void) => PingusWorldmap* get_worldmap do
+    function (void) => PingusWorldmap&& get_worldmap do
         return pingus_worldmap;
     end
 
@@ -184,7 +184,7 @@ do
         return pingus_worldmap:get_height();
     end
 
-    function @rec (int x, int y) => Dot* find_dot do        
+    function @rec (int x, int y) => Dot&& find_dot do        
         return call/rec path_graph.get_dot(
             gc_state.screen2world(_Vector2i(x, y)).x,
             gc_state.screen2world(_Vector2i(x, y)).y
@@ -198,16 +198,16 @@ do
             //update_locked_nodes:
             //original FIXME: This shouldn't be a polling function
             loop i in path_graph.path_graph.graph.nodes_size() do
-                var _WorldmapNS__Node_WorldmapNS__Drawable* node = _addr(path_graph.path_graph.graph.get_node(i));
-                var Dot* dot = _PTR2REF(node:data);
+                var _WorldmapNS__Node_WorldmapNS__Drawable&& node = _addr(path_graph.path_graph.graph.get_node(i));
+                var Dot&& dot = _PTR2REF(node:data);
                 if dot:finished() then
                     //log_info("Unlocking neightbours of: " << node.data);                    
                     loop j in node:next.size() do                        
-                        var _WorldmapNS__Edge_WorldmapNS__Path* edge = _addr(path_graph.path_graph.graph.resolve_edge(node:next.at(j)));
+                        var _WorldmapNS__Edge_WorldmapNS__Path&& edge = _addr(path_graph.path_graph.graph.resolve_edge(node:next.at(j)));
 
                         //original FIXME: This should be identical to node.data->unlock(), but not sure                        
-                        ((Dot*)_graph_resolve_node(path_graph.path_graph.graph, edge:source).data):unlock();
-                        ((Dot*)_graph_resolve_node(path_graph.path_graph.graph, edge:destination).data):unlock();
+                        ((Dot&&)_graph_resolve_node(path_graph.path_graph.graph, edge:source).data):unlock();
+                        ((Dot&&)_graph_resolve_node(path_graph.path_graph.graph, edge:destination).data):unlock();
                     end
                 end
             end
@@ -249,10 +249,10 @@ do
             gc_state.push(_deref(gc));
   
             loop i in drawables.size() do  
-                emit ((Drawable*)drawables.at(i)):draw => gc;
+                emit ((Drawable&&)drawables.at(i)):draw => gc;
             end
 
-            var Dot* dot = _PTR2REF(call/rec find_dot(mouse_x, mouse_y));            
+            var Dot&& dot = _PTR2REF(call/rec find_dot(mouse_x, mouse_y));            
             if dot then                
                 emit dot:draw_hover => gc;
             end
@@ -262,7 +262,7 @@ do
     with
         every delta in update do
             loop i in drawables.size() do  
-                emit ((Drawable*)drawables.at(i)):update => delta;
+                emit ((Drawable&&)drawables.at(i)):update => delta;
             end  
         end
     with
@@ -288,7 +288,7 @@ do
             end
             */
 
-            var Dot* dot = _PTR2REF(call/rec find_dot(x, y));            
+            var Dot&& dot = _PTR2REF(call/rec find_dot(x, y));            
             if dot then                
                 if _globals__developer_mode then
                     _log_info("Worldmap: Clicked on: %1%", _deref(dot:name));
@@ -317,7 +317,7 @@ do
     with
         every (x, y) in mouse_secondary_press do
             if _globals__developer_mode then
-                var Dot* dot = _PTR2REF(call/rec find_dot(x, y));
+                var Dot&& dot = _PTR2REF(call/rec find_dot(x, y));
                 if dot then
                     // FIXME: Dot NodeID missmatch...
                     var int id = call/rec path_graph.get_id(dot);

@@ -76,13 +76,13 @@ native @pure _new_PingusCounter(), _new_GUI_Component(), _new_RectComponent(), _
              _SavegameManager__instance(), _ScreenManager__instance(), _get_demostream(),
              _std__make_shared_ResultScreen(), _toSStatus(), _Display__get_width(), _Display__get_height();
 
-input _GameSession* DELETE_GAME_SESSION;
+input _GameSession&& DELETE_GAME_SESSION;
 
 class GameSession with
     interface Screen;
     interface IGameSession;
 do
-    var _GameSession&? game_session = (_GameSession*)&me;
+    var _GameSession&? game_session = (_GameSession&&)&me;
     var GUIManager gui_manager with
         this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
         this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
@@ -353,7 +353,7 @@ do
         end
     with
         every gc in draw_background do
-            var _GUI_RectComponent* rect = (_GUI_RectComponent*)&playfield.me;
+            var _GUI_RectComponent&& rect = (_GUI_RectComponent&&)&playfield.me;
 
             if rect:get_rect() != _Rect(_Vector2i(0,0), _Size(_Display__get_width(), _Display__get_height())) then
                 // Draw a black border around the playfield when the playfield is smaller then the screen                
@@ -369,7 +369,7 @@ do
         end
     with
         every (width, height) in resize do
-            ((_GUI_RectComponent*)&playfield.me):set_rect(
+            ((_GUI_RectComponent&&)&playfield.me):set_rect(
                 _Rect(
                     _Vector2i(
                         _Math__max((width - global:world:get_width())/2,  0),
@@ -382,9 +382,9 @@ do
                 )
             );
 
-            ((_GUI_RectComponent*)&armageddon_button.me):set_rect(_Rect(_Vector2i(width - 40, height - 62), _Size(38, 60)));
-            ((_GUI_RectComponent*)&forward_button.me):set_rect(_Rect(_Vector2i(width - 40*2, height - 62), _Size(38, 60)));
-            ((_GUI_RectComponent*)&pause_button.me):set_rect(_Rect(_Vector2i(width - 40*3, height - 62), _Size(38, 60)));
+            ((_GUI_RectComponent&&)&armageddon_button.me):set_rect(_Rect(_Vector2i(width - 40, height - 62), _Size(38, 60)));
+            ((_GUI_RectComponent&&)&forward_button.me):set_rect(_Rect(_Vector2i(width - 40*2, height - 62), _Size(38, 60)));
+            ((_GUI_RectComponent&&)&pause_button.me):set_rect(_Rect(_Vector2i(width - 40*3, height - 62), _Size(38, 60)));
             small_map.rect.set_rect(_Rect(_Vector2i(5, height - 105), _Size(175, 100)));
 
             var Vector2i bp_pos;
@@ -401,7 +401,7 @@ do
             end
         end
     with
-        var _GameSession* e = await DELETE_GAME_SESSION until (e == &game_session);        
+        var _GameSession&& e = await DELETE_GAME_SESSION until (e == &game_session);        
     end
 
     emit server.e_DELETE;

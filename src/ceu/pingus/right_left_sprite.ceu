@@ -10,10 +10,10 @@
 class RightLeftSprite with
     var IPingu& pingu;
     var IPosGiver& pos_giver;
-    var _std__string* right_name = null;
-    var _std__string* left_name = null;    
+    var _std__string&& right_name = null;
+    var _std__string&& left_name = null;    
 
-    function (void) => Sprite3* get_current;
+    function (void) => Sprite3&& get_current;
 
     event void finished;
 do
@@ -26,9 +26,9 @@ do
         _log_error("name's not given");
     end
 
-    var Sprite3* current = null;
+    var Sprite3&& current = null;
 
-    function (void) => Sprite3* get_current do
+    function (void) => Sprite3&& get_current do
         if current == null then _log_error("get_current() == null\n"); end
         return current;
     end

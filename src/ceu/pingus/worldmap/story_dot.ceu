@@ -30,7 +30,7 @@ native @pure _ScreenManager__instance(), _std__make_shared_StoryScreen();
 
 class StoryDot with
     interface Dot;
-    var _FileReader* reader;
+    var _FileReader&& reader;
 do
     var Sprite m_story_dot_highlight;
     var Sprite m_story_dot;

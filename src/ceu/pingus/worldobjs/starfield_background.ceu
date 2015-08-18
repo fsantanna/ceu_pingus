@@ -18,7 +18,7 @@ class StarfieldBackground with
 do
     call/rec global:world:add_object(&this);
 
-    function (_FileReader* reader) => void construct do end;
+    function (_FileReader&& reader) => void construct do end;
 
     //original FIXME: Make z_pos handling editable via xml
     function (void) => float get_z_pos do return -10; end

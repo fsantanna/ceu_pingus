@@ -83,8 +83,8 @@ native @pure _reader_read_Groundtype(), _Resource__load_surface(), _opeq(), _new
              _read_position(), _read_position2(), _log_error(), _log_warn(),
              _reader_read_int(), _reader_read_float(), _reader_read_bool();
 
-input IWorldObj* WORLD_DRAW_OBJECT;
-input IWorldObj* WORLD_DRAW_SMALLMAP_OBJECT;
+input IWorldObj&& WORLD_DRAW_OBJECT;
+input IWorldObj&& WORLD_DRAW_SMALLMAP_OBJECT;
 
 class World with
     interface IWorld;
@@ -93,33 +93,33 @@ class World with
     pool ISwitchDoorDoor[] switch_door_doors;
     var _PingusLevel&? pingus_level;
 
-    event _CreationPackage* create_group;
-    event _CreationPackage* create_prefab;
-    event _CreationPackage* create_object;
-    event _CreationPackage* create;
+    event _CreationPackage&& create_group;
+    event _CreationPackage&& create_prefab;
+    event _CreationPackage&& create_object;
+    event _CreationPackage&& create;
 
-    event _CreationPackage* create_liquid;
-    event _CreationPackage* create_hotspot;
-    event _CreationPackage* create_entrance;
-    event _CreationPackage* create_exit;
-    event _CreationPackage* create_fake_exit;
-    event _CreationPackage* create_guillotine;
-    event _CreationPackage* create_hammer;
-    event _CreationPackage* create_laser_exit;
-    event _CreationPackage* create_smasher;
-    event _CreationPackage* create_spike;
-    event _CreationPackage* create_switchdoor_switch;
-    event _CreationPackage* create_switchdoor_door;
-    event _CreationPackage* create_iceblock;
-    event _CreationPackage* create_conveyorbelt;
-    event _CreationPackage* create_teleporter;
-    event _CreationPackage* create_teleporter_target;
-    event _CreationPackage* create_surface_background;
-    event _CreationPackage* create_starfield_background;
-    event _CreationPackage* create_solidcolor_background;
-    event _CreationPackage* create_snow_generator;
-    event _CreationPackage* create_rain_generator;
-    event _CreationPackage* create_groundpiece;
+    event _CreationPackage&& create_liquid;
+    event _CreationPackage&& create_hotspot;
+    event _CreationPackage&& create_entrance;
+    event _CreationPackage&& create_exit;
+    event _CreationPackage&& create_fake_exit;
+    event _CreationPackage&& create_guillotine;
+    event _CreationPackage&& create_hammer;
+    event _CreationPackage&& create_laser_exit;
+    event _CreationPackage&& create_smasher;
+    event _CreationPackage&& create_spike;
+    event _CreationPackage&& create_switchdoor_switch;
+    event _CreationPackage&& create_switchdoor_door;
+    event _CreationPackage&& create_iceblock;
+    event _CreationPackage&& create_conveyorbelt;
+    event _CreationPackage&& create_teleporter;
+    event _CreationPackage&& create_teleporter_target;
+    event _CreationPackage&& create_surface_background;
+    event _CreationPackage&& create_starfield_background;
+    event _CreationPackage&& create_solidcolor_background;
+    event _CreationPackage&& create_snow_generator;
+    event _CreationPackage&& create_rain_generator;
+    event _CreationPackage&& create_groundpiece;
 do
     var _Container&? objs = _new_Container();
     finalize with _delete_obj(objs); end
@@ -194,13 +194,13 @@ do
         _Sound_PingusSound_play_sound(name, volume, panning);
     end
 
-    function @rec (IWorldObj* o) => void add_object do
-        objs.add((void*)o, o:get_z_pos());
+    function @rec (IWorldObj&& o) => void add_object do
+        objs.add((void&&)o, o:get_z_pos());
         objs.sort();
     end
 
-    function (IWorldObj* o) => void remove_object do
-        objs.remove((void*)o);
+    function (IWorldObj&& o) => void remove_object do
+        objs.remove((void&&)o);
     end
 
     function (void) => int get_width do
@@ -211,11 +211,11 @@ do
         return gfx_map.gmap.get_height();
     end
 
-    function (void) => _GroundMap* get_gfx_map do
+    function (void) => _GroundMap&& get_gfx_map do
         return &gfx_map.gmap;
     end
 
-    function (void) => _CollisionMap* get_colmap do
+    function (void) => _CollisionMap&& get_colmap do
         return gfx_map.gmap.colmap.get();
     end
 
@@ -223,19 +223,19 @@ do
         return holder;
     end
 
-    function (void) => IPinguParticlesHolder* get_pingu_particles_holder do
+    function (void) => IPinguParticlesHolder&& get_pingu_particles_holder do
         return pingu_particles_holder;
     end
 
-    function (void) => IRainParticlesHolder* get_rain_particles_holder do
+    function (void) => IRainParticlesHolder&& get_rain_particles_holder do
         return rain_particles_holder;
     end
 
-    function (void) => ISmokeParticlesHolder* get_smoke_particles_holder do
+    function (void) => ISmokeParticlesHolder&& get_smoke_particles_holder do
         return smoke_particles_holder;
     end
 
-    function (void) => ISnowParticlesHolder* get_snow_particles_holder do
+    function (void) => ISnowParticlesHolder&& get_snow_particles_holder do
         return snow_particles_holder;
     end
 
@@ -243,7 +243,7 @@ do
         return 0.2;
     end
 
-    function (_const_char_string id) => ITeleporterTarget* get_teleporter_target do
+    function (_const_char_string id) => ITeleporterTarget&& get_teleporter_target do
         loop target in teleporter_targets do
             if target:id == id then
                 return target;
@@ -253,7 +253,7 @@ do
         return null;
     end
 
-    function (_const_char_string id) => ISwitchDoorDoor* get_switch_door_door do
+    function (_const_char_string id) => ISwitchDoorDoor&& get_switch_door_door do
         loop door in switch_door_doors do
             if door:id == id then
                 return door;
@@ -263,24 +263,24 @@ do
         return null;
     end
 
-    function (_CollisionMask* mask, int x, int y, int type) => void put do
+    function (_CollisionMask&& mask, int x, int y, int type) => void put do
         gfx_map.gmap.put(mask:get_surface(), x, y);
         gfx_map.gmap.colmap:put(_deref(mask), x, y, _to_GT(type));
     end
 
-    function (_CollisionMask* mask, int x, int y) => void remove do
+    function (_CollisionMask&& mask, int x, int y) => void remove do
         gfx_map.gmap.remove(mask:get_surface(), x, y);
         gfx_map.gmap.colmap:remove(_deref(mask), x, y);
     end
 
     function (_const_char_string str, int x, int y, int t) => void put_str do
-        var _CollisionMask* mask = _new_CollisionMask(str);
+        var _CollisionMask&& mask = _new_CollisionMask(str);
         put(mask, x, y, t);
         _delete_obj(mask);
     end
 
     function (_const_char_string str, int x, int y) => void remove_str do
-        var _CollisionMask* mask = _new_CollisionMask(str);
+        var _CollisionMask&& mask = _new_CollisionMask(str);
         remove(mask, x, y);
         _delete_obj(mask);
     end
@@ -289,10 +289,10 @@ do
 
     par/or do
         every e_CREATE do
-            var _const_std__vector_FileReader* ov = _addr(pingus_level.get_objects());
-            var _CreationPackage* pack = _new_CreationPackage();            
+            var _const_std__vector_FileReader&& ov = _addr(pingus_level.get_objects());
+            var _CreationPackage&& pack = _new_CreationPackage();            
             loop i in ov:size() do
-                pack:reader = _PTR2REF((_FileReader*)_vecget_addr(ov, i));
+                pack:reader = _PTR2REF((_FileReader&&)_vecget_addr(ov, i));
                 pack:result.clear();                
                 emit create => pack;
             end
@@ -302,7 +302,7 @@ do
             //second: when you try to find an object by id, you want all objects to be already created (teleporters, doors)
             //third: now objects are sorted and will receive STARTUP in necessary order
             loop i in objs.size() do                
-                emit ((IWorldObj*)objs.get(i)):e_STARTUP;
+                emit ((IWorldObj&&)objs.get(i)):e_STARTUP;
             end
             objs.cleanup();
         end
@@ -345,7 +345,7 @@ do
     with
         every package in create_group do
             var _std__vector_FileReader&? sections = _new_std__vector_FileReader(package);
-            var _CreationPackage* new_package = _new_CreationPackage();
+            var _CreationPackage&& new_package = _new_CreationPackage();
 
             loop i in sections.size() do
                 new_package:reader = _vecget_addr(sections, i);
@@ -376,8 +376,8 @@ do
             var _FileReader&? overrides = _new_FileReader();
             package:reader:read_section("overrides", _deref(overrides));
 
-            var _const_std__vector_FileReader* objects = _addr(prefab.get_objects());
-            var _CreationPackage* new_package = _new_CreationPackage();
+            var _const_std__vector_FileReader&& objects = _addr(prefab.get_objects());
+            var _CreationPackage&& new_package = _new_CreationPackage();
 
             loop i in objects:size() do
                 var _OverrideFileReader&? override_reader = _new_OverrideFileReader(objects, i, _deref(overrides));
@@ -389,7 +389,7 @@ do
 
                 loop j in new_package:result.size() do
                     if _vecget(new_package:result, j) then
-                        var IWorldObj* wobject = (IWorldObj*)_vecget(new_package:result, j);
+                        var IWorldObj&& wobject = (IWorldObj&&)_vecget(new_package:result, j);
                         wobject:pos.x = wobject:pos.x + pos.x;
                         wobject:pos.y = wobject:pos.y + pos.y;
                         wobject:pos.z = wobject:pos.z + pos.z;
@@ -777,7 +777,7 @@ do
 
     objs.cleanup();
     loop i in objs.size() do
-        emit ((IWorldObj*)objs.get(i)):e_DELETE;
+        emit ((IWorldObj&&)objs.get(i)):e_DELETE;
     end
 end
 

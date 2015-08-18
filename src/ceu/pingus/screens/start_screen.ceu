@@ -50,14 +50,14 @@ native @pure _new_GUI_Component(), _ScreenManager__instance(), _std__make_shared
              _Display__get_width(), _Display__get_height(),
              _SU2str(), _StringFormat__break_line();
 
-input _StartScreen* DELETE_START_SCREEN;
+input _StartScreen&& DELETE_START_SCREEN;
 
 interface IStartScreen with
     interface Screen;
 
     function (void) => void start_game;
     function (void) => void cancel_game;
-    function (void) => _PingusLevel* get_plf;
+    function (void) => _PingusLevel&& get_plf;
 end
 
 ////////////////////////////////////////////////
@@ -259,15 +259,15 @@ do
     gui_manager.add(&abort_button.me);
 
     function (void) => void start_game do
-        _ScreenManager__instance():replace_screen(_std__make_shared_GameSession(((_StartScreen*)&me):plf, true));
+        _ScreenManager__instance():replace_screen(_std__make_shared_GameSession(((_StartScreen&&)&me):plf, true));
     end
 
     function (void) => void cancel_game do
         _ScreenManager__instance():pop_screen();
     end
 
-    function (void) => _PingusLevel* get_plf do
-        return &((_StartScreen*)&me):plf;
+    function (void) => _PingusLevel&& get_plf do
+        return &((_StartScreen&&)&me):plf;
     end
 
     par/or do
@@ -288,7 +288,7 @@ do
             call/rec ok_button.set_pos(width/2 + 245, height/2 + 150);
         end
     with
-        var _StartScreen* e = await DELETE_START_SCREEN until (e == &me);
+        var _StartScreen&& e = await DELETE_START_SCREEN until (e == &me);
     end
 end
 

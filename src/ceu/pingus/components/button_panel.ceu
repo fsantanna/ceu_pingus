@@ -59,7 +59,7 @@ class ButtonPanel with
     interface IButtonPanel;
     var IServer& server;
 do
-    var _GUI_RectComponent&? button_panel = (_GUI_RectComponent*)&me;
+    var _GUI_RectComponent&? button_panel = (_GUI_RectComponent&&)&me;
 
     RECT_IS_AT(&button_panel);
 

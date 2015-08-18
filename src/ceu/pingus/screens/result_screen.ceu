@@ -42,14 +42,14 @@ native @pure _new_GUI_Component(), _ScreenManager__instance(), _std__make_shared
              _Display__get_width(), _Display__get_height(),
              _SU2str();
 
-input _ResultScreen* DELETE_RESULT_SCREEN;
+input _ResultScreen&& DELETE_RESULT_SCREEN;
 
 interface IResultScreen with
     interface Screen;
 
     function (void) => void retry_level;
     function (void) => void close_screen;
-    function (void) => _Result* get_result;
+    function (void) => _Result&& get_result;
 end
 
 ////////////////////////////////////////////////
@@ -199,7 +199,7 @@ do
     call/rec background.reload_by_name("core/menu/wood");
     call/rec blackboard.reload_by_name("core/menu/blackboard");
 
-    var _std__string*? message;
+    var _std__string&&? message;
 
     if parent.get_result():success() then
         if parent.get_result():killed == 0 and parent.get_result():saved == parent.get_result():total then
@@ -289,7 +289,7 @@ end
 class ResultScreen with
     interface IResultScreen;    
 do
-    var _ResultScreen&? result_screen = (_ResultScreen*)&me;
+    var _ResultScreen&? result_screen = (_ResultScreen&&)&me;
     var GUIManager gui_manager with
         this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
         this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
@@ -307,9 +307,9 @@ do
 
     gui_manager.add(&comp.me);
 
-    var ResultScreenOkButton*? ok_button = null;
-    var ResultScreenAbortButton*? abort_button = null;
-    var ResultScreenRetryButton*? retry_button = null;
+    var ResultScreenOkButton&&? ok_button = null;
+    var ResultScreenAbortButton&&? abort_button = null;
+    var ResultScreenRetryButton&&? retry_button = null;
 
     if result_screen.result.success() then
         ok_button = spawn ResultScreenOkButton with
@@ -343,7 +343,7 @@ do
         _ScreenManager__instance():pop_screen();
     end
 
-    function (void) => _Result* get_result do
+    function (void) => _Result&& get_result do
         return &result_screen.result;
     end
 
@@ -392,7 +392,7 @@ do
             end
         end
     with
-        var _ResultScreen* e = await DELETE_RESULT_SCREEN until (e == &me);
+        var _ResultScreen&& e = await DELETE_RESULT_SCREEN until (e == &me);
     end
 end
 

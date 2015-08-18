@@ -19,7 +19,7 @@ class SnowGenerator with
 do
     call/rec global:world:add_object(&this);
 
-    function (_FileReader* reader) => void construct do end;
+    function (_FileReader&& reader) => void construct do end;
 
     function (void) => float get_z_pos do return 1000; end
     function (Vector3f p) => void set_pos do end

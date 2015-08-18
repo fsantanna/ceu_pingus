@@ -72,7 +72,7 @@ do
             pingu.set_pos(_toVector3f(mover.get_pos()));
         end
     with        
-        var _SceneContext* gc = await pingu.e_DRAW_CALLED until sprite.get_current():get_current_frame() >= 13;
+        var _SceneContext&& gc = await pingu.e_DRAW_CALLED until sprite.get_current():get_current_frame() >= 13;
         _gc_color_draw2(gc, explo_surf, _Vector3f(pingu.get_x()-32, pingu.get_y()-48));
     with
         // If the Bomber hasn't 'exploded' yet...

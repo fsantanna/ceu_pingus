@@ -100,13 +100,13 @@ do
     do
     var _std__vector_FileReader&? childs = _new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("nodes").get_sections());
     loop i in childs.size() do
-        var Drawable*? dot = null;
+        var Drawable&&? dot = null;
 
         //DotFactory:
         if childs.at(i).get_name() == "storydot" then            
             spawn StoryDot in sds with
                 dot = &this;
-                this.reader = (_FileReader*)_addr(childs.at(i));
+                this.reader = (_FileReader&&)_addr(childs.at(i));
 
                 _reader_read_Vector3f(childs.at(i).read_section("dot"), this.pos);
                 this.name = _new_String();
@@ -116,7 +116,7 @@ do
         else/if childs.at(i).get_name() == "leveldot" then
             spawn LevelDot in lds with
                 dot = &this;
-                this.reader = (_FileReader*)_addr(childs.at(i));                
+                this.reader = (_FileReader&&)_addr(childs.at(i));                
                 
                 _reader_read_Vector3f(childs.at(i).read_section("dot"), this.pos);
                 this.name = _new_String();
@@ -151,9 +151,9 @@ do
     do
     var _std__vector_FileReader&? childs = _new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("edges").get_sections());
 
-    var _std__string* name = _new_String();
-    var _std__string* source = _new_String();
-    var _std__string* destination = _new_String();
+    var _std__string&& name = _new_String();
+    var _std__string&& source = _new_String();
+    var _std__string&& destination = _new_String();
     loop i in childs.size() do
         if childs.at(i).get_name() == "edge" then            
             childs.at(i).read_string("name", _deref(name));
@@ -161,7 +161,7 @@ do
             childs.at(i).read_string("destination", _deref(destination));
               
             //original FIXME: add path-data parsing here
-            var _WorldmapNS__Path* path = _new_Path();
+            var _WorldmapNS__Path&& path = _new_Path();
               
             var _std__vector_FileReader&? childs2 = _new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("edges").read_section("positions").get_sections());
               
@@ -176,9 +176,9 @@ do
             end
 
             var _WorldmapNS__Path&? full_path = _new_Path();
-            full_path.push_back(((Dot*)path_graph.graph.resolve_node(path_graph.lookup_node(_deref(source))).data):get_pos());
+            full_path.push_back(((Dot&&)path_graph.graph.resolve_node(path_graph.lookup_node(_deref(source))).data):get_pos());
             full_path.insert(*path) finalize with end;
-            full_path.push_back(((Dot*)path_graph.graph.resolve_node(path_graph.lookup_node(_deref(destination))).data):get_pos());
+            full_path.push_back(((Dot&&)path_graph.graph.resolve_node(path_graph.lookup_node(_deref(destination))).data):get_pos());
 
             //original FIXME: merge this together with the Pingus::distance() stuff in a seperate Path class
             var float cost = full_path.length();
@@ -196,7 +196,7 @@ do
                                       path_graph.lookup_node(_deref(destination)), path_graph.lookup_node(_deref(source)),
                                       cost) finalize with end;
 
-            var _WorldmapNS__Path* path2 = _new_Path();
+            var _WorldmapNS__Path&& path2 = _new_Path();
             path2:reverse_insert(*path) finalize with end;
             //EdgeId id2 =
             path_graph.graph.add_edge(path2, //original FIXME: Memory leak!
@@ -228,9 +228,9 @@ do
         _delete_obj(path_graph);
     end
 
-    function @rec (float x_pos, float y_pos) => Dot* get_dot do
+    function @rec (float x_pos, float y_pos) => Dot&& get_dot do
         loop/1000 i in path_graph.dots.size() do  
-            var Dot* r = _PTR2REF((Dot*)path_graph.dots.at(i));
+            var Dot&& r = _PTR2REF((Dot&&)path_graph.dots.at(i));
             var float x = x_pos - r:get_pos().x;
             var float y = y_pos - r:get_pos().y;
 
@@ -242,11 +242,11 @@ do
         return null;
     end
 
-    function (int id) => Dot* get_dot_by_id do
-        return (Dot*)path_graph.graph.resolve_node(id).data;
+    function (int id) => Dot&& get_dot_by_id do
+        return (Dot&&)path_graph.graph.resolve_node(id).data;
     end
 
-    function @rec (Dot* dot) => int get_id do
+    function @rec (Dot&& dot) => int get_id do
         loop/1000 i in path_graph.dots.size() do 
             if path_graph.dots.at(i) == dot then
                 return i;

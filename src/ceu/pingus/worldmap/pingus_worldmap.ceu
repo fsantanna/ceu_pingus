@@ -75,14 +75,14 @@ class PingusWorldmap with
     function (void) => _std__string&? get_default_node;
     function (void) => _std__string&? get_final_node;
     
-    function (void) => _FileReader* get_intro_story;
-    function (void) => _FileReader* get_end_story;
+    function (void) => _FileReader&& get_intro_story;
+    function (void) => _FileReader&& get_end_story;
 
-    function (void) => _FileReader* get_graph;
-    function (void) => _std__vector_FileReader* get_objects;
+    function (void) => _FileReader&& get_graph;
+    function (void) => _std__vector_FileReader&& get_objects;
 
-    function @rec (_FileReader* reader) => void parse_file;
-    function (_FileReader* reader) => void parse_properties;
+    function @rec (_FileReader&& reader) => void parse_file;
+    function (_FileReader&& reader) => void parse_properties;
 do
     var _std__string&? filename = _new_String();
     var _std__string&? name = _new_String();
@@ -149,27 +149,27 @@ do
 
     ////
     
-    function (void) => _FileReader* get_intro_story do
+    function (void) => _FileReader&& get_intro_story do
         return &intro_story;
     end
 
-    function (void) => _FileReader* get_end_story do
+    function (void) => _FileReader&& get_end_story do
         return &end_story;
     end
 
     ////
 
-    function (void) => _FileReader* get_graph do
+    function (void) => _FileReader&& get_graph do
         return &path_graph;
     end
 
-    function (void) => _std__vector_FileReader* get_objects do
+    function (void) => _std__vector_FileReader&& get_objects do
         return &objects;
     end
 
     ////
 
-    function @rec (_FileReader* reader) => void parse_file do
+    function @rec (_FileReader&& reader) => void parse_file do
         if reader:get_name() == "pingus-worldmap" then
             if not reader:read_section("graph", _deref(path_graph)) then            
                 _log_error("Worldmap: %1% is missed 'graph' section", filename);
@@ -197,7 +197,7 @@ do
         end
     end
 
-    function (_FileReader* reader) => void parse_properties do
+    function (_FileReader&& reader) => void parse_properties do
         reader:read_section("head").read_string("music", _deref(music));
         reader:read_section("head").read_string("author", _deref(author));
         reader:read_section("head").read_string("name", _deref(name));

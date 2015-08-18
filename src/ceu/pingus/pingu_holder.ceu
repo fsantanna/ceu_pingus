@@ -13,7 +13,7 @@ class PinguHolder with
 do
     call/rec global:world:add_object(&this);
 
-    function (_FileReader* reader) => void construct do end;
+    function (_FileReader&& reader) => void construct do end;
 
     function (void) => float get_z_pos do return 50; end
     function (Vector3f p) => void set_pos do end
@@ -30,8 +30,8 @@ do
     function (void) => int get_number_of_allowed do return number_of_allowed; end
     function (void) => u32 get_end_id do return pingus_emitted; end
 
-    function @rec (int id) => IPingu* get_pingu do
-        var IPingu* result = null;
+    function @rec (int id) => IPingu&& get_pingu do
+        var IPingu&& result = null;
 
         if id < pingus_emitted then
             loop pingu in all_pingus do

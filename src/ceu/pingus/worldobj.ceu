@@ -24,10 +24,10 @@ interface IWorldObj with
     var Vector3f pos;
 
     event void e_STARTUP;
-    event _SceneContext* e_DRAW;
+    event _SceneContext&& e_DRAW;
     event void e_DELETE;
 
-    function (_FileReader* reader) => void construct;
+    function (_FileReader&& reader) => void construct;
     function (void) => float get_z_pos;
     function (Vector3f p) => void set_pos;    
 end

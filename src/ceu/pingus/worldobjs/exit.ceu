@@ -32,7 +32,7 @@ do
     call/rec smallmap_symbol.reload_by_name("core/misc/smallmap_exit");
     sprite.reload_by_desc(&desc);
 
-    function (_FileReader* reader) => void construct do
+    function (_FileReader&& reader) => void construct do
         //Unfortunately, we can't make `desc`/`sprite`/etc "private"
         //(i.e. hide it from interface in the body)
         //because this function's meant to be called in constructor

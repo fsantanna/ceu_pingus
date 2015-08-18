@@ -79,8 +79,8 @@ native @pure _new_GUI_Component(), _ScreenManager__instance(), _std__make_shared
              _std__make_shared_Editor__EditorScreen(), _new_LayerManager(), _Resource__load_surface(), _make_Sprite2(),
              _std__make_shared_StoryScreen(), _StatManager__instance(), __();
 
-input _ScreenUpdatePackage* PINGUS_MENU_UPDATE;
-input _PingusMenu* DELETE_PINGUS_MENU;
+input _ScreenUpdatePackage&& PINGUS_MENU_UPDATE;
+input _PingusMenu&& DELETE_PINGUS_MENU;
 
 class FunctionStart with
     interface Function;
@@ -313,7 +313,7 @@ do
             quit_button.set_pos(width/2, height/2 + 120);
         end
     with
-        var _PingusMenu* e = await DELETE_PINGUS_MENU until (e == &me);
+        var _PingusMenu&& e = await DELETE_PINGUS_MENU until (e == &me);
     end
 end
 

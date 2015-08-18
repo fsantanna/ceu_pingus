@@ -6,7 +6,7 @@
 interface Dot with
     interface Drawable;
 
-    event _DrawingContext* draw_hover;    
+    event _DrawingContext&& draw_hover;    
     event void on_click;
     
     function (void) => _Vector3f get_pos;

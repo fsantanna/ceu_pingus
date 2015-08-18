@@ -63,7 +63,7 @@ native @pure _new_GUI_Component(), _ScreenManager__instance(), _couldnt_open(),
              _Display__get_width(), _Display__get_height(), _read_file(), _new_std__ifstream(),
              _StringFormat__break_line(), _new_Vector_String(), _new_SceneContext(), _new_SceneContextDrawingRequest();
 
-input _Credits* DELETE_CREDITS;
+input _Credits&& DELETE_CREDITS;
 
 interface ICredits with
     interface Screen;
@@ -117,7 +117,7 @@ end
 class Credits with
     interface ICredits;
 do
-    var _Credits&? credits_screen = (_Credits*)&me;
+    var _Credits&? credits_screen = (_Credits&&)&me;
     var GUIManager gui_manager with
         this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
         this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
@@ -272,7 +272,7 @@ do
             close();            
         end
     with
-        var _Credits* e = await DELETE_CREDITS until (e == &credits_screen);
+        var _Credits&& e = await DELETE_CREDITS until (e == &credits_screen);
     end
 end
 

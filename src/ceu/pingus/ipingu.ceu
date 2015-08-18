@@ -24,10 +24,10 @@ end
 
 interface IPingu with
     interface IPosGiver;
-    var IPinguAction* ceu_action;
+    var IPinguAction&& ceu_action;
     var int init_direction_value;
 
-    event _SceneContext* e_DRAW_CALLED;
+    event _SceneContext&& e_DRAW_CALLED;
 
     event int e_CHANGE_ACTION;
 
@@ -64,7 +64,7 @@ interface IPingu with
     function (float x) => void set_x;
     function (float y) => void set_y;
 
-    event _SetActionPackage* request_set_action;
+    event _SetActionPackage&& request_set_action;
 
     function (void) => int get_owner;
     function (void) => _std__string get_owner_str;

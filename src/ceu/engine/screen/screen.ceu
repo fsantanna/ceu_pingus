@@ -14,34 +14,34 @@ end
 
 native @pure _new_GUIScreen(), _log_debug(), _log_error();
 
-input _GUIScreen* ON_STARTUP;
-input _GUIScreen* ON_ARMAGEDDON_PRESS;
-input _GUIScreen* ON_ARMAGEDDON_RELEASE;
-input _GUIScreen* ON_ESCAPE_PRESS;
-input _GUIScreen* ON_ESCAPE_RELEASE;
-input _GUIScreen* ON_PAUSE_PRESS;
-input _GUIScreen* ON_PAUSE_RELEASE;
-input _GUIScreen* ON_SINGLE_STEP_PRESS;
-input _GUIScreen* ON_SINGLE_STEP_RELEASE;
-input _GUIScreen* ON_FAST_FORWARD_PRESS;
-input _GUIScreen* ON_FAST_FORWARD_RELEASE;
-input _GUIScreen* ON_ACTION_UP_PRESS;
-input _GUIScreen* ON_ACTION_DOWN_PRESS;
-input _ScreenUpdateEventPackage* SCREEN_UPDATE_EVENT;
-input _ScreenDrawPackage* SCREEN_DRAW_BACKGROUND;
-input _ScreenDrawPackage* SCREEN_DRAW_FOREGROUND;
-input _ScreenResizePackage* SCREEN_RESIZE;
-input _ScreenAxisMovePackage* ON_ACTION_AXIS_MOVE;
+input _GUIScreen&& ON_STARTUP;
+input _GUIScreen&& ON_ARMAGEDDON_PRESS;
+input _GUIScreen&& ON_ARMAGEDDON_RELEASE;
+input _GUIScreen&& ON_ESCAPE_PRESS;
+input _GUIScreen&& ON_ESCAPE_RELEASE;
+input _GUIScreen&& ON_PAUSE_PRESS;
+input _GUIScreen&& ON_PAUSE_RELEASE;
+input _GUIScreen&& ON_SINGLE_STEP_PRESS;
+input _GUIScreen&& ON_SINGLE_STEP_RELEASE;
+input _GUIScreen&& ON_FAST_FORWARD_PRESS;
+input _GUIScreen&& ON_FAST_FORWARD_RELEASE;
+input _GUIScreen&& ON_ACTION_UP_PRESS;
+input _GUIScreen&& ON_ACTION_DOWN_PRESS;
+input _ScreenUpdateEventPackage&& SCREEN_UPDATE_EVENT;
+input _ScreenDrawPackage&& SCREEN_DRAW_BACKGROUND;
+input _ScreenDrawPackage&& SCREEN_DRAW_FOREGROUND;
+input _ScreenResizePackage&& SCREEN_RESIZE;
+input _ScreenAxisMovePackage&& ON_ACTION_AXIS_MOVE;
 
 interface Screen with
     var _GUIScreen&? me;    
 
-    event _DrawingContext* call_draw;
-    event _const_Input__Event* call_update_event;
+    event _DrawingContext&& call_draw;
+    event _const_Input__Event&& call_update_event;
 
-    event _DrawingContext* draw_background;
-    event _DrawingContext* draw_foreground;
-    event _const_Input__Event* update_event;
+    event _DrawingContext&& draw_background;
+    event _DrawingContext&& draw_foreground;
+    event _const_Input__Event&& update_event;
 
     event (int, int) resize;
 
@@ -65,9 +65,9 @@ end
 
 class ScreenFramework with
     var Screen& screen;
-    var IGUIManager* gui_manager = null;
+    var IGUIManager&& gui_manager = null;
 
-    event _const_Input__ButtonEvent* process_button_event;
+    event _const_Input__ButtonEvent&& process_button_event;
 do
     par do
         every gc in screen.call_draw do
@@ -151,10 +151,10 @@ do
         end
     with
         loop do
-            var _ScreenResizePackage* package = await SCREEN_RESIZE until package:screen == &screen.me;            
+            var _ScreenResizePackage&& package = await SCREEN_RESIZE until package:screen == &screen.me;            
 
             if gui_manager then
-                ((_GUI_RectComponent*)&gui_manager:me):set_rect(_Rect(_Vector2i(0, 0), package:size) finalize with end);
+                ((_GUI_RectComponent&&)&gui_manager:me):set_rect(_Rect(_Vector2i(0, 0), package:size) finalize with end);
             end
 
             var int w = package:size.width;

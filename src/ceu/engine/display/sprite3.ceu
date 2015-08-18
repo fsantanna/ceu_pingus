@@ -14,7 +14,7 @@ class Sprite3 with
     var bool visible = true;
 
     function (_const_char_string filename) => void reload_by_name;
-    function (_ResDescriptor* desc) => void reload_by_desc;
+    function (_ResDescriptor&& desc) => void reload_by_desc;
 
   /*
   Sprite(const Surface& surface);
@@ -22,7 +22,7 @@ class Sprite3 with
   void set_hotspot(Origin origin, int x, int y);
   */
 
-    function (_SceneContext* gc, Vector3f pos) => void draw;
+    function (_SceneContext&& gc, Vector3f pos) => void draw;
 
     event float update;
     event void default_update;
@@ -57,7 +57,7 @@ do
     var _CeuSpriteImpl&? core = _new_CeuSpriteImpl();
     finalize with _delete_obj(core); end
 
-    function (_SpriteDescription* desc, int mod) => void load_desc do
+    function (_SpriteDescription&& desc, int mod) => void load_desc do
         core.filename = _PTR2REF(desc:filename);
         core.framebuffer_surface = _load_framebuffer_surface(desc:filename, _to_RM(mod));        
 
@@ -86,7 +86,7 @@ do
         frame_delay  = desc:speed;
     end
 
-    function (_SpriteDescription* desc, int mod) => void try_desc do
+    function (_SpriteDescription&& desc, int mod) => void try_desc do
         if desc then
             load_desc(desc, mod);
         else
@@ -98,16 +98,16 @@ do
     end
 
     function (_const_char_string filename) => void reload_by_name do
-        var _SpriteDescription* desc = _Resource__load_sprite_desc(filename);
+        var _SpriteDescription&& desc = _Resource__load_sprite_desc(filename);
         try_desc(desc, _RM_ROT0);
     end
 
-    function (_ResDescriptor* res_desc) => void reload_by_desc do
-        var _SpriteDescription* desc = _Resource__load_sprite_desc(res_desc:res_name);
+    function (_ResDescriptor&& res_desc) => void reload_by_desc do
+        var _SpriteDescription&& desc = _Resource__load_sprite_desc(res_desc:res_name);
         try_desc(desc, res_desc:modifier);
     end
 
-    function (_SceneContext* gc, Vector3f pos) => void draw do
+    function (_SceneContext&& gc, Vector3f pos) => void draw do
         var Vector2i draw_pos;
         draw_pos.x = pos.x - offset.x;
         draw_pos.y = pos.y - offset.y;

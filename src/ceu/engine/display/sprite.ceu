@@ -17,12 +17,12 @@ native @pure _new_Sprite(),
 
 class Sprite with
     function @rec (_const_char_string filename) => void reload_by_name;
-    function @rec (_ResDescriptor* desc) => void reload_by_desc;
+    function @rec (_ResDescriptor&& desc) => void reload_by_desc;
     //Sprite(const SpriteDescription& desc, ResourceModifier::Enum mod = ResourceModifier::ROT0);
     //Sprite(const Surface& surface);
 
-    function (void) => _Sprite* get;
-    function (_Sprite*) => void set;
+    function (void) => _Sprite&& get;
+    function (_Sprite&&) => void set;
 
     function (void) => void update;
     function (float delta) => void update_delta;
@@ -39,22 +39,22 @@ class Sprite with
     function (int i) => void set_frame;
     function (bool l) => void set_play_loop;
 do
-    var _Sprite* sprite = _new_Sprite();
+    var _Sprite&& sprite = _new_Sprite();
     finalize with _delete_obj(sprite); end;
 
     function @rec (_const_char_string filename) => void reload_by_name do
       set(_new_Sprite(filename));
     end
 
-    function @rec (_ResDescriptor* desc) => void reload_by_desc do
+    function @rec (_ResDescriptor&& desc) => void reload_by_desc do
       set(_new_Sprite(_deref(desc)));
     end
 
-    function (void) => _Sprite* get do
+    function (void) => _Sprite&& get do
       return sprite;
     end
 
-    function (_Sprite* s) => void set do
+    function (_Sprite&& s) => void set do
       _delete_obj(sprite);
       sprite = _PTR2REF(s);
     end

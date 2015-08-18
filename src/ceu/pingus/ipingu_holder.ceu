@@ -10,9 +10,9 @@ interface IPinguHolder with
     interface IWorldObj;
 
     pool IPingu[] all_pingus;
-    event (IWorldObj*, int, bool) e_MAKE_PINGU;
+    event (IWorldObj&&, int, bool) e_MAKE_PINGU;
 
-    function @rec (int id) => IPingu* get_pingu;
+    function @rec (int id) => IPingu&& get_pingu;
 
     function (void) => int get_number_of_exited;
     function (void) => int get_number_of_killed;

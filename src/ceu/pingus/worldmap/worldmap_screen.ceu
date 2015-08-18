@@ -58,19 +58,19 @@ native @pure _new_GUI_Component(), _ScreenManager__instance(), _std__make_shared
              _Display__get_width(), _Display__get_height(),
              _SU2str(), _StringFormat__break_line(), _new_SceneContextE();
 
-input _WorldmapScreenLoadPackage* LOAD_WORLDMAP_SCREEN;
-input _ScreenUpdatePackage* WORLDMAP_SCREEN_UPDATE;
-input _GUIScreen* DELETE_WORLDMAP_SCREEN;
+input _WorldmapScreenLoadPackage&& LOAD_WORLDMAP_SCREEN;
+input _ScreenUpdatePackage&& WORLDMAP_SCREEN_UPDATE;
+input _GUIScreen&& DELETE_WORLDMAP_SCREEN;
 
 interface IWorldmapScreen with
     interface Screen;
 
     function (void) => void show_intro_story;
     function (void) => void show_end_story;    
-    function (void) => Worldmap*? get_ceu_worldmap;
+    function (void) => Worldmap&&? get_ceu_worldmap;
     function (void) => Rect get_trans_rect;    
 
-    event _Pathname* load;
+    event _Pathname&& load;
 end
 
 ////////////////////////////////////////////////
@@ -275,7 +275,7 @@ do
         this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
 
-    var Worldmap*? worldmap = null;
+    var Worldmap&&? worldmap = null;
     var bool exit_worldmap = false;
 
     var ScreenFramework sf with
@@ -295,7 +295,7 @@ do
         this.parent = outer;
     end;
 
-    var WorldmapScreenCreditsButton*? credits_button = null;
+    var WorldmapScreenCreditsButton&&? credits_button = null;
 
     gui_manager.add(&comp.me);
     gui_manager.add(&close_button.me);
@@ -312,7 +312,7 @@ do
         ));
     end
 
-    function (void) => Worldmap*? get_ceu_worldmap do
+    function (void) => Worldmap&&? get_ceu_worldmap do
         return worldmap;
     end
 
@@ -344,11 +344,11 @@ do
                 continue;
             end
 
-            emit load => (_Pathname*)&package:filename;
+            emit load => (_Pathname&&)&package:filename;
         end
     with
         every filename in load do
-            var PingusWorldmap*? pingus_worldmap = spawn PingusWorldmap;
+            var PingusWorldmap&&? pingus_worldmap = spawn PingusWorldmap;
             var _FileReader&? fr = _new_FileReader(_FileReader__parse(_deref(filename)));
             call/rec pingus_worldmap:parse_file(&fr);
             _delete_obj(fr);
@@ -405,7 +405,7 @@ do
             end
         end
     with
-        var _GUIScreen* e = await DELETE_WORLDMAP_SCREEN until (e == &me);
+        var _GUIScreen&& e = await DELETE_WORLDMAP_SCREEN until (e == &me);
         if worldmap then
             emit worldmap:delete;
         end
