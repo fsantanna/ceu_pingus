@@ -220,7 +220,7 @@ do
         return gfx_map.gmap!.colmap.get();
     end
 
-    function (void) => IPinguHolder&? get_pingus do
+    function (void) => IPinguHolder& get_pingus do
         return holder;
     end
 

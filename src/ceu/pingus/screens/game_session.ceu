@@ -220,8 +220,8 @@ do
 
                 finalize result.plf = server.get_plf(); with end
 
-                result.saved  = global:world:get_pingus()!.get_number_of_exited();
-                result.killed = global:world:get_pingus()!.get_number_of_killed();
+                result.saved  = global:world:get_pingus().get_number_of_exited();
+                result.killed = global:world:get_pingus().get_number_of_killed();
                 finalize result.total  = server.get_plf().get_number_of_pingus(); with end
 
                 finalize result.needed = server.get_plf().get_number_to_save(); with end

@@ -58,10 +58,11 @@ do
         end
 
         if exit_time == 0 then
-            if global:world:get_pingus()!.get_number_of_allowed() == 
-                global:world:get_pingus()!.get_number_of_released() and global:world:get_pingus()!.get_number_of_alive() == 0 then
+            if global:world:get_pingus().get_number_of_allowed() == 
+                global:world:get_pingus().get_number_of_released() and 
+global:world:get_pingus().get_number_of_alive() == 0 then
                 goal = GMT_NO_PINGUS_IN_WORLD;
-            else/if global:world:get_pingus()!.get_number_of_alive() == 0 and 
+            else/if global:world:get_pingus().get_number_of_alive() == 0 and 
                 global:world:check_armageddon() then
                 goal = GMT_ARMAGEDDON;
             else/if server.get_plf().get_time() != -1 and server.get_plf().get_time() <= call/rec server.get_time() then
