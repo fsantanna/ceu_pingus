@@ -55,8 +55,13 @@ do
     var Size     frame_size;
     var int      frame_delay;
 
-    var _CeuSpriteImpl&? core_ = &_new_CeuSpriteImpl();
-    finalize with _delete_obj(&&core_!); end
+    var _CeuSpriteImpl&? core_;
+    finalize
+        core_ = &_new_CeuSpriteImpl();
+    with
+        _delete_obj(&&core_!);
+    end
+
     var _CeuSpriteImpl& core = &core_!;
 
     function (_SpriteDescription&& desc, int mod) => void load_desc do

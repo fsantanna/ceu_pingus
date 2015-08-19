@@ -54,7 +54,9 @@ do
 
     var GUIManager gui_manager with
         this.me = &_new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
-        this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
+        XXX_NO_FIN(this.drawing_context,
+                   &_new_DrawingContext(
+                    _Rect(0, 0, _Display__get_width(), _Display__get_height()), false));
     end;
 
     var ScreenFramework sf with

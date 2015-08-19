@@ -21,7 +21,7 @@ native/pre do
     ##define new_DrawingContext new DrawingContext
 end
 
-native @pure _new_Vector_Component(), _new_DrawingContext(), _log_warn();
+native @nohold _log_warn();
 
 /*
     //these methods not yet ported
@@ -64,9 +64,20 @@ do
     mouse_pos.x = 400;
     mouse_pos.y = 300;
 
-    var _std__vector_Component&? children = &_new_Vector_Component();
+    var _std__vector_Component&? children;
+    finalize
+        children = &_new_Vector_Component();
+    with
+        loop i in children!.size() do
+            _delete_obj(children!.at(i));
+        end
+        _delete_obj(&&children!);
+    end
     var _std__vector_Component& children_ = &children!;
 
+    finalize with
+        _delete_obj(&&drawing_context!);
+    end
     var _DrawingContext& drawing_context_ = &drawing_context!;
 
     var _GUI__Component&& mouse_over_comp = null;
@@ -74,15 +85,6 @@ do
     var _GUI__Component&& grabbed_comp = null;
     var _GUI__Component&& primary_pressed_comp = null;
     var _GUI__Component&& secondary_pressed_comp = null;
-
-    finalize with
-        loop i in children_.size() do
-            _delete_obj(children_.at(i));
-        end
-
-        _delete_obj(&&drawing_context!);
-        _delete_obj(&&children_);
-    end
 
     function (_GUI__Component&& comp) => void add do
         comp:set_parent((_GUI__RectComponent&&)&&me);

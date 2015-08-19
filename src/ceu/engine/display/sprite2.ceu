@@ -27,7 +27,7 @@ native/pre do
     ##define new_CeuSpriteImpl() new CeuSpriteImpl()
 end
 
-native @pure _new_SpriteDescription(), _Resource__load_sprite_desc(), _to_RM(), _new_CeuSpriteImpl(), _load_framebuffer_surface();
+native @pure _new_SpriteDescription(), _Resource__load_sprite_desc(), _to_RM(), _load_framebuffer_surface();
 
 class Sprite2 with
     function (_const_char_string filename) => void reload_by_name;
@@ -71,8 +71,13 @@ do
     var Vector2i frame_pos;
     var Size     frame_size;
     var int      frame_delay;
-    var _CeuSpriteImpl&? core = &_new_CeuSpriteImpl();
-    finalize with _delete_obj((&&core!)); end
+
+    var _CeuSpriteImpl&? core;
+    finalize
+        core = &_new_CeuSpriteImpl();
+    with
+        _delete_obj((&&core!));
+    end
 
     var _CeuSpriteImpl& core_ = &core!;
 
