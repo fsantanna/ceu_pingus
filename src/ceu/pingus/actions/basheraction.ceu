@@ -102,8 +102,10 @@ do
     var RightLeftSprite sprite with
         this.pingu = &pingu;
         this.pos_giver = &pingu;
-        this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/basher/left"));
-        this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/basher/right"));
+        XXX_FIN(this.left_name,
+                &_new_String(_concat2(pingu.get_owner_str(), "/basher/left")));
+        XXX_FIN(this.right_name,
+                &_new_String(_concat2(pingu.get_owner_str(), "/basher/right")));
     end;
 
     par do

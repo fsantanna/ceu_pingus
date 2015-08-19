@@ -111,7 +111,7 @@ do
                 this.reader = (_FileReader&&)_addr(childs.at(i));
 
                 _reader_read_Vector3f(childs.at(i).read_section("dot"), this.pos);
-                this.name = &_new_String();
+                XXX_NO_FIN(this.name, &_new_String());
                 childs.at(i).read_section("dot").read_string("name", _deref(&&this.name!));
                 _assert(not this.name!.empty());
             end;
@@ -121,7 +121,7 @@ do
                 this.reader = (_FileReader&&)_addr(childs.at(i));
 
                 _reader_read_Vector3f(childs.at(i).read_section("dot"), this.pos);
-                this.name! = &_new_String();
+                XXX_NO_FIN(this.name, &_new_String());
                 childs.at(i).read_section("dot").read_string("name", _deref(&&this.name!));
                 _assert(not this.name!.empty());
             end;
@@ -154,14 +154,15 @@ do
     var _std__vector_FileReader&? childs_ = &_new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("edges").get_sections());
     var _std__vector_FileReader& childs = &childs_!;
 
-    var _std__string&& name = &_new_String();
-    var _std__string&& source = &_new_String();
-    var _std__string&& destination = &_new_String();
+    XXX_DEF_STR(name);
+    XXX_DEF_STR(source);
+    XXX_DEF_STR(destination);
+
     loop i in childs.size() do
         if childs.at(i).get_name() == "edge" then
-            childs.at(i).read_string("name", _deref(name));
-            childs.at(i).read_string("source", _deref(source));
-            childs.at(i).read_string("destination", _deref(destination));
+            childs.at(i).read_string("name", _deref(&&name!));
+            childs.at(i).read_string("source", _deref(&&source!));
+            childs.at(i).read_string("destination", _deref(&&destination!));
 
             //original FIXME: add path-data parsing here
             var _WorldmapNS__Path&& path = &_new_Path();
@@ -180,16 +181,16 @@ do
             end
 
             var _WorldmapNS__Path&? full_path = &_new_Path();
-            full_path!.push_back(((Dot&&)path_graph!.graph.resolve_node(path_graph!.lookup_node(_deref(source))).data):get_pos());
+            full_path!.push_back(((Dot&&)path_graph!.graph.resolve_node(path_graph!.lookup_node(_deref(&&source!))).data):get_pos());
             full_path!.insert(*path) finalize with end;
-            full_path!.push_back(((Dot&&)path_graph!.graph.resolve_node(path_graph!.lookup_node(_deref(destination))).data):get_pos());
+            full_path!.push_back(((Dot&&)path_graph!.graph.resolve_node(path_graph!.lookup_node(_deref(&&destination!))).data):get_pos());
 
             //original FIXME: merge this together with the Pingus::distance() stuff in a seperate Path class
             var float cost = full_path!.length();
 
             if _globals__developer_mode then
                 spawn PathDrawable in pds with
-                    this.name = &_new_String();
+                    XXX_NO_FIN(this.name, &_new_String());
                     worldmap.add_drawable(&&this);
                     this.path = &_PTR2REF(&&full_path!); //delete inside
                 end;
@@ -197,20 +198,20 @@ do
 
             //original FIXME: No error checking,
             var int id1 = path_graph!.graph.add_edge(path, //original FIXME: Memory leak!
-                                      path_graph!.lookup_node(_deref(destination)), 
-                                      path_graph!.lookup_node(_deref(source)),
+                                      path_graph!.lookup_node(_deref(&&destination!)), 
+                                      path_graph!.lookup_node(_deref(&&source!)),
                                       cost) finalize with end;
 
             var _WorldmapNS__Path&& path2 = &_new_Path();
             path2:reverse_insert(*path) finalize with end;
             //EdgeId id2 =
             path_graph!.graph.add_edge(path2, //original FIXME: Memory leak!
-                         path_graph!.lookup_node(_deref(source)), 
-                         path_graph!.lookup_node(_deref(destination)),
+                         path_graph!.lookup_node(_deref(&&source!)), 
+                         path_graph!.lookup_node(_deref(&&destination!)),
                          cost) finalize with end;
 
             //original FIXME: edge lookup is flawed, since we have different edges in both directions
-            path_graph!.edge_lookup[_deref(name)] = id1;
+            path_graph!.edge_lookup[_deref(&&name!)] = id1;
 
             ///_delete_obj(path);
             ///_delete_obj(path2);
@@ -219,9 +220,6 @@ do
             _log_error("PathGraph: unhandled: ");
         end
     end
-    _delete_obj(name);
-    _delete_obj(source);
-    _delete_obj(destination);
     _delete_obj(childs);
     end
     ////////

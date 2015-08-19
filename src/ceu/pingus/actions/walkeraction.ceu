@@ -34,15 +34,17 @@ do
     var RightLeftSprite sprite with
         this.pingu = &pingu;
         this.pos_giver = &pingu;
-        this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/walker/left"));
-        this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/walker/right"));
+        XXX_FIN(this.left_name,
+                &_new_String(_concat2(pingu.get_owner_str(), "/walker/left")));
+        XXX_FIN(this.right_name,
+                &_new_String(_concat2(pingu.get_owner_str(), "/walker/right")));
     end;
 
     var RightLeftSprite floaterlayer with
         this.pingu = &pingu;
         this.pos_giver = &pingu;
-        this.left_name = _new_String("other/floaterlayer/left");
-        this.right_name = _new_String("other/floaterlayer/right");
+        XXX_FIN(this.left_name,  &_new_String("other/floaterlayer/left"));
+        XXX_FIN(this.right_name, &_new_String("other/floaterlayer/right"));
     end;
 
     var int max_steps = 5;

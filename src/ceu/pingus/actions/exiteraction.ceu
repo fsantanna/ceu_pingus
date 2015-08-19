@@ -35,8 +35,10 @@ do
         var RightLeftSprite sprite with
             this.pingu = &pingu;
             this.pos_giver = &pingu;
-            this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/exit/left"));
-            this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/exit/right"));
+            XXX_FIN(this.left_name,
+                    &_new_String(_concat2(pingu.get_owner_str(), "/exit/left")));
+            XXX_FIN(this.right_name,
+                    &_new_String(_concat2(pingu.get_owner_str(), "/exit/right")));
         end;
 
         await sprite.finished;

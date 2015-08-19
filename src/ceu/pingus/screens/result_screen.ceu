@@ -200,37 +200,42 @@ do
     call/rec background.reload_by_name("core/menu/wood");
     call/rec blackboard.reload_by_name("core/menu/blackboard");
 
-    var _std__string&&? message;
+    var _char&& message_;
 
     if parent.get_result():success() then
         if parent.get_result():killed == 0 and parent.get_result():saved == parent.get_result():total then
-            message = &_new_String(__("Perfect! You saved everyone possible - great!"));
+            message_ = (("Perfect! You saved everyone possible - great!"));
         else/if parent.get_result():killed == 0 then
-            message = &_new_String(__("No-one got killed, pretty good work."));
+            message_ = (("No-one got killed, pretty good work."));
         else/if parent.get_result():saved == parent.get_result():needed then
-            message = &_new_String(__("You saved exactly what you needed - you made it, but\nmaybe you can do better?"));
+            message_ = (("You saved exactly what you needed - you made it, but\nmaybe you can do better?"));
         else/if parent.get_result():killed >= 5 then
-            message = &_new_String(__("Not everybody was saved, but still good work!"));
+            message_ = (("Not everybody was saved, but still good work!"));
         else
-            message = &_new_String(__("What can I say, you made it - congratulations!"));
+            message_ = (("What can I say, you made it - congratulations!"));
         end
     else
         if parent.get_result():killed == parent.get_result():total then
-            message = &_new_String(__("You killed everybody, not good."));
+            message_ = (("You killed everybody, not good."));
         else/if parent.get_result():saved == 0 then
-            message = &_new_String(__("No-one got saved - I know you can do better."));
+            message_ = (("No-one got saved - I know you can do better."));
         else/if parent.get_result():saved > 0 then
-            message = &_new_String(__("You didn't save enough, but you saved a few.  Next\ntime you might do better."));
+            message_ = (("You didn't save enough, but you saved a few.  Next\ntime you might do better."));
         else/if parent.get_result():saved + 1 >= parent.get_result():needed then
-            message = &_new_String(__("Only one more and you would have made it - try again!"));
+            message_ = (("Only one more and you would have made it - try again!"));
         else/if parent.get_result():saved + 5 >= parent.get_result():needed then
-            message = &_new_String(__("Only a handful more and you would have made it - try again!"));
+            message_ = (("Only a handful more and you would have made it - try again!"));
         else
-            message = &_new_String(__("Better luck next time!"));
+            message_ = (("Better luck next time!"));
         end
     end
 
-    finalize with _delete_obj(message!); end
+    var _std__string&? message;
+    finalize
+        message = &_new_String(__(message_));
+    with
+        _delete_obj(message!);
+    end;
 
     every gc in draw do
         // Paint the background wood panel
@@ -259,7 +264,7 @@ do
                             __("Failure!"));
         end
 
-        gc:print_center(_Fonts__chalk_normal, _Vector2i(gc:get_width()/2, gc:get_height()/2 - 70), message!:c_str());
+        gc:print_center(_Fonts__chalk_normal, _Vector2i(gc:get_width()/2, gc:get_height()/2 - 70), message!.c_str());
 
         var int left_x  = gc:get_width()/2 - 100;
         var int right_x = gc:get_width()/2 + 100;

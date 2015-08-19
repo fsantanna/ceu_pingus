@@ -23,11 +23,10 @@ class FPSCounter with
     function (void) => void draw;
 do
     var bool odd_frame = false;
-    var _std__string&? fps_string = &_new_String();
     var int fps_count = 0;
     var uint start_time = _SDL_GetTicks();
 
-    finalize with _delete_obj(&&fps_string!); end
+    XXX_DEF_STR(fps_string);
 
     function (void) => void update_fps_counter do
         var uint current_time = _SDL_GetTicks();

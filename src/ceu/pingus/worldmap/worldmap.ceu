@@ -109,7 +109,7 @@ do
                 this.reader = (_FileReader&&)_addr(pingus_worldmap:get_objects():at(i));
                 this.worldmap = &outer;
 
-                this.name = &_new_String();
+                XXX_NO_FIN(this.name, &_new_String());
                 this.reader:read_string("name", _deref(&&this.name!));
                 drawable! = &&this;
             end;
@@ -134,7 +134,7 @@ do
     path_graph.path_graph!.lookup_node(_deref(pingus_worldmap:get_final_node()!));
 
     var Pingus pingus with
-        this.name = &_new_String("pingus");
+        XXX_NO_FIN(this.name, &_new_String("pingus"));
         this.path_graph = &path_graph;
     end;
     call/rec set_starting_node();
@@ -149,11 +149,21 @@ do
         // See if the user has played this map before.  If not, use the <default-node>
         // tag from the XML file.
         var int id;
-        var _std__string&& node_name = &_new_String();
 
-        if _StatManager__instance():get_string(_scc2(_deref(pingus_worldmap:get_short_name()!), "-current-node"), _deref(node_name)) then
+        var _std__string&? node_name;
+        finalize
+            node_name = &_new_String();
+        with
+            nothing;    /* deleted below */
+        end
+
+        if _StatManager__instance():get_string(
+                _scc2(_deref(pingus_worldmap:get_short_name()!),
+                      "-current-node"),
+                _deref(&&node_name!))
+        then
             // Just in case that level doesn't exist, look it up.
-            id = path_graph.path_graph!.lookup_node(_deref(node_name));
+            id = path_graph.path_graph!.lookup_node(_deref(&&node_name!));
             if id == _WNS_NoNode then
                 id = default_node;
             end
@@ -161,7 +171,7 @@ do
             id = default_node;
         end
 
-        _delete_obj(node_name);
+        _delete_obj(&&node_name!);
 
         call/rec pingus.set_position(id);
 

@@ -71,7 +71,8 @@ do
     call/rec highlight_green_dot_sur.reload_by_name("core/worldmap/dot_green_hl");
     call/rec highlight_red_dot_sur.reload_by_name("core/worldmap/dot_red_hl");
 
-    var _std__string&? resname = &_new_String();
+    XXX_DEF_STR(resname);
+
     reader:read_string("levelname", _deref(&&resname!));
 
     var _PingusLevel&? plf = &_new_PingusLevel(_PLFResMgr__load_plf(_deref(&&resname!)));
@@ -79,7 +80,6 @@ do
         _delete_obj(&&name!);
         _delete_obj(&&plf!);
     end
-    _delete_obj(&&resname!);
 
     function (void) => _PingusLevel&& get_plf do
         return &&plf!;

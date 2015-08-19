@@ -41,8 +41,8 @@ do
     var RightLeftSprite sprite with
         this.pingu = &pingu;
         this.pos_giver = &outer;
-        this.left_name = _new_String("other/laser_kill/left");
-        this.right_name = _new_String("other/laser_kill/right");
+        XXX_FIN(this.left_name,  &_new_String("other/laser_kill/left"));
+        XXX_FIN(this.right_name, &_new_String("other/laser_kill/right"));
     end;
 
     await sprite.finished;

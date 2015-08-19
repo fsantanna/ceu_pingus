@@ -371,7 +371,12 @@ do
         end
     with
         every package in create_prefab do
-            var _std__string&? name = &_new_String();
+            var _std__string&? name;
+            finalize
+                name = &_new_String();
+            with
+                _delete_obj(&&name!);
+            end
             _string_read_string(&&name!, package:reader, "name");
 
             var Vector3f pos;
@@ -404,7 +409,6 @@ do
                     end
                 end
             end
-            _delete_obj(&&name!);
             _delete_obj(&&prefab!);
             _delete_obj(&&overrides!);
             _delete_obj(&&new_package);
@@ -480,7 +484,9 @@ do
                     this.owner_id = 0;
                 end
 
-                var _std__string&? direction_str_ = &_new_String();
+                var _std__string&? direction_str_;
+                XXX_FIN(direction_str_, &_new_String());
+
                 var _std__string& direction_str = &direction_str_!;
                 _string_read_string(direction_str, package:reader, "direction");
 
@@ -495,7 +501,7 @@ do
                     this.direction = ED_MISC;
                 end
 
-                _delete_obj(&&direction_str);
+                _delete_obj(&&direction_str_!);
             end;
         end;
     with
@@ -741,7 +747,7 @@ do
             spawn SwitchDoorDoor in switch_door_doors with
                 package:result.push_back(&&this) finalize with end;
 
-                this.id = &_new_String();
+                XXX_FIN(this.id, &_new_String());
                 _string_read_string(&&this.id!, package:reader, "id");
 
                 _read_position(package:reader, this.pos);
@@ -755,7 +761,7 @@ do
             spawn SwitchDoorSwitch with
                 pack4ge:result.push_back(&&this) finalize with end;
 
-                this.m_target = &_new_String();
+                XXX_FIN(this.m_target, &_new_String());
                 _string_read_string(&&this.m_target!, pack4ge:reader, "target-id");
                 _read_position(pack4ge:reader, this.pos);
             end;
@@ -766,7 +772,7 @@ do
                 packag3:result.push_back(&&this) finalize with end;
 
                 _read_position(packag3:reader, this.pos);
-                this.target_id = &_new_String();
+                XXX_FIN(this.target_id, &_new_String());
                 _string_read_string(&&this.target_id!, packag3:reader, "target-id");
             end;
         end
@@ -775,7 +781,7 @@ do
             spawn TeleporterTarget in teleporter_targets with
                 package:result.push_back(&&this) finalize with end;
 
-                this.id = &_new_String();
+                XXX_FIN(this.id, &_new_String());
                 _string_read_string(&&this.id!, package:reader, "id");
                 _read_position(package:reader, this.pos);
             end;

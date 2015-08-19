@@ -156,7 +156,7 @@ end
     var Label labelname with \
         this.me = &_new_GUI__RectComponent(); \
         this.me.ceu = &&this; \
-        this.label = &_new_String(__(str)); \
+        XXX_FIN(this.label, &_new_String(__(str))); \
     end; \
     add_item((_GUI_RectComponent&&)&&labelname.me, (_GUI_RectComponent&&)&&control.me, type);
 
@@ -190,7 +190,14 @@ do
         _readSize(fullscreen, _config_manager.get_fullscreen_resolution());
 
         var int choice = resolutions!.size()-1;
-        var _std__string&? str = &_new_String();
+
+        var _std__string&? str;
+        finalize
+            str = &_new_String();
+        with
+            _delete_obj(&&str!);
+        end
+
         loop i in resolutions!.size() do
             // add resolution to the box
             _resolution_string(_deref(&&str!), resolutions!.at(i).w, resolutions!.at(i).h, resolutions!.at(i).refresh_rate);
@@ -204,7 +211,6 @@ do
 
         resolution_box.set_current_choice(choice);
         _delete_obj(&&resolutions!);
-        _delete_obj(&&str!);
     end
 
     MakeChoiceBox(renderer_box);

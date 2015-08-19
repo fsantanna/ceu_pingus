@@ -166,8 +166,8 @@ do
         this.func = &do_start;
         this.x_pos = _Display__get_width()/2 - 125;
         this.y_pos = _Display__get_height()/2 - 20;
-        this.text = &_new_String(__("Story"));
-        this.desc = &_new_String(__("..:: Start the game ::.."));
+        XXX_FIN(this.text, &_new_String(__("Story")));
+        XXX_FIN(this.desc, &_new_String(__("..:: Start the game ::..")));
     end;
 
     var MenuButton editor_button with
@@ -177,8 +177,8 @@ do
         this.func = &do_edit;
         this.x_pos = _Display__get_width()/2 + 125;
         this.y_pos = _Display__get_height()/2 - 20;
-        this.text = &_new_String(__("Editor"));
-        this.desc = &_new_String(__("..:: Create your own levels ::.."));
+        XXX_FIN(this.text, &_new_String(__("Editor")));
+        XXX_FIN(this.desc, &_new_String(__("..:: Create your own levels ::..")));
     end;
 
     var MenuButton options_button with
@@ -188,8 +188,8 @@ do
         this.func = &do_options;
         this.x_pos = _Display__get_width()/2 + 125;
         this.y_pos = _Display__get_height()/2 + 50;
-        this.text = &_new_String(__("Options"));
-        this.desc = &_new_String(__("..:: Configure the game ::.."));
+        XXX_FIN(this.text, &_new_String(__("Options")));
+        XXX_FIN(this.desc, &_new_String(__("..:: Configure the game ::..")));
     end;
 
     var MenuButton contrib_button with
@@ -199,8 +199,8 @@ do
         this.func = &do_contrib;
         this.x_pos = _Display__get_width()/2 - 125;
         this.y_pos = _Display__get_height()/2 + 50;
-        this.text = &_new_String(__("Levelsets"));
-        this.desc = &_new_String(__("..:: Play User Built levels ::.."));
+        XXX_FIN(this.text, &_new_String(__("Levelsets")));
+        XXX_FIN(this.desc, &_new_String(__("..:: Play User Built levels ::..")));
     end;
 
     var MenuButton quit_button with
@@ -210,8 +210,8 @@ do
         this.func = &do_quit;
         this.x_pos = _Display__get_width()/2;
         this.y_pos = _Display__get_height()/2 + 120;
-        this.text = &_new_String(__("Exit"));
-        this.desc = &_new_String(__("..:: Bye, bye ::.."));
+        XXX_FIN(this.text, &_new_String(__("Exit")));
+        XXX_FIN(this.desc, &_new_String(__("..:: Bye, bye ::..")));
     end;
 
     gui_manager.add(&&quit_button.me);
@@ -220,17 +220,24 @@ do
     gui_manager.add(&&start_button.me);
     gui_manager.add(&&editor_button.me);
 
-    var _std__string&? hint = &_new_String();
-    var _std__string&? help = &_new_String();
+    var _std__string&? hint;
+    finalize
+        hint = &_new_String();
+    with
+        _delete_obj(&&hint!);
+    end
+
+    var _std__string&? help;
+    finalize
+        help = &_new_String();
+    with
+        _delete_obj(&&hint!);
+    end
+
     var LayerManager background;
 
     var Sprite logo;
     call/rec logo.reload_by_name("core/misc/logo");
-
-    finalize with
-        _delete_obj(&&hint!);
-        _delete_obj(&&help!);
-    end
 
     help! = &__("..:: Ctrl-g: mouse grab   ::   F10: fps counter   ::   F11: fullscreen   ::   F12: screenshot ::..");
 

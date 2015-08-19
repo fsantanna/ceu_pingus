@@ -34,9 +34,31 @@ native @pure _addr(), _deref(), _delete_obj();
 
 native @pure _print_message(); //this could be used to write message in log -- with filename and line
 
-#define AWAIT_N(e, n) \
-    loop i in n do \
-        await e; \
+/* TODO: __? */
+native @nohold __();
+
+/* TODO: search for XXX_* and fix! */
+
+#define XXX_FIN(var,val)    \
+    finalize                \
+        var = val;          \
+    with                    \
+        nothing;            \
+    end
+#define XXX_NO_FIN(a,b) XXX_FIN(a,b)
+
+#define XXX_DEF_STR(id)         \
+    var _std__string&? id;      \
+    finalize                    \
+        id = &_new_String();    \
+    with                        \
+        _delete_obj(&& id !);   \
+    end
+
+
+#define AWAIT_N(e, n)       \
+    loop i in n do          \
+        await e;            \
     end
 
 #define PRE_CONDITION_AWAIT(e, c) \

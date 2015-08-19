@@ -41,8 +41,10 @@ do
     var RightLeftSprite sprite with
         this.pingu = &pingu;
         this.pos_giver = &outer;
-        this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/slider/left"));
-        this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/slider/right"));
+        XXX_FIN(this.left_name,
+                &_new_String(_concat2(pingu.get_owner_str(), "/slider/left")));
+        XXX_FIN(this.right_name,
+                &_new_String(_concat2(pingu.get_owner_str(), "/slider/right")));
     end;
 
     var float speed = 10;

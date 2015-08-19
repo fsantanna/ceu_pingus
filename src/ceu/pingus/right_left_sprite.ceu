@@ -10,19 +10,19 @@
 class RightLeftSprite with
     var IPingu& pingu;
     var IPosGiver& pos_giver;
-    var _std__string&& right_name = null;
-    var _std__string&& left_name = null;    
+    var _std__string&? right_name;
+    var _std__string&? left_name;
 
     function (void) => Sprite3&& get_current;
 
     event void finished;
 do
     finalize with
-        _delete_obj(right_name);
-        _delete_obj(left_name);
+        _delete_obj(&&right_name!);
+        _delete_obj(&&left_name!);
     end
 
-    if right_name == null or left_name == null then
+    if not (right_name? or left_name?) then
         _log_error("name's not given");
     end
 
@@ -43,7 +43,7 @@ do
             var Sprite3 right with
                 this.pos_giver = &pos_giver;
             end;
-            right.reload_by_name(right_name:c_str());
+            right.reload_by_name(right_name!:c_str());
             current = _PTR2REF(&&right);
 
             par/or do
@@ -60,7 +60,7 @@ do
             var Sprite3 left with
                 this.pos_giver = &pos_giver;
             end;
-            left.reload_by_name(left_name:c_str());
+            left.reload_by_name(left_name!:c_str());
             current = _PTR2REF(&&left);
 
             par/or do

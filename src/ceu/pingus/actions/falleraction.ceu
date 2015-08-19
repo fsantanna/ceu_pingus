@@ -49,8 +49,10 @@ do
                 var RightLeftSprite sprite with
                     this.pingu = &pingu;
                     this.pos_giver = &pingu;
-                    this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/faller/left"));
-                    this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/faller/right"));
+                    XXX_FIN(this.left_name,
+                            &_new_String(_concat2(pingu.get_owner_str(), "/faller/left")));
+                    XXX_FIN(this.right_name,
+                            &_new_String(_concat2(pingu.get_owner_str(), "/faller/right")));
                 end;
 
                 loop do 
@@ -65,8 +67,10 @@ do
                 var RightLeftSprite tumbler with
                     this.pingu = &pingu;
                     this.pos_giver = &pingu;
-                    this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/tumbler/left"));
-                    this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/tumbler/right"));
+                    XXX_FIN(this.left_name,
+                            &_new_String(_concat2(pingu.get_owner_str(), "/tumbler/left")));
+                    XXX_FIN(this.right_name,
+                            &_new_String(_concat2(pingu.get_owner_str(), "/tumbler/right")));
                 end;
 
                 loop do 

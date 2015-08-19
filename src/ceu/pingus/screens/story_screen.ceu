@@ -157,7 +157,13 @@ do
     call/rec background.reload_by_name("core/menu/wood");
     call/rec blackboard.reload_by_name("core/menu/blackboard");
 
-    var _std__string&? display_text = &_new_String();
+    var _std__string&? display_text;
+    finalize
+        display_text = &_new_String();
+    with
+        _delete_obj(&&display_text!);
+    end
+
     var float time_passed  = 0;
     var bool page_displayed_completly = false;
 
@@ -169,7 +175,6 @@ do
     call/rec page_surface.reload_by_desc(_addr(current_page!.image));
 
     finalize with
-        _delete_obj(&&display_text!);
         _delete_obj(&&pages);
         _delete_obj(&&current_page!);
     end

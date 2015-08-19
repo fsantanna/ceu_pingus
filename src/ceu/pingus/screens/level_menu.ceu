@@ -474,7 +474,7 @@ do
         this.me.ceu = &&this;
         this.parent = &outer;
         this.callback = &f_prev_page;
-        this.str = &_new_String("core/menu/arrow_up");
+        XXX_FIN(this.str, &_new_String("core/menu/arrow_up"));
     end;
 
     var LevelScrollButton next_button with
@@ -482,7 +482,7 @@ do
         this.me.ceu = &&this;
         this.parent = &outer;
         this.callback = &f_next_page;
-        this.str = &_new_String("core/menu/arrow_down");
+        XXX_FIN(this.str, &_new_String("core/menu/arrow_down"));
     end;
 
     var LevelMenuAbortButton abort_button with

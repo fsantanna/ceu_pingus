@@ -14,8 +14,7 @@ native/pre do
     ##define string_read_string(s, reader, id) reader->read_string(id, *s)
 end
 
-native @pure _new_String(),
-             _make_String(),
+native @pure _make_String(),
              _string_set(),
              _string_add(),
              _string_read_string();
@@ -28,8 +27,12 @@ class String with
     function (void) => bool empty;
     function (void) => _const_char_string get;
 do
-    var _std__string&? ss = &_new_String();
-    finalize with _delete_obj(&&ss!); end;
+    var _std__string&? ss;
+    finalize
+        ss = &_new_String();
+    with
+        _delete_obj(&&ss!);
+    end;
 
     function (_const_char_string v) => void set do
         _string_set(&&ss!, v);

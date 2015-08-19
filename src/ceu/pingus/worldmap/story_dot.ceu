@@ -37,8 +37,9 @@ do
     call/rec m_story_dot_highlight.reload_by_name("core/worldmap/story_dot_highlight");
     call/rec m_story_dot.reload_by_name("core/worldmap/story_dot");
 
-    var _std__string&? m_name = &_new_String();
-    var _std__string&? m_story = &_new_String();
+    XXX_DEF_STR(m_name);
+    XXX_DEF_STR(m_story);
+
     var bool m_credits = false;
         
     reader:read_string("name", _deref(&&m_name!));
@@ -47,8 +48,6 @@ do
     
     finalize with
         _delete_obj(&&name!);
-        _delete_obj(&&m_name!);
-        _delete_obj(&&m_story!);
     end
 
     function (void) => _Vector3f get_pos do

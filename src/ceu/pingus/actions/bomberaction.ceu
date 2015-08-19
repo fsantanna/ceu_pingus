@@ -45,8 +45,10 @@ do
     var RightLeftSprite sprite with
         this.pingu = &pingu;
         this.pos_giver = &pingu;
-        this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/bomber/left"));
-        this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/bomber/right"));
+        XXX_FIN(this.left_name,
+                &_new_String(_concat2(pingu.get_owner_str(), "/bomber/left")));
+        XXX_FIN(this.right_name,
+                &_new_String(_concat2(pingu.get_owner_str(), "/bomber/right")));
     end;
 
     var _Sprite&? explo_surf = &_new_SpriteA(_scc3("pingus/player", pingu.get_owner_str(), "/explo"));

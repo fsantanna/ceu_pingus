@@ -141,8 +141,10 @@ do
             var RightLeftSprite build_sprite with
                 this.pingu = &pingu;
                 this.pos_giver = &outer;
-                this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/bridger/left"));
-                this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/bridger/right"));
+                XXX_FIN(this.left_name,
+                        &_new_String(_concat2(pingu.get_owner_str(), "/bridger/left")));
+                XXX_FIN(this.right_name,
+                        &_new_String(_concat2(pingu.get_owner_str(), "/bridger/right")));
             end;
 
             await global:world:update until (build_sprite.get_current():get_current_frame () >= 7);
@@ -168,8 +170,10 @@ do
             var RightLeftSprite walk_sprite with
                 this.pingu = &pingu;
                 this.pos_giver = &outer;
-                this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/bridger_walk/left"));
-                this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/bridger_walk/right"));
+                XXX_FIN(this.left_name,
+                        &_new_String(_concat2(pingu.get_owner_str(), "/bridger_walk/left")));
+                XXX_FIN(this.right_name,
+                        &_new_String(_concat2(pingu.get_owner_str(), "/bridger_walk/right")));
             end;
 
             await walk_sprite.finished;
