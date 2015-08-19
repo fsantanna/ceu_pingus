@@ -66,7 +66,7 @@ do
 
     var Server server with
         this.me = &_new_Server(demo_session.plf);
-        demo_session.server = &_PTR2REF(&&this.me!);
+        demo_session.server = &&this.me!;
     end;
 
     var PingusCounter pcounter with
@@ -99,7 +99,7 @@ do
 
     var SmallMap small_map with
         this.rect = &_new_RectComponent(_Rect(_Vector2i(5, demo_session.size.height - 105), _Size(175, 100)));
-        this.me = &this.rect;
+        this.me = &this.rect!;
         this.me.ceu = &&this;
         this.playfield = &playfield;
     end;

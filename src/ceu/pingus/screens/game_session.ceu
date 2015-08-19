@@ -95,8 +95,8 @@ do
     end;
 
     var Server server with
-        this.me = &_new_Server(&&game_session!.plf);
-        this.me!.demostream = &_get_demostream(&&this.me!.plf);
+        this.me = &_new_Server(game_session!.plf);
+        this.me!.demostream = &_get_demostream(this.me!.plf);
     end;
 
     var ButtonPanel button_panel with
@@ -142,7 +142,7 @@ do
 
     var SmallMap small_map with
         this.rect = &_new_RectComponent(_Rect(_Vector2i(5, game_session!.size.height - 105), _Size(175, 100)));
-        this.me = &this.rect;
+        this.me = &this.rect!;
         this.me.ceu = &&this;
         this.playfield = &playfield;
     end;

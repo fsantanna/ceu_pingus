@@ -36,7 +36,7 @@ native @pure _new_Font();
 
 class FontTestScreen with
     interface Screen;
-    var _Pathname&& fontfile;
+    var _Pathname&? fontfile;
 do
     var GUIManager gui_manager with
         this.me = &_new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
@@ -52,9 +52,9 @@ do
     var Vector2i scroll;
     var bool dark = true;    
 
-    _log_info(">>> Loading font file: %1%", _deref(fontfile));
+    _log_info(">>> Loading font file: %1%", _deref(&&fontfile!));
 
-    var _Font&? font_ = &_new_Font(_FontDescription(_deref(fontfile)));
+    var _Font&? font_ = &_new_Font(_FontDescription(_deref(&&fontfile!)));
     var _Font& font = &font_!;
 
     var _Font&? reference_ = &_new_Font(_FontDescription(_Pathname("images/fonts/reference-iso-8859-1.font", _Pathname__DATA_PATH)));

@@ -43,7 +43,7 @@ do
     end
 
     function (_const_char_string v) => bool equals do
-        return &&ss! == v;
+        return ss! == v;
     end
 
     function (_FileReader&& reader, _const_char_string id) => void read_from_reader do
@@ -51,11 +51,11 @@ do
     end
 
     function (void) => bool empty do
-        return (&&ss!).empty();
+        return ss!.empty();
     end
 
     function (void) => _const_char_string get do
-        return (&&ss!).c_str();
+        return ss!.c_str();
     end
 
     await FOREVER;

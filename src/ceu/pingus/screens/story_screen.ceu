@@ -147,7 +147,7 @@ end
 class StoryScreenComponent with
     interface IStoryScreenComponent;
     interface IGUI_Component;
-    var _WorldmapNS__WorldmapStory&& story;
+    var _WorldmapNS__WorldmapStory&? story;
     var bool m_credits;
 do
     RECT_IS_AT(&&me);
@@ -167,7 +167,7 @@ do
     var float time_passed  = 0;
     var bool page_displayed_completly = false;
 
-    var _std__vector_StoryPage&? pages_ = &_new_Vector_StoryPage(story:get_pages());
+    var _std__vector_StoryPage&? pages_ = &_new_Vector_StoryPage(story!.get_pages());
     var _std__vector_StoryPage& pages = &pages_!;
 
     var _StoryPage&? current_page = &_new_StoryPage(pages.back());
@@ -215,7 +215,7 @@ do
     end
 
     function (void) => _WorldmapNS__WorldmapStory&& get_story do
-        return story;
+        return &&story!;
     end
 
     par do
@@ -235,7 +235,7 @@ do
 
             gc:draw(_deref(blackboard.get()), _Vector2i(gc:get_width()/2, gc:get_height()/2));
 
-            gc:print_center(_Fonts__chalk_large, _Vector2i(gc:get_width()/2, gc:get_height()/2 - 200), story:get_title());
+            gc:print_center(_Fonts__chalk_large, _Vector2i(gc:get_width()/2, gc:get_height()/2 - 200), story!:get_title());
 
             gc:draw(_deref(page_surface.get()), _Vector2i(gc:get_width()/2, gc:get_height()/2 - 65));
 
@@ -283,9 +283,9 @@ do
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
 
-        var _StoryScreen&? story_screen = &me;
-        this.story = &_PTR2REF(story_screen!.story.get());
-        this.m_credits = story_screen!.m_credits;
+        var _StoryScreen&& story_screen = (_StoryScreen&&)&&me!;
+        this.story = &_PTR2REF(story_screen:story.get());
+        this.m_credits = story_screen:m_credits;
     end;
 
     var StoryScreenContinueButton continue_button with

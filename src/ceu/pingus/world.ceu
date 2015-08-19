@@ -488,7 +488,7 @@ do
                 XXX_FIN(direction_str_, &_new_String());
 
                 var _std__string& direction_str = &direction_str_!;
-                _string_read_string(direction_str, package:reader, "direction");
+                _string_read_string(&&direction_str, package:reader, "direction");
 
                 if direction_str == "left" then
                     this.direction = ED_LEFT;
