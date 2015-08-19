@@ -17,6 +17,7 @@ native/pre do
     ##define Display__get_width() Display::get_width()
     ##define Display__get_framebuffer() Display::get_framebuffer()
     ##define SU2str(x) StringUtil::to_string(x)
+    ##define STRadd(x,y) x+y
 end
 
 class FPSCounter with
@@ -40,7 +41,7 @@ do
             fps_count = 0;
             start_time = _SDL_GetTicks();
 
-            fps_string = &{SU2str(current_fps) + _make_String(" fps")};
+            fps_string = &_SU2str(_STRadd(current_fps,_make_String(" fps")));
         end
     end
 
@@ -48,9 +49,19 @@ do
         update_fps_counter();
 
         if odd_frame then
-            _Fonts__pingus_small.render(_origin_center, _Display__get_width()/2, 35, _deref(&&fps_string!), _deref(_Display__get_framebuffer()));
+            _Fonts__pingus_small.render(
+                _origin_center,
+                _Display__get_width()/2,
+                35,
+                _deref(&&fps_string!),
+                _deref(_Display__get_framebuffer()));
         else
-            _Fonts__pingus_small.render(_origin_center, _Display__get_width()/2, 35, {_make_String("+ ") + fps_string} + _make_String(" +"), _deref(_Display__get_framebuffer()));
+            _Fonts__pingus_small.render(
+                _origin_center,
+                _Display__get_width()/2,
+                35,
+                _STRadd(_make_String("+ "), _STRadd(&&fps_string!,_make_String(" +"))),
+                _deref(_Display__get_framebuffer()));
         end
 
         odd_frame = not odd_frame;
