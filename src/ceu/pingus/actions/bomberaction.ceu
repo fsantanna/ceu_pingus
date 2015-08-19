@@ -17,14 +17,14 @@
 #include "../particles/particles.ceu"
 
 native/pre do
-    ##include "pingus/pingu_enums.hpp"    
+    ##include "pingus/pingu_enums.hpp"
 end
 
 class BomberAction with
     interface IAction;
     interface IPinguAction;
 do
-    pingu.ceu_action = &this;
+    pingu.ceu_action = &&this;
 
     function (int a) => bool change_allowed do
         return false;
@@ -49,17 +49,17 @@ do
         this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/bomber/right"));
     end;
 
-    var _Sprite&? explo_surf = _new_SpriteA(_scc3("pingus/player", pingu.get_owner_str(), "/explo"));
-    finalize with _delete_obj(explo_surf); end;
+    var _Sprite&? explo_surf = &_new_SpriteA(_scc3("pingus/player", pingu.get_owner_str(), "/explo"));
+    finalize with _delete_obj(&&explo_surf!); end;
 
-    var _CollisionMask&? bomber_radius = _new_CollisionMask("other/bomber_radius_gfx", "other/bomber_radius");
-    finalize with _delete_obj(bomber_radius); end;
+    var _CollisionMask&? bomber_radius = &_new_CollisionMask("other/bomber_radius_gfx", "other/bomber_radius");
+    finalize with _delete_obj(&&bomber_radius!); end;
 
     global:world:play_sound("ohno", (call/rec pingu.get_pos()), 0.5);
 
     par do
         loop do
-            await global:world:update;            
+            await global:world:update;
 
             // Move the Pingu
             var LinearMover mover with
@@ -67,18 +67,18 @@ do
             end;
             var PinguCollider collider with
                 this.height = _pingu_height;
-            end;            
-            call/rec mover.update(pingu.get_velocity(), &collider);
+            end;
+            call/rec mover.update(pingu.get_velocity(), &&collider);
             pingu.set_pos(_toVector3f(mover.get_pos()));
         end
-    with        
+    with
         var _SceneContext&& gc = await pingu.e_DRAW_CALLED until sprite.get_current():get_current_frame() >= 13;
-        _gc_color_draw2(gc, explo_surf, _Vector3f(pingu.get_x()-32, pingu.get_y()-48));
+        _gc_color_draw2(gc, &&explo_surf!, _Vector3f(pingu.get_x()-32, pingu.get_y()-48));
     with
         // If the Bomber hasn't 'exploded' yet...
         loop do
             await global:world:update;
-            
+
             if sprite.get_current():get_current_frame() > 9 then
                 break;
             end
@@ -105,13 +105,13 @@ do
             pingu.get_x(), pingu.get_y() - 5
         );
 
-        //Wait for 13th frame again?..        
+        //Wait for 13th frame again?..
         PRE_CONDITION_AWAIT(global:world:update, sprite.get_current():get_current_frame() >= 13);
 
         global:world:remove(
-            &bomber_radius,
-            (int)((int)pingu.get_x() - (bomber_radius.get_width()/2)),
-            (int)((int)pingu.get_y() - 16 - (bomber_radius.get_width()/2))
+            &&bomber_radius!,
+            (int)((int)pingu.get_x() - (bomber_radius!.get_width()/2)),
+            (int)((int)pingu.get_y() - 16 - (bomber_radius!.get_width()/2))
         );
 
         // The pingu explode

@@ -71,12 +71,14 @@ do
     var Vector2i frame_pos;
     var Size     frame_size;
     var int      frame_delay;
-    var _CeuSpriteImpl&? core = _new_CeuSpriteImpl();
-    finalize with _delete_obj(core); end
+    var _CeuSpriteImpl&? core = &_new_CeuSpriteImpl();
+    finalize with _delete_obj((&&core!)); end
+
+    var _CeuSpriteImpl& core_ = core!;
 
     function (_SpriteDescription&& desc, int mod) => void load_desc do
-        core.filename = _PTR2REF(desc:filename);
-        core.framebuffer_surface = _load_framebuffer_surface(desc:filename, _to_RM(mod));
+        (&&core_).filename = _PTR2REF(desc:filename);
+        (&&core_).framebuffer_surface = _load_framebuffer_surface(desc:filename, _to_RM(mod));
 
         finished_ = false;
         frame = 0;
@@ -86,13 +88,13 @@ do
         loop_last_cycle = false;
 
         if desc:frame_size.width == -1 then
-            frame_size.width  = core.framebuffer_surface.get_width()/array.width;
+            frame_size.width  = (&&core_).framebuffer_surface.get_width()/array.width;
         else
             frame_size.width  = desc:frame_size.width;
         end
 
         if desc:frame_size.height == -1 then
-            frame_size.height = core.framebuffer_surface.get_height()/array.height;
+            frame_size.height = (&&core_).framebuffer_surface.get_height()/array.height;
         else
             frame_size.height = desc:frame_size.height;
         end
@@ -126,7 +128,7 @@ do
 
     function (_Surface&& surface) => void reload_by_surface do
         //filename(),
-        core.framebuffer_surface = _PTR2REF(_Display__get_framebuffer():create_surface(_deref(surface)));
+        (&&core_).framebuffer_surface = _PTR2REF(_Display__get_framebuffer():create_surface(_deref(surface)));
         offset.x = 0;
         offset.y = 0;
         frame_pos.x = 0;
@@ -153,9 +155,8 @@ do
         rect_pos.y = frame_pos.y + frame_size.height * (frame/array.width);
 
         gc:color().draw(
-            core.framebuffer_surface,
-            _Rect(_toVector2i(rect_pos), _toSize(frame_size)),
-            _toVector2i(draw_pos),
+            (&&core_).framebuffer_surface, _Rect(_toVector2i(rect_pos), 
+            _toSize(frame_size)), _toVector2i(draw_pos),
             pos.z
         );
     end
@@ -170,9 +171,8 @@ do
         rect_pos.y = frame_pos.y + frame_size.height * (frame/array.width);
 
         gc:draw(
-            core.framebuffer_surface,
-            _Rect(_toVector2i(rect_pos), _toSize(frame_size)),
-            _toVector2i(draw_pos),
+            (&&core_).framebuffer_surface, _Rect(_toVector2i(rect_pos), 
+            _toSize(frame_size)), _toVector2i(draw_pos),
             pos.z
         );
     end 

@@ -11,7 +11,7 @@ class PinguHolder with
     interface IPinguHolder;
     var int number_of_allowed;
 do
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 

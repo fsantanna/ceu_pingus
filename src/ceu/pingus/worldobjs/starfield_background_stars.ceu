@@ -21,7 +21,7 @@ class StarfieldBackgroundStars with
     var float x_add;
     var float y_add;
 do
-    finalize with _delete_obj(sprite); end
+    finalize with _delete_obj(&&sprite!); end
 
     x_pos = (float)(_rand()%global:world:get_width());
     y_pos = (float)(_rand()%global:world:get_height());
@@ -31,7 +31,7 @@ do
 
     par do
         every gc in global:draw do
-            _gc_color_draw2(gc, &sprite, _Vector3f(x_pos, y_pos, -10)); //original FIXME: make z editable via xml
+            _gc_color_draw2(gc, &&sprite!, _Vector3f(x_pos, y_pos, -10)); //original FIXME: make z editable via xml
         end
     with
         every global:world:update do

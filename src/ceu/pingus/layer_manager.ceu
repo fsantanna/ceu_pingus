@@ -74,7 +74,7 @@ do
                     this.y_offset = y_o;
                     this.parent = outer;
                 end;
-                l:load(sprite);
+                l!:load(sprite);
             end
         with
             await respawn;

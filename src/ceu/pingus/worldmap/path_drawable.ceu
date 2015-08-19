@@ -5,7 +5,7 @@
 #include "../../sdl.ceu"
 #include "drawable.ceu"
 
-native/pre do    
+native/pre do
     ##include "math/vector3f.hpp"
     ##include "pingus/worldmap/path.hpp"
 
@@ -14,21 +14,21 @@ end
 
 class PathDrawable with
     interface Drawable;
-    var _WorldmapNS__Path&? path;    
+    var _WorldmapNS__Path&? path;
 do
-    finalize with _delete_obj(path); end
+    finalize with _delete_obj(&&path!); end
 
     par/or do
         every gc in draw do
-            loop i in path.size()-1 do                
+            loop i in path!.size()-1 do
                 gc:draw_line(
-                    _Vector2i(path.get(i).x, path.get(i).y),
-                    _Vector2i(path.get(i+1).x, path.get(i+1).y),
+                    _Vector2i(path!.get(i).x, path!.get(i).y),
+                    _Vector2i(path!.get(i+1).x, path!.get(i+1).y),
                     _Color(255, 255, 255)
                 );
-            end              
+            end
         end
-    with        
+    with
         await delete;
     end
 end

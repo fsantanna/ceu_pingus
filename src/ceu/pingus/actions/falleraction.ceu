@@ -19,7 +19,7 @@ class FallerAction with
     interface IAction;
     interface IPinguAction;
 do
-    pingu.ceu_action = &this;
+    pingu.ceu_action = &&this;
 
     function (int a) => bool change_allowed do
         return (a==_A_FLOATER or a==_A_CLIMBER or a==_A_BOMBER);
@@ -103,7 +103,7 @@ do
             var PinguCollider collider with
                 this.height = _pingu_height;
             end;
-            call/rec mover.update(pingu.get_velocity(), &collider);
+            call/rec mover.update(pingu.get_velocity(), &&collider);
             pingu.set_pos(_toVector3f(mover.get_pos()));
 
             var bool collided = mover.collided();

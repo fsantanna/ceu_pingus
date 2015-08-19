@@ -8,6 +8,7 @@
 #include "../../proxies/eventproxy.ceu"
 #include "../../proxies/primarybuttonproxy.ceu"
 #include "../iserver.ceu"
+#include "../global_interface.ceu"
 
 native/pre do
     ##define gc_draw(gc, s, rect) gc->draw(*s, Vector2i(rect.left, rect.top))
@@ -26,9 +27,7 @@ do
     call/rec backgroundhl.reload_by_name("core/buttons/hbuttonbg");
     call/rec sprite.reload_by_name("core/buttons/armageddon_anim");
 
-    var _GUI_RectComponent&? me_ = (_GUI_RectComponent&&)&me;
-
-    RECT_IS_AT(&me_);
+    RECT_IS_AT(&&me);
 
     par do
         loop do
@@ -45,12 +44,12 @@ do
     with
         every gc in draw do
             if global:world:check_armageddon() then
-                _gc_draw(gc, backgroundhl.get(), me_.rect);
-                _gc_draw(gc, sprite.get(), me_.rect);
+                _gc_draw(gc, backgroundhl.get(), me.rect);
+                _gc_draw(gc, sprite.get(), me.rect);
             else
-                _gc_draw(gc, background.get(), me_.rect);
+                _gc_draw(gc, background.get(), me.rect);
                 sprite.set_frame(7);
-                _gc_draw(gc, sprite.get(), me_.rect);
+                _gc_draw(gc, sprite.get(), me.rect);
             end
         end
     with

@@ -1,6 +1,7 @@
 #ifndef DOT_CEU
 #define DOT_CEU
 
+#include "../../math/vector3f.ceu"
 #include "drawable.ceu"
 
 interface Dot with

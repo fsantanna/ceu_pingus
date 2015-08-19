@@ -8,6 +8,7 @@
 #include "../../math/math.ceu"
 #include "../iworld.ceu"
 #include "../worldobj.ceu"
+#include "../global_interface.ceu"
 
 class RainGenerator with
     interface IWorldObj;
@@ -16,7 +17,7 @@ class RainGenerator with
     var float waiter_count;
 
 do
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 

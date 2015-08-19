@@ -19,7 +19,7 @@ class GroundMap with
 
     var _GroundMap&? gmap;
 do
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 
@@ -28,12 +28,12 @@ do
     function @rec (void) => Vector3f get_pos do return pos; end
 
     finalize with
-        _delete_obj(gmap);
+        _delete_obj(&&gmap!);
     end
 
     par/or do
         every gc in global:draw do
-            gmap.draw(_deref(gc));
+            gmap!.draw(_deref(gc));
         end
     with
         await e_DELETE;

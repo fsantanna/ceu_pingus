@@ -3,6 +3,7 @@
 
 #include "../../c.ceu"
 #include "../../sdl.ceu"
+#include "../../engine/display/sprite.ceu"
 #include "../iworld.ceu"
 #include "../global_interface.ceu"
 #include "../worldobj.ceu"
@@ -11,8 +12,8 @@
 class SnowParticlesHolder with
     interface ISnowParticlesHolder;
 do
-    var _Vector_SnowParticle&? particles = _new_Vector_SnowParticle();
-    var _CollisionMask&? ground = _new_CollisionMask("particles/ground_snow");
+    var _Vector_SnowParticle&? particles_ = &_new_Vector_SnowParticle();
+    var _CollisionMask&? ground = &_new_CollisionMask("particles/ground_snow");
     var Sprite snow1;
     var Sprite snow2;
     var Sprite snow3;
@@ -24,11 +25,12 @@ do
     call/rec snow4.reload_by_name("particles/snow4");
     call/rec snow5.reload_by_name("particles/snow5");
     finalize with
-        _delete_obj(particles);
-        _delete_obj(ground);
+        _delete_obj(&&particles_!);
+        _delete_obj(&&ground!);
     end
+    var _Vector_PinguParticle& particles = particles_!;
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end
     function (void) => float get_z_pos do return 1000; end
@@ -39,10 +41,10 @@ do
         //default c == false
         // search for dead entry to replace
         loop j in particles.size() do
-            var _SnowParticle&? it = _get_particle(particles, j);
+            var _SnowParticle&? it = &_get_particle(particles, j);
 
-            if not it.alive then
-                it = _makeSnowParticle(x, y, c);
+            if not it!.alive then
+                it! = _makeSnowParticle(x, y, c);
                 return;
             end
         end
@@ -54,7 +56,8 @@ do
     par/or do
         every gc in global:draw do
             loop j in particles.size() do
-                var _SnowParticle&? it = _get_particle(particles, j);
+                var _SnowParticle&? it_ = &_get_particle(particles, j);
+                var _SnowParticle& it = it_!;
 
                 if not it.alive then
                     continue;
@@ -72,7 +75,8 @@ do
         every global:world:update do
             // update all contained particles
             loop j in particles.size() do
-                var _SnowParticle&? it = _get_particle(particles, j);
+                var _SnowParticle&? it_ = &_get_particle(particles, j);
+                var _SnowParticle& it = it_!;
 
                 // skip dead particles
                 if not it.alive then
@@ -93,7 +97,7 @@ do
                 if it.colliding then
                     var int pixel = global:world:get_colmap():getpixel(it.pos.x, it.pos.y) finalize with end;
                     if pixel != _GT_NOTHING and pixel != _GT_WATER and pixel != _GT_OUTOFSCREEN then
-                        global:world:get_gfx_map():put(ground.get_surface(), it.pos.x-1, it.pos.y-1);
+                        global:world:get_gfx_map():put(ground!.get_surface(), it.pos.x-1, it.pos.y-1);
                         it.alive = false;
                     end
                 end

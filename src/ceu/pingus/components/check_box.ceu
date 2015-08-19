@@ -4,6 +4,7 @@
 #include "../../c.ceu"
 #include "../../sdl.ceu"
 #include "../../engine/gui/igui_component.ceu"
+#include "../../engine/display/sprite.ceu"
 #include "../../proxies/pointerproxy.ceu"
 #include "../../math/vector2i.ceu"
 
@@ -27,17 +28,17 @@ class CheckBox with
     function (int x, int y) => void shift_pos;
     function (bool v) => void set_state;
 do
-    var _GUI_RectComponent&? rect = (_GUI_RectComponent&&)&me;
+    var _GUI_RectComponent&? rect = &me;
     var bool state = false;
     var Sprite m_checkbox_marked;
     var Sprite m_checkbox;
     call/rec m_checkbox_marked.reload_by_name("core/menu/checkbox_marked_small");
     call/rec m_checkbox.reload_by_name("core/menu/checkbox_small");
 
-    RECT_IS_AT(&rect);
+    RECT_IS_AT(&&rect!);
 
     function (int x, int y) => void shift_pos do
-        rect.set_rect(_Rect(_Vector2i(rect.rect.left + x, rect.rect.top + y), rect.rect.get_size()));        
+        rect!.set_rect(_Rect(_Vector2i(rect!.rect.left + x, rect!.rect.top + y), rect!.rect.get_size()));
     end
 
     function (bool v) => void set_state do
@@ -47,13 +48,13 @@ do
     par do
         every gc in draw do
             if _globals__developer_mode then
-                gc:draw_rect(rect.rect, _Color(0, 255, 255)) finalize with end;
+                gc:draw_rect(rect!.rect, _Color(0, 255, 255)) finalize with end;
             end
 
             if state then
-                gc:draw(_deref(m_checkbox_marked.get()), _Vector2i(rect.rect.left, rect.rect.top) finalize with end);
+                gc:draw(_deref(m_checkbox_marked.get()), _Vector2i(rect!.rect.left, rect!.rect.top) finalize with end);
             else
-                gc:draw(_deref(m_checkbox.get()), _Vector2i(rect.rect.left, rect.rect.top) finalize with end);
+                gc:draw(_deref(m_checkbox.get()), _Vector2i(rect!.rect.left, rect!.rect.top) finalize with end);
             end
         end
     with

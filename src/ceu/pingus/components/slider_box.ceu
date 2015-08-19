@@ -33,15 +33,15 @@ class SliderBox with
     function (int x, int y) => void shift_pos;
     function (int v) => void set_value;
 do
-    var _GUI_RectComponent&? rect = (_GUI_RectComponent&&)&me;
+    var _GUI_RectComponent&? rect = &me;
     var bool drag_drop = false;
 
     function @rec (Vector2i pos) => bool is_at_func do
-        return rect.is_at(pos.x, pos.y);
+        return rect!.is_at(pos.x, pos.y);
     end
 
     function (int x, int y) => void shift_pos do
-        rect.set_rect(_Rect(_Vector2i(rect.rect.left + x, rect.rect.top + y), rect.rect.get_size()));        
+        rect!.set_rect(_Rect(_Vector2i(rect!.rect.left + x, rect!.rect.top + y), rect!.rect.get_size()));
     end
 
     function (int v) => void set_value do
@@ -51,21 +51,22 @@ do
     par do
         every gc in draw do
             if _globals__developer_mode then
-                gc:draw_rect(rect.rect, _Color(0, 255, 255)) finalize with end;
+                gc:draw_rect(rect!.rect, _Color(0, 255, 255)) finalize with end;
             end
 
-            if value == 0 then  
-                gc:print_center(_Fonts__chalk_normal, _Vector2i(rect.rect.left + rect.rect.get_width()/2, rect.rect.top) finalize with end, "off");
+            if value == 0 then
+                gc:print_center(_Fonts__chalk_normal, _Vector2i(rect!.rect.left + rect!.rect.get_width()/2, rect!.rect.top) finalize with end, "off");
             else
                 loop i in m_steps do
                     if i < value then
-                        gc:print_left(_Fonts__chalk_normal, _Vector2i(rect.rect.left + i*(rect.rect.get_width()-12)/m_steps + 6, rect.rect.top) finalize with end, "|");
+                        gc:print_left(_Fonts__chalk_normal, _Vector2i(rect!.rect.left + i*(rect!.rect.get_width()-12)/m_steps + 6, rect!.rect.top) finalize with end, 
+"|");
                     end
                 end
             end
   
-            gc:print_left(_Fonts__chalk_normal, _Vector2i(rect.rect.left, rect.rect.top) finalize with end, "[");
-            gc:print_right(_Fonts__chalk_normal, _Vector2i(rect.rect.right, rect.rect.top) finalize with end, "]");
+            gc:print_left(_Fonts__chalk_normal, _Vector2i(rect!.rect.left, rect!.rect.top) finalize with end, "[");
+            gc:print_right(_Fonts__chalk_normal, _Vector2i(rect!.rect.right, rect!.rect.top) finalize with end, "]");
         end
     with
         every (x, y) in mouse_press do
@@ -81,8 +82,8 @@ do
         every (x, y) in mouse_move do
             if drag_drop then
                 var int old_value = value;
-                x = x - rect.rect.left;
-                value = m_steps * x / (rect.rect.get_width() - 12);
+                x = x - rect!.rect.left;
+                value = m_steps * x / (rect!.rect.get_width() - 12);
                 value = _Math__clamp(0, value, m_steps);
                 if value != old_value then
                     emit changed => value*5; // scale to [0,100]

@@ -3,8 +3,8 @@
 
 #include "../../c.ceu"
 #include "../../sdl.ceu"
-#include "../../engine/gui/igui_component.ceu"
 #include "../../math/vector2i.ceu"
+#include "../../engine/gui/igui_component.ceu"
 #include "../../proxies/eventproxy.ceu"
 #include "../../proxies/pointerproxy.ceu"
 #include "../../proxies/primarybuttonproxy.ceu"
@@ -47,16 +47,16 @@ class Playfield with
     var IServer& server;
     var IGameSession&& session;
 do
-    var _GUI_RectComponent&? playfield = (_GUI_RectComponent&&)&me;
+    var _GUI_RectComponent& playfield = &me;
 
     finalize with
-        _delete_obj(scene_context);
-        _delete_obj(state);
+        _delete_obj(&&scene_context!);
+        _delete_obj(&&state!);
     end;
 
-    RECT_IS_AT(&playfield);
+    RECT_IS_AT(&&playfield);
 
-    state.set_limit(
+    state!.set_limit(
         _Rect(
             _Vector2i(0, 0),
             _Size(global:world:get_width(), global:world:get_height())
@@ -64,7 +64,7 @@ do
     );
 
     //original FIXME: Temporary workaround till start-pos is integrated a bit more properly
-    state.set_pos(global:world:get_start_pos(0));
+    state!.set_pos(global:world:get_start_pos(0));
 
     var CaptureRectangle capture_rectangle with
         this.session = session;
@@ -81,7 +81,7 @@ do
         var float dist;
         var IPingu&& c_pingu = null;
 
-        loop pingu in global:world:get_pingus().all_pingus do
+        loop pingu in global:world:get_pingus()!.all_pingus do
             if call/rec pingu:is_over(mx, my) then
                 dist = call/rec pingu:dist(mx, my);
 
@@ -97,7 +97,7 @@ do
 
     function @rec (void) => IPingu&& current_pingu_find_mouse do
         var Vector2i m;
-        _readVector2i(m, state.screen2world(_toVector2i(mouse_pos)));
+        _readVector2i(m, state!.screen2world(_toVector2i(mouse_pos)));
         return call/rec current_pingu_find(m.x, m.y);
     end
 
@@ -107,36 +107,36 @@ do
 
     function (void) => Vector2i get_pos do
         var Vector2i v;
-        v.x = state.get_pos().x;
-        v.y = state.get_pos().y;
+        v.x = state!.get_pos().x;
+        v.y = state!.get_pos().y;
         return v;
     end
 
     function (int x, int y) => void set_viewpoint do
-        state.set_pos(_Vector2i(x, y));
+        state!.set_pos(_Vector2i(x, y));
     end
 
     function (int x, int y) => void scroll do
-        state.set_pos(state.get_pos() + _Vector2i(x, y));
+        state!.set_pos(state!.get_pos() + _Vector2i(x, y));
     end
 
     par do
         every gc in draw do
-            scene_context.clear();
-            state.push(_deref(scene_context));
+            scene_context!.clear();
+            state!.push(_deref(&&scene_context!));
 
             current_pingu = _PTR2REF(call/rec current_pingu_find_mouse());
             call/rec capture_rectangle.set_pingu(current_pingu);
             //call/rec capture_rectangle.set_pingu(get_current_pingu()); //another no-"access across `await`"-hack
-            emit capture_rectangle.draw => &scene_context;
+            emit capture_rectangle.draw => &&scene_context!;
 
             if global:world != null then
-                emit global:world:e_DRAW => &scene_context;
+                emit global:world:e_DRAW => &&scene_context!;
             end
 
-            state.pop(_deref(scene_context));
+            state!.pop(_deref(&&scene_context!));
 
-            gc:draw(_new_SceneContextDrawingRequest(&scene_context, _Vector2i(0,0), -10000));
+            gc:draw(_new_SceneContextDrawingRequest(&&scene_context!, _Vector2i(0,0), -10000));
 
             gc:push_modelview();
             gc:translate(playfield.rect.left, playfield.rect.top) finalize with end;
@@ -162,21 +162,21 @@ do
             if _globals__developer_mode then
                 // Some fun stuff that lets you draw directly on the level
                 var _const_Uint8&? keystate;
-                finalize keystate = _SDL_GetKeyboardState(null); with end;
+                finalize keystate = &_SDL_GetKeyboardState(null); with end;
 
                 var int px;
                 var int py;
-                _read_coords(px, py, state.screen2world(_toVector2i(mouse_pos)));
+                _read_coords(px, py, state!.screen2world(_toVector2i(mouse_pos)));
 
-                if _get_uint(keystate, _SDL_SCANCODE_DELETE) then
+                if _get_uint((&&keystate!), _SDL_SCANCODE_DELETE) then
                     var _CollisionMask&& mask = _new_CollisionMask("other/bash_radius_gfx");
                     global:world:remove(mask, px - mask:get_width()/2, py - mask:get_height()/2);
                     _delete_obj(mask);
-                else/if _get_uint(keystate, _SDL_SCANCODE_INSERT) then
+                else/if _get_uint((&&keystate!), _SDL_SCANCODE_INSERT) then
                     var _CollisionMask&& mask = _new_CollisionMask("other/bash_radius_gfx");
                     global:world:put(mask, px - mask:get_width()/2, py - mask:get_height()/2, _GT_GROUND);
                     _delete_obj(mask);
-                else/if _get_uint(keystate, _SDL_SCANCODE_HOME) then
+                else/if _get_uint((&&keystate!), _SDL_SCANCODE_HOME) then
                     var _CollisionMask&& mask = _new_CollisionMask("other/bash_radius_gfx");
                     global:world:put(mask, px - mask:get_width()/2, py - mask:get_height()/2, _GT_BRIDGE);
                     _delete_obj(mask);
@@ -190,7 +190,7 @@ do
 
             if session then
                 var Vector2i pos;
-                _readVector2i(pos, state.screen2world(_Vector2i(x, y)));
+                _readVector2i(pos, state!.screen2world(_Vector2i(x, y)));
                 current_pingu = _PTR2REF(call/rec current_pingu_find(pos.x, pos.y));
 
                 if current_pingu then                    
@@ -207,7 +207,7 @@ do
             scroll_center.x = x;
             scroll_center.y = y;
 
-            _readVector2i(old_state_pos, state.get_pos());
+            _readVector2i(old_state_pos, state!.get_pos());
         end
     with
         every (x, y) in mouse_secondary_release do
@@ -218,12 +218,12 @@ do
         end
     with
         every component in RECT_COMPONENT_UPDATE_LAYOUT do
-            if component != &playfield then
+            if component != &&playfield then
                 continue;
             end
 
-            state.set_size(playfield.rect.get_width(), playfield.rect.get_height());
-            scene_context.set_rect(playfield.rect) finalize with end;
+            state!.set_size(playfield.rect.get_width(), playfield.rect.get_height());
+            scene_context!.set_rect(playfield.rect) finalize with end;
         end
     with
         every delta in global:update do
@@ -238,10 +238,11 @@ do
                 //call/rec capture_rectangle.set_pingu(current_pingu);
             else
                 if _globals__drag_drop_scrolling then
-                    state.set_pos(_toVector2i(old_state_pos) + (_toVector2i(scroll_center) - _toVector2i(mouse_pos)));
+                    state!.set_pos(_toVector2i(old_state_pos) + (_toVector2i(scroll_center) - _toVector2i(mouse_pos)));
                 else
-                    state.set_pos(_Vector2i(state.get_pos().x - (int)((float)(scroll_center.x - mouse_pos.x)*0.2),
-                                                      state.get_pos().y - (int)((float)(scroll_center.y - mouse_pos.y)*0.2)));
+                    state!.set_pos(_Vector2i(state!.get_pos().x - 
+                                                      (int)((float)(scroll_center.x - mouse_pos.x)*0.2),
+                                                      state!.get_pos().y - (int)((float)(scroll_center.y - mouse_pos.y)*0.2)));
                 end
 
                 //current_pingu = null;
@@ -251,15 +252,15 @@ do
                 var int scroll_speed = 800*delta;
 
                 if mouse_pos.x < 10 then
-                    state.set_pos(state.get_pos() - _Vector2i(scroll_speed, 0));
+                    state!.set_pos(state!.get_pos() - _Vector2i(scroll_speed, 0));
                 else/if mouse_pos.x > _Display__get_width() - 10 then
-                    state.set_pos(state.get_pos() + _Vector2i(scroll_speed, 0));
+                    state!.set_pos(state!.get_pos() + _Vector2i(scroll_speed, 0));
                 end
 
                 if mouse_pos.y < 10 then
-                    state.set_pos(state.get_pos() - _Vector2i(0, scroll_speed));
+                    state!.set_pos(state!.get_pos() - _Vector2i(0, scroll_speed));
                 else/if mouse_pos.y > _Display__get_height() - 10 then
-                    state.set_pos(state.get_pos() + _Vector2i(0, scroll_speed));
+                    state!.set_pos(state!.get_pos() + _Vector2i(0, scroll_speed));
                 end
             end
         end

@@ -3,6 +3,7 @@
 
 #include "../../c.ceu"
 #include "../../sdl.ceu"
+#include "../../engine/display/sprite.ceu"
 #include "../iworld.ceu"
 #include "../worldobj.ceu"
 #include "../ipingu_holder.ceu"
@@ -21,7 +22,7 @@ do
     var Sprite smallmap_symbol;    
     call/rec smallmap_symbol.reload_by_name("core/misc/smallmap_entrance");
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end
     function (void) => float get_z_pos do return pos.z; end
@@ -52,7 +53,7 @@ do
         every global:world:update do
             var bool pr = call/rec pingu_ready();
             if pr and not global:world:check_armageddon() then
-                emit global:world:get_pingus().e_MAKE_PINGU => (&this, owner_id, go_left);
+                emit global:world:get_pingus()!.e_MAKE_PINGU => (&&this, owner_id, go_left);
 
                 if direction == ED_MISC then
                     go_left = not go_left;

@@ -14,10 +14,10 @@ class IceBlock with
     interface IWorldObj;
     var int width;
 do
-    var _CollisionMask&? block_sur_cmap = _new_CollisionMask("worldobjs/iceblock_cmap");
-    finalize with _delete_obj(block_sur_cmap); end
+    var _CollisionMask&? block_sur_cmap = &_new_CollisionMask("worldobjs/iceblock_cmap");
+    finalize with _delete_obj(&&block_sur_cmap!); end
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
     function (void) => float get_z_pos do return pos.z; end
@@ -29,7 +29,7 @@ do
 
     par/or do
         every e_STARTUP do
-            global:world:put(&block_sur_cmap, pos.x, pos.y, _GT_GROUND);
+            global:world:put(&&block_sur_cmap!, pos.x, pos.y, _GT_GROUND);
         end
     with
         //not finished
@@ -42,7 +42,7 @@ do
             loop do
                 await global:world:update;
                 
-                loop pingu in global:world:get_pingus().all_pingus do
+                loop pingu in global:world:get_pingus()!.all_pingus do
                     if pingu:get_x() > pos.x and pingu:get_x() < pos.x+(float)block_sur.get_width() and
                        pingu:get_y() > pos.y-4 and pingu:get_y() < pos.y+(float)block_sur.get_height() then
                         last_contact = global:world:get_time();
@@ -60,7 +60,7 @@ do
         end
 
         //finished
-        global:world:remove(&block_sur_cmap, pos.x, pos.y);
+        global:world:remove(&&block_sur_cmap!, pos.x, pos.y);
         await FOREVER;
     with
         await e_DELETE;

@@ -24,7 +24,7 @@ native @pure _abs(),
 
 native/pre do
     ##define PTR2REF(v) v
-    ##define addr(x) &x
+    ##define addr(x) &&x
     ##define deref(x) *x
     ##define delete_obj(x) delete x;
 end

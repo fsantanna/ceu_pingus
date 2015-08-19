@@ -3,6 +3,7 @@
 
 #include "../../c.ceu"
 #include "../../sdl.ceu"
+#include "../../engine/display/sprite.ceu"
 #include "../iworld.ceu"
 #include "../global_interface.ceu"
 #include "../worldobj.ceu"
@@ -11,12 +12,14 @@
 class PinguParticlesHolder with
     interface IPinguParticlesHolder;
 do
-    var _Vector_PinguParticle&? particles = _new_Vector_PinguParticle();
+    var _Vector_PinguParticle&? particles_ = &_new_Vector_PinguParticle();
+
     var Sprite sprite;
     call/rec sprite.reload_by_name("particles/pingu_explo");
-    finalize with _delete_obj(particles); end
+    finalize with _delete_obj(&&particles_!); end
+    var _Vector_PinguParticle& particles = particles_!;
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end
     function (void) => float get_z_pos do return 1000; end
@@ -28,10 +31,10 @@ do
 
         // fill gaps from dead entries
         loop j in particles.size() do
-            var _PinguParticle&? it = _get_particle(particles, j);
+            var _PinguParticle&? it = &_get_particle(particles, j);
 
-            if not it.livetime then
-                it = _makePinguParticle(x, y);
+            if not it!.livetime then
+                it! = _makePinguParticle(x, y);
                 i = i + 1;
             end
         end
@@ -53,14 +56,14 @@ do
     par/or do
         every gc in global:draw do
            loop i in particles.size() do
-                var _PinguParticle&? it = _get_particle(particles, i);
+                var _PinguParticle&? it = &_get_particle(particles, i);
 
                 // skip dead particles
-                if not it.livetime then
+                if not it!.livetime then
                     continue;
                 end
 
-                gc:color().draw(_deref(sprite.get()), it.pos) finalize with end;
+                gc:color().draw(_deref(sprite.get()), it!.pos) finalize with end;
             end
         end
     with
@@ -70,7 +73,8 @@ do
 
             // update all contained particles
             loop i in particles.size() do
-                var _PinguParticle&? it = _get_particle(particles, i);
+                var _PinguParticle&? it_ = &_get_particle(particles, i);
+                var _PinguParticle& it = it_!;
 
                 // skip dead particles
                 if not it.livetime then

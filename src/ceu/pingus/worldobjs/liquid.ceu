@@ -13,7 +13,7 @@ class Liquid with
     var _Sprite&? sprite;
     var int width;
 do
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
     function (void) => float get_z_pos do return pos.z; end
@@ -21,13 +21,13 @@ do
     function @rec (void) => Vector3f get_pos do return pos; end
 
     finalize with
-        _delete_obj(sprite);
+        _delete_obj(&&sprite!);
     end
 
     //Cause to interpret the width in pixels instead of tiles
     var bool old_width_handling = false;
     if not old_width_handling then
-        width = width * sprite.get_width();
+        width = width * sprite!.get_width();
     end
 
     par/or do
@@ -48,14 +48,14 @@ do
                     break;
                 end;
 
-                _gc_color_draw2(gc, &sprite, _Vector3f(x, pos.y));
+                _gc_color_draw2(gc, &&sprite!, _Vector3f(x, pos.y));
 
-                x = x + sprite.get_width();
+                x = x + sprite!.get_width();
             end
         end
     with
         every global:world:update do
-            sprite.update(0.033);
+            sprite!.update(0.033);
         end
     with
         await e_DELETE;

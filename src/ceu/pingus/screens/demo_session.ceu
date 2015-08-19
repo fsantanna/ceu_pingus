@@ -27,14 +27,14 @@ native/pre do
     ##define new_Rect(v, s) new Rect(v, s)
     ##define new_SceneContext(rect) new SceneContext(rect)
     ##define new_GraphicContextState new GraphicContextState
-    ##define new_Server(a) new Server(a)    
+    ##define new_Server(a) new Server(a)
     ##define ScreenManager__instance() ScreenManager::instance()
     ##define new_BButton new BButton
-    ##define std__bind(f, p) std::bind(f, p)    
+    ##define std__bind(f, p) std::bind(f, p)
     ##define std__make_shared_DemoSession std::make_shared<DemoSession>
 end
 
-native @pure _new_PingusCounter(), _new_GUI_Component(), _new_RectComponent(), 
+native @pure _new_PingusCounter(), _new_GUI_Component(), _new_RectComponent(),
              _new_Rect(), _new_SceneContext(), _new_GraphicContextState(),
              _new_Server(), _ScreenManager__instance(), _addr(),
              _new_BButton(), _std__bind(), _std__make_shared_DemoSession();
@@ -49,31 +49,32 @@ class DemoSession with
     interface Screen;
     event void update_demo;
 do
-    var _DemoSession&? demo_session = (_DemoSession&&)&me;
+    var _DemoSession&? demo_session_ = &me;
+    var _DemoSession& demo_session = demo_session_!;
 
     var GUIManager gui_manager with
         this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
-        this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
+        this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
 
     var ScreenFramework sf with
         this.screen = outer;
-        this.gui_manager = &gui_manager;
+        this.gui_manager = &&gui_manager;
     end;
 
     var Server server with
-        this.me = _new_Server(demo_session.plf);        
-        demo_session.server = _PTR2REF(this.me);
+        this.me = &_new_Server(demo_session.plf);
+        demo_session.server = &_PTR2REF(&&this.me!);
     end;
 
     var PingusCounter pcounter with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
         this.server = server;
     end;
 
     var Playfield playfield with
-        var _Rect&? rect = _new_Rect(
+        var _Rect&? rect = &_new_Rect(
                                 _Vector2i(
                                     _Math__max((demo_session.size.width - global:world:get_width())/2, 0),
                                     _Math__max((demo_session.size.height - global:world:get_height())/2, 0)
@@ -83,27 +84,27 @@ do
                                     _Math__min(demo_session.size.height, global:world:get_height())
                                 )
                             );
-        
-        this.me = _new_RectComponent(_deref(rect));
-        this.me.ceu = &this;
-        this.scene_context = _new_SceneContext(_deref(rect));
-        this.state = _new_GraphicContextState(rect.get_width(), rect.get_height());
+
+        this.me = &_new_RectComponent(_deref(&&rect!));
+        this.me.ceu = &&this;
+        this.scene_context = &_new_SceneContext(_deref(&&rect!));
+        this.state = &_new_GraphicContextState(rect!.get_width(), rect!.get_height());
         this.server = server;
         this.session = null;
 
-        _delete_obj(rect);
+        _delete_obj(&&rect!);
     end;
 
     var SmallMap small_map with
-        this.rect = _new_RectComponent(_Rect(_Vector2i(5, demo_session.size.height - 105), _Size(175, 100)));
-        this.me = this.rect;
-        this.me.ceu = &this;
+        this.rect = &_new_RectComponent(_Rect(_Vector2i(5, demo_session.size.height - 105), _Size(175, 100)));
+        this.me = &this.rect;
+        this.me.ceu = &&this;
         this.playfield = playfield;
     end;
 
     var ButtonPanel button_panel with
-        this.me = _new_RectComponent(_Rect());
-        this.me.ceu = &this;
+        this.me = &_new_RectComponent(_Rect());
+        this.me.ceu = &&this;
         this.server = server;
     end;
 
@@ -114,21 +115,21 @@ do
         button_panel.set_pos(bp_pos);
     end
 
-    gui_manager.add(&pcounter.me);
-    gui_manager.add(&button_panel.me);
-    gui_manager.add(&playfield.me);
-    gui_manager.add(&small_map.rect);
+    gui_manager.add(&&pcounter.me);
+    gui_manager.add(&&button_panel.me);
+    gui_manager.add(&&playfield.me);
+    gui_manager.add(&&small_map.rect!);
 
-    demo_session.fastforward_button = _new_BButton(32+50, 32, "core/demo/fastforward",
-                                                   _std__bind({&DemoSession::on_fast_forward_press}, &demo_session),
-                                                   _std__bind({&DemoSession::is_fast_forward}, &demo_session));
+    demo_session.fastforward_button = &_new_BButton(32+50, 32, "core/demo/fastforward",
+                                                   _std__bind({&DemoSession::on_fast_forward_press}, &&demo_session),
+                                                   _std__bind({&DemoSession::is_fast_forward}, &&demo_session));
 
-    demo_session.pause_button = _new_BButton(32, 32, "core/demo/pause",
-                                             _std__bind({&DemoSession::on_pause_press}, &demo_session),
-                                             _std__bind({&DemoSession::is_pause}, &demo_session));
+    demo_session.pause_button = &_new_BButton(32, 32, "core/demo/pause",
+                                             _std__bind({&DemoSession::on_pause_press}, &&demo_session),
+                                             _std__bind({&DemoSession::is_pause}, &&demo_session));
 
-    demo_session.restart_button = _new_BButton(demo_session.size.width - 32 - 48, 32, "core/demo/reload",
-                                               _std__bind({&DemoSession::restart}, &demo_session));
+    demo_session.restart_button = &_new_BButton(demo_session.size.width - 32 - 48, 32, "core/demo/reload",
+                                               _std__bind({&DemoSession::restart}, &&demo_session));
 
     gui_manager.add(demo_session.fastforward_button);
     gui_manager.add(demo_session.pause_button);
@@ -171,10 +172,10 @@ do
         end
     with
         every gc in draw_background do
-            var _GUI_RectComponent&& rect = (_GUI_RectComponent&&)&playfield.me;
+            var _GUI_RectComponent&& rect = (_GUI_RectComponent&&)&&playfield.me;
 
             if rect:get_rect() != _Rect(_Vector2i(0,0), _Size(gc:get_width(), gc:get_height())) then
-                // Draw a black border around the playfield when the playfield is smaller then the screen                
+                // Draw a black border around the playfield when the playfield is smaller then the screen
                 // top
                 gc:draw_fillrect(_Rect(0, 0, gc:get_width(), rect:get_rect().top), _Color(0, 0, 0));
                 // bottom
@@ -184,12 +185,12 @@ do
                 // right
                 gc:draw_fillrect(_Rect(rect:get_rect().right, rect:get_rect().top, gc:get_width(), rect:get_rect().bottom), _Color(0, 0, 0));
             end
-        end 
+        end
     with
-        every on_escape_press do            
+        every on_escape_press do
             _log_info("Escape Pressed");
             emit server.e_FINISH_EVENT;
-            _ScreenManager__instance():pop_screen();            
+            _ScreenManager__instance():pop_screen();
         end
     with
         every pos in DEMO_SESSION_ON_SCROLLER_MOVE do
@@ -198,20 +199,20 @@ do
             //well, I think it isn't
         end
     with
-        var _DemoSession&& e = await RESTART_DEMO_SESSION until (e == &demo_session);
+        var _DemoSession&& e = await RESTART_DEMO_SESSION until (e == &&demo_session);
 
-        //await 10ms;                
+        //await 10ms;
         _ScreenManager__instance():replace_screen(_std__make_shared_DemoSession(demo_session.pathname));
 
-        e = await DELETE_DEMO_SESSION until (e == &demo_session);
+        e = await DELETE_DEMO_SESSION until (e == &&demo_session);
     with
         every (width, height) in resize do
-            ((_GUI_RectComponent&&)&playfield.me):set_rect(
+            ((_GUI_RectComponent&&)&&playfield.me):set_rect(
                 _Rect(
                     _Vector2i(
                         _Math__max((width  - global:world:get_width())/2,  0),
                         _Math__max((height - global:world:get_height())/2, 0)
-                    ), 
+                    ),
                     _Size(
                         _Math__min(width,  global:world:get_width()),
                         _Math__min(height, global:world:get_height())
@@ -223,10 +224,10 @@ do
             demo_session.pause_button:set_pos(32, 32);
             demo_session.restart_button:set_pos(width - 32 - 48, 32);
 
-            small_map.rect.set_rect(_Rect(_Vector2i(5, height - 105), _Size(175, 100)));
+            small_map.rect!.set_rect(_Rect(_Vector2i(5, height - 105), _Size(175, 100)));
         end
     with
-        var _DemoSession&& e = await DELETE_DEMO_SESSION until (e == &demo_session);
+        var _DemoSession&& e = await DELETE_DEMO_SESSION until (e == &&demo_session);
         emit server.e_DELETE;
     end
 end

@@ -20,7 +20,7 @@ do
     end;
     sprite.reload_by_name("worldobjs/teleporter");
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 
@@ -28,17 +28,17 @@ do
     function (Vector3f p) => void set_pos do pos = p; end
     function @rec (void) => Vector3f get_pos do return pos; end
 
-    finalize with _delete_obj(target_id); end;
+    finalize with _delete_obj(&&target_id!); end;
 
     var ITeleporterTarget&& target = null;
 
     par/or do
          every e_STARTUP do
-            if target_id.empty() then
+            if target_id!.empty() then
                 _log_error("target-id is empty");
             else
                 //original FIXME: find the target
-                target = _PTR2REF(global:world:get_teleporter_target(target_id.c_str()));
+                target = _PTR2REF(global:world:get_teleporter_target(target_id!.c_str()));
                 if target == null then
                     _log_error("Teleporter: Couldn't find matching target-id or object isn't a TeleporterTarget");
                 end
@@ -47,7 +47,7 @@ do
     with
         every global:world:update do
             if target != null then
-                loop pingu in global:world:get_pingus().all_pingus do
+                loop pingu in global:world:get_pingus()!.all_pingus do
                     if pingu:get_x() > pos.x-3 and pingu:get_x() < pos.x+3 and
                        pingu:get_y() > pos.y-52 and pingu:get_y() < pos.y then
                         pingu:set_posf((call/rec target:get_pos()).x, (call/rec target:get_pos()).y);

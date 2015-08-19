@@ -32,15 +32,15 @@ do
     var float edge_path_position;
     var Vector3f pos;
     var Vector3f last_pos;
-    var _std__vector_NodeId&? node_path = _new_Vector_NodeId();
-    var _WorldmapNS__Path&? edge_path = _new_Path();
+    var _std__vector_NodeId&? node_path = &_new_Vector_NodeId();
+    var _WorldmapNS__Path&? edge_path = &_new_Path();
     finalize with
-        _delete_obj(name);
-        _delete_obj(node_path);
-        _delete_obj(edge_path);
+        _delete_obj(&&name!);
+        _delete_obj(&&node_path!);
+        _delete_obj(&&edge_path!);
     end
 
-    var Sprite sprite_standing;    
+    var Sprite sprite_standing;
     var Sprite sprite_right;
     var Sprite sprite_left;
     var Sprite arrow;
@@ -54,7 +54,7 @@ do
         current_node = node;
     end
 
-    function (void) => Vector3f get_pos do        
+    function (void) => Vector3f get_pos do
         return pos;
     end
 
@@ -68,14 +68,14 @@ do
         // Update the edge_path_position
         edge_path_position = edge_path_position + velocity*delta;
 
-        if edge_path_position > edge_path.length() then
-            // target reached  
-            if node_path.empty() then
-                // final target reached    
+        if edge_path_position > edge_path!.length() then
+            // target reached
+            if node_path!.empty() then
+                // final target reached
                 current_node = target_node;
-                final_target_node = _WNS_NoNode;    
+                final_target_node = _WNS_NoNode;
             else
-                // edge is traveled, now go to the next node    
+                // edge is traveled, now go to the next node
                 call/rec update_edge_path();
             end
         end
@@ -84,9 +84,9 @@ do
         last_pos = pos;
 
         if current_node != _WNS_NoNode then // pingu stands still
-            _readVector3f(pos, ((Dot&&)path_graph.path_graph.graph.resolve_node(current_node).data):get_pos());
-        else // between two nodes  
-            _readVector3f(pos, edge_path.at(edge_path_position));
+            _readVector3f(pos, ((Dot&&)path_graph.path_graph!.graph.resolve_node(current_node).data):get_pos());
+        else // between two nodes
+            _readVector3f(pos, edge_path!.at(edge_path_position));
         end
     end
 
@@ -97,89 +97,90 @@ do
     function @rec (int target) => bool walk_to_node do
         final_target_node = target;
 
-        if current_node == target then  
-            return true;  
-        else/if current_node != _WNS_NoNode then // pingu stands still            
-            if path_graph.path_graph.get_path(current_node, target).path.empty() then            
+        if current_node == target then
+            return true;
+        else/if current_node != _WNS_NoNode then // pingu stands still
+            if path_graph.path_graph!.get_path(current_node, target).path.empty() then
                 // No path could be found
-                return false;            
-            else            
-                node_path = _PTR2REF(path_graph.path_graph.get_path(current_node, target).path);
+                return false;
+            else
+                node_path! = &_PTR2REF(path_graph.path_graph!.get_path(current_node, target).path);
 
                 // Simulate that we just reached current_node, then update the edge_path
-                target_node = _PTR2REF(node_path.back()); // equal to current_node;
-                node_path.pop_back();
+                target_node = &_PTR2REF(node_path!.back()); // equal to current_node;
+                node_path!.pop_back();
                 call/rec update_edge_path();
 
                 current_node = _WNS_NoNode;
                 return true;
             end
-        else // pingu between two nodes  
-            if target_node == target then            
-                node_path.clear();
+        else // pingu between two nodes
+            if target_node == target then
+                node_path!.clear();
                 return true;
             else/if source_node == target then
                 // Reverse the pingu
                 _std__swap(target_node, source_node);
-                edge_path.reverse();
-                edge_path_position = edge_path.length() - edge_path_position;
-                node_path.clear();
-                return true;            
-            else                
-                var _WorldmapNS__PathfinderResult&? node_path1 = _new_PathfinderResult(path_graph.path_graph.get_path(source_node, target));
-                var _WorldmapNS__PathfinderResult&? node_path2 = _new_PathfinderResult(path_graph.path_graph.get_path(target_node, target));
+                edge_path!.reverse();
+                edge_path_position = edge_path!.length() - edge_path_position;
+                node_path!.clear();
+                return true;
+            else
+                var _WorldmapNS__PathfinderResult&? node_path1 = &_new_PathfinderResult(path_graph.path_graph!.get_path(source_node, target));
+                var _WorldmapNS__PathfinderResult&? node_path2 = &_new_PathfinderResult(path_graph.path_graph!.get_path(target_node, target));
 
                 // Check that a path exist
-                if node_path1.path.empty() then
-                    if node_path2.path.empty() then
-                        _delete_obj(node_path1);
-                        _delete_obj(node_path2);
-                        return false;                    
+                if node_path1!.path.empty() then
+                    if node_path2!.path.empty() then
+                        _delete_obj(&&node_path1!);
+                        _delete_obj(&&node_path2!);
+                        return false;
                     else
-                        node_path = _PTR2REF(node_path2.path);
+                        node_path! = &_PTR2REF(node_path2!.path);
                     end
                 else
                     // Select the shorter path
-                    if node_path1.cost + edge_path_position <
-                       node_path2.cost + (edge_path.length() - edge_path_position) then
+                    if node_path1!.cost + edge_path_position <
+                       node_path2!.cost + (edge_path!.length() - edge_path_position) then
                         // walk to source node, which means to reverse the pingu
-                        node_path = _PTR2REF(node_path1.path);
+                        node_path! = &_PTR2REF(node_path1!.path);
 
                         // Reverse the pingu
                         _std__swap(target_node, source_node);
-                        edge_path.reverse();
-                        edge_path_position = edge_path.length() - edge_path_position;
+                        edge_path!.reverse();
+                        edge_path_position = edge_path!.length() - edge_path_position;
                     else
                         // walk to target_node
-                        node_path = _PTR2REF(node_path2.path);
+                        node_path! = &_PTR2REF(node_path2!.path);
                     end
                 end
 
                 // Pop the first element on the stack, since we are already targeting it
-                node_path.pop_back();
+                node_path!.pop_back();
 
-                _delete_obj(node_path1);
-                _delete_obj(node_path2);
-                return true;              
+                _delete_obj(&&node_path1!);
+                _delete_obj(&&node_path2!);
+                return true;
             end
         end
     end
 
-    function @rec (void) => void update_edge_path do    
+    function @rec (void) => void update_edge_path do
         // Update source and target nodes
         source_node = target_node;
-        target_node = node_path.back();
-        node_path.pop_back(); // remove target node from list of nodes
+        target_node = node_path!.back();
+        node_path!.pop_back(); // remove target node from list of nodes
 
         edge_path_position = 0.0;
-        edge_path.clear();
-        
-        var _WorldmapNS__Path&& partial_path = _PTR2REF(path_graph.path_graph.graph.resolve_edge(source_node, target_node).data);
+        edge_path!.clear();
 
-        edge_path.push_back(((Dot&&)path_graph.path_graph.graph.resolve_node(source_node).data):get_pos());
+        var _WorldmapNS__Path&& partial_path = &_PTR2REF(path_graph.path_graph!.graph.resolve_edge(source_node, 
+target_node).data);
+
+        edge_path!.push_back(((Dot&&)path_graph.path_graph!.graph.resolve_node(source_node).data):get_pos());
         // Why do we need to reverse this?!
-        edge_path.reverse_insert(_deref(partial_path));
-        edge_path.push_back(((Dot&&)path_graph.path_graph.graph.resolve_node(target_node).data):get_pos());
+        edge_path!.reverse_insert(_deref(partial_path));
+        edge_path!.push_back(((Dot&&)path_graph.path_graph!.graph.resolve_node(target_node).data):get_pos());
     end
 
     function (void) => float get_direction do
@@ -190,16 +191,16 @@ do
         every gc in draw do
             // Add 10 to z_pos so that the pingu gets drawn above the node it is
             // standing one
-            if final_target_node != _WNS_NoNode and current_node == _WNS_NoNode then              
+            if final_target_node != _WNS_NoNode and current_node == _WNS_NoNode then
                 gc:draw(_deref(arrow.get()), path_graph.get_dot_by_id(final_target_node):get_pos() + _Vector3f(0, 0, 10));
             end
 
             if not is_walking() then
                 gc:draw(_deref(sprite_standing.get()), _toVector3f(pos));
-            else  
+            else
                 //original FIXME: Replace the sprite and add up/down here
                 var float direction = get_direction();
-      
+
                 if direction >= 0 and direction < 180 then
                     gc:draw(_deref(sprite_right.get()), _toVector3f(pos) + _Vector3f(0, 0, 10));
                 else
@@ -215,12 +216,12 @@ do
             else
                 sprite_left.update_delta(delta);
             end
-  
+
             if is_walking() then
                 call/rec update_walk(delta);
             end
         end
-    with        
+    with
         await delete;
     end
 end

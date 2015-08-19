@@ -30,7 +30,7 @@ native/pre do
 
     ##include "engine/screen/screen_manager.hpp"
     ##include "pingus/server.hpp"
-    ##include "engine/sound/sound.hpp" 
+    ##include "engine/sound/sound.hpp"
 
     ##include "engine/display/graphic_context_state.hpp"
     ##include "engine/gui/rect_component.hpp"
@@ -42,7 +42,7 @@ native/pre do
     ##define new_Rect(v, s) new Rect(v, s)
     ##define new_SceneContext(rect) new SceneContext(rect)
     ##define new_GraphicContextState new GraphicContextState
-    ##define new_Server(a) new Server(a)  
+    ##define new_Server(a) new Server(a)
     ##define new_TimeDisplay(s) new TimeDisplay(s)
     ##define new_Result() new Result()
     ##define new_Savegame new Savegame
@@ -68,7 +68,7 @@ native/pre do
     ##define Input__POINTER_EVENT_TYPE Input::POINTER_EVENT_TYPE
     ##define Input__AXIS_EVENT_TYPE Input::AXIS_EVENT_TYPE
     ##define Input__KEYBOARD_EVENT_TYPE Input::KEYBOARD_EVENT_TYPE
-    ##define Input__TEXT_INPUT_EVENT_TYPE Input::TEXT_INPUT_EVENT_TYPE    
+    ##define Input__TEXT_INPUT_EVENT_TYPE Input::TEXT_INPUT_EVENT_TYPE
 end
 
 native @pure _new_PingusCounter(), _new_GUI_Component(), _new_RectComponent(), _new_Server(),
@@ -82,42 +82,42 @@ class GameSession with
     interface Screen;
     interface IGameSession;
 do
-    var _GameSession&? game_session = (_GameSession&&)&me;
+    var _GameSession&? game_session = &me;
     var GUIManager gui_manager with
-        this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
-        this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
+        this.me = &_new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
+        this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
         this.screen = outer;
-        this.gui_manager = &gui_manager;
+        this.gui_manager = &&gui_manager;
     end;
 
     var Server server with
-        this.me = _new_Server(game_session.plf);
-        this.me.demostream = _get_demostream(this.me.plf);
+        this.me = &_new_Server(&&game_session!.plf);
+        this.me!.demostream = &_get_demostream(&&this.me!.plf);
     end;
 
     var ButtonPanel button_panel with
-        this.me = _new_RectComponent(_Rect());
-        this.me.ceu = &this;
+        this.me = &_new_RectComponent(_Rect());
+        this.me.ceu = &&this;
         this.server = server;
     end;
 
     do
         var Vector2i bp_pos;
         bp_pos.x = 0;
-        bp_pos.y = (game_session.size.height - 150)/2;
+        bp_pos.y = (game_session!.size.height - 150)/2;
         button_panel.set_pos(bp_pos);
     end
 
     var PingusCounter pcounter with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
         this.server = server;
     end;
 
     var Playfield playfield with
-        var _Rect&? rect = _new_Rect(
+        var _Rect&? rect = &_new_Rect(
                                 _Vector2i(
                                     _Math__max((_Display__get_width() - global:world:get_width())/2, 0),
                                     _Math__max((_Display__get_height() - global:world:get_height())/2, 0)
@@ -127,56 +127,56 @@ do
                                     _Math__min(_Display__get_height(), global:world:get_height())
                                 )
                             );
-        
-        this.me = _new_RectComponent(_deref(rect));
-        this.me.ceu = &this;
-        this.scene_context = _new_SceneContext(_deref(rect));
-        this.state = _new_GraphicContextState(rect.get_width(), rect.get_height());
-        this.server = server;
-        this.session = &outer;
 
-        _delete_obj(rect);
+        this.me = &_new_RectComponent(_deref(&&rect!));
+        this.me.ceu = &&this;
+        this.scene_context = &_new_SceneContext(_deref(&&rect!));
+        this.state = &_new_GraphicContextState(rect!.get_width(), rect!.get_height());
+        this.server = server;
+        this.session = &&outer;
+
+        _delete_obj(&&rect!);
     end;
 
     var SmallMap small_map with
-        this.rect = _new_RectComponent(_Rect(_Vector2i(5, game_session.size.height - 105), _Size(175, 100)));
+        this.rect = &_new_RectComponent(_Rect(_Vector2i(5, game_session!.size.height - 105), _Size(175, 100)));
         this.me = this.rect;
-        this.me.ceu = &this;    
+        this.me.ceu = &&this;
         this.playfield = playfield;
     end;
 
     var ArmageddonButton armageddon_button with
-        this.me = _new_RectComponent(_Rect(_Vector2i(_Display__get_width() - 40, _Display__get_height()-62), _Size(38, 60)));
-        this.me.ceu = &this;
+        this.me = &_new_RectComponent(_Rect(_Vector2i(_Display__get_width() - 40, _Display__get_height()-62), _Size(38, 60)));
+        this.me.ceu = &&this;
         this.server = server;
     end;
 
     var ForwardButton forward_button with
-        this.me = _new_RectComponent(_Rect(_Vector2i(_Display__get_width() - 40*2, _Display__get_height()-62), _Size(38, 60)));
-        this.me.ceu = &this;
+        this.me = &_new_RectComponent(_Rect(_Vector2i(_Display__get_width() - 40*2, _Display__get_height()-62), _Size(38, 60)));
+        this.me.ceu = &&this;
         this.session = outer;
     end;
 
     var PauseButton pause_button with
-        this.me = _new_RectComponent(_Rect(_Vector2i(_Display__get_width() - 40*3, _Display__get_height()-62), _Size(38, 60)));
-        this.me.ceu = &this;
+        this.me = &_new_RectComponent(_Rect(_Vector2i(_Display__get_width() - 40*3, _Display__get_height()-62), _Size(38, 60)));
+        this.me.ceu = &&this;
         this.session = outer;
     end;
-    
+
     var TimeDisplay time_display with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
         this.server = server;
     end;
 
-    gui_manager.add(&playfield.me);
-    gui_manager.add(&button_panel.me);
-    gui_manager.add(&pcounter.me);
-    gui_manager.add(&small_map.rect);
-    gui_manager.add(&time_display.me);
-    gui_manager.add(&armageddon_button.me);
-    gui_manager.add(&forward_button.me);
-    gui_manager.add(&pause_button.me);
+    gui_manager.add(&&playfield.me);
+    gui_manager.add(&&button_panel.me);
+    gui_manager.add(&&pcounter.me);
+    gui_manager.add(&&small_map.rect!);
+    gui_manager.add(&&time_display.me);
+    gui_manager.add(&&armageddon_button.me);
+    gui_manager.add(&&forward_button.me);
+    gui_manager.add(&&pause_button.me);
 
     var int world_delay = 0;
 
@@ -184,13 +184,13 @@ do
     var bool fast_forward = false;
     var bool single_step = false;
 
-    function (bool value) => void set_fast_forward do    
+    function (bool value) => void set_fast_forward do
         fast_forward = value;
-        if fast_forward then        
+        if fast_forward then
             pause = false;
         end
     end
-    
+
     function (bool value) => void set_pause do
         pause = value;
         if pause then
@@ -202,7 +202,7 @@ do
         return button_panel.get_action_name();
     end
 
-    function (void) => bool get_fast_forward do    
+    function (void) => bool get_fast_forward do
         return fast_forward;
     end
 
@@ -213,12 +213,13 @@ do
     par/or do
         every delta in global:update do
             if call/rec server.is_finished() then
-                var _Result&? result = _new_Result();
+                var _Result&? result_ = &_new_Result();
+                var _Result& result = result_!;
 
-                finalize result.plf    = server.get_plf(); with end
+                finalize result.plf = server.get_plf(); with end
 
-                result.saved  = global:world:get_pingus().get_number_of_exited();
-                result.killed = global:world:get_pingus().get_number_of_killed();
+                result.saved  = global:world:get_pingus()!.get_number_of_exited();
+                result.killed = global:world:get_pingus()!.get_number_of_killed();
                 finalize result.total  = server.get_plf().get_number_of_pingus(); with end
 
                 finalize result.needed = server.get_plf().get_number_to_save(); with end
@@ -226,25 +227,25 @@ do
                 finalize result.max_time  = server.get_plf().get_time(); with end
                 result.used_time = call/rec server.get_time();
 
-                var int rs = _Savegame__ACCESSIBLE;
+                var int rs = &_Savegame__ACCESSIBLE;
                 if result.saved >= result.needed then
-                    rs = _Savegame__FINISHED;
+                    rs = &_Savegame__FINISHED;
                 end
 
                 // Write the savegame
-                var _Savegame&? savegame = _new_Savegame(result.plf.get_resname(),
+                var _Savegame&? savegame = &_new_Savegame(result.plf.get_resname(),
                                                          _toSStatus(rs),
                                                          result.used_time,
                                                          result.saved);
-                _SavegameManager__instance():store(_deref(savegame));
+                _SavegameManager__instance():store(_deref(&&savegame!));
 
-                if game_session.show_result_screen then
-                    _ScreenManager__instance():replace_screen(_std__make_shared_ResultScreen(_deref(result)));
+                if game_session!.show_result_screen then
+                    _ScreenManager__instance():replace_screen(_std__make_shared_ResultScreen(_deref(&&result)));
                 else
                     _ScreenManager__instance():pop_screen();
                 end
 
-                _delete_obj(result);
+                _delete_obj(&&result_!);
             else
 
                 // how much time we have to account for while doing world updates
@@ -287,13 +288,13 @@ do
             //log_info("Events: " << event.get_type ());
 
             if ev:type == _Input__BUTTON_EVENT_TYPE then
-                if ev:button.state == _Input__BUTTON_PRESSED then              
+                if ev:button.state == _Input__BUTTON_PRESSED then
                     if  ev:button.name >= _Input__ACTION_1_BUTTON
                     and ev:button.name <= _Input__ACTION_10_BUTTON then
-                        button_panel.set_button(ev:button.name - _Input__ACTION_1_BUTTON);                    
-                    else/if ev:button.name == _Input__ACTION_DOWN_BUTTON then                    
-                        button_panel.next_action();                    
-                    else/if ev:button.name == _Input__ACTION_UP_BUTTON then                    
+                        button_panel.set_button(ev:button.name - _Input__ACTION_1_BUTTON);
+                    else/if ev:button.name == _Input__ACTION_DOWN_BUTTON then
+                        button_panel.next_action();
+                    else/if ev:button.name == _Input__ACTION_UP_BUTTON then
                         button_panel.previous_action();
                     end
                 end
@@ -309,7 +310,7 @@ do
                 // unhandled event
                 _log_info("unhandled event: %1%", ev:type) finalize with end;
             end
-        end        
+        end
     with
         every on_startup do
             if _globals__developer_mode then
@@ -324,21 +325,21 @@ do
         end
     with
         every on_escape_press do
-            emit server.e_FINISH_EVENT;            
+            emit server.e_FINISH_EVENT;
         end
     with
         every on_armageddon_press do
-            emit server.e_ARMAGEDDON;            
+            emit server.e_ARMAGEDDON;
         end
     with
         every on_pause_press do
-            set_pause(not get_pause());            
+            set_pause(not get_pause());
         end
     with
         every on_single_step_press do
             set_pause(true);
             single_step = true;
-        end    
+        end
     with
         every on_fast_forward_press do
             if get_pause() then
@@ -353,10 +354,10 @@ do
         end
     with
         every gc in draw_background do
-            var _GUI_RectComponent&& rect = (_GUI_RectComponent&&)&playfield.me;
+            var _GUI_RectComponent&& rect = (_GUI_RectComponent&&)&&playfield.me;
 
             if rect:get_rect() != _Rect(_Vector2i(0,0), _Size(_Display__get_width(), _Display__get_height())) then
-                // Draw a black border around the playfield when the playfield is smaller then the screen                
+                // Draw a black border around the playfield when the playfield is smaller then the screen
                 // top
                 gc:draw_fillrect(_Rect(0, 0, _Display__get_width(), rect:get_rect().top), _Color(0, 0, 0));
                 // bottom
@@ -369,7 +370,7 @@ do
         end
     with
         every (width, height) in resize do
-            ((_GUI_RectComponent&&)&playfield.me):set_rect(
+            ((_GUI_RectComponent&&)&&playfield.me):set_rect(
                 _Rect(
                     _Vector2i(
                         _Math__max((width - global:world:get_width())/2,  0),
@@ -382,10 +383,10 @@ do
                 )
             );
 
-            ((_GUI_RectComponent&&)&armageddon_button.me):set_rect(_Rect(_Vector2i(width - 40, height - 62), _Size(38, 60)));
-            ((_GUI_RectComponent&&)&forward_button.me):set_rect(_Rect(_Vector2i(width - 40*2, height - 62), _Size(38, 60)));
-            ((_GUI_RectComponent&&)&pause_button.me):set_rect(_Rect(_Vector2i(width - 40*3, height - 62), _Size(38, 60)));
-            small_map.rect.set_rect(_Rect(_Vector2i(5, height - 105), _Size(175, 100)));
+            ((_GUI_RectComponent&&)&&armageddon_button.me):set_rect(_Rect(_Vector2i(width - 40, height - 62), _Size(38, 60)));
+            ((_GUI_RectComponent&&)&&forward_button.me):set_rect(_Rect(_Vector2i(width - 40*2, height - 62), _Size(38, 60)));
+            ((_GUI_RectComponent&&)&&pause_button.me):set_rect(_Rect(_Vector2i(width - 40*3, height - 62), _Size(38, 60)));
+            small_map.rect!.set_rect(_Rect(_Vector2i(5, height - 105), _Size(175, 100)));
 
             var Vector2i bp_pos;
             bp_pos.x = 0;
@@ -401,7 +402,7 @@ do
             end
         end
     with
-        var _GameSession&& e = await DELETE_GAME_SESSION until (e == &game_session);        
+        var _GameSession&& e = await DELETE_GAME_SESSION until (e == &&game_session!);
     end
 
     emit server.e_DELETE;

@@ -33,7 +33,7 @@ native/pre do
     ##include "pingus/screens/result_screen.hpp"
     ##include "pingus/screens/story_screen.hpp"
     ##include "pingus/server.hpp"
-    ##include "pingus/stat_manager.hpp"    
+    ##include "pingus/stat_manager.hpp"
     ##include "pingus/string_format.hpp"
     ##include "pingus/worldmap/worldmap_screen.hpp"
     ##include "util/log.hpp"
@@ -59,7 +59,7 @@ native/pre do
     ##define new_SceneContextE() new SceneContext()
     ##define new_Pingus(x) new WorldmapNS::Pingus(x)
 
-    ##define WorldmapNS__WorldmapScreen WorldmapNS::WorldmapScreen    
+    ##define WorldmapNS__WorldmapScreen WorldmapNS::WorldmapScreen
 
     ##define StatManager__instance StatManager::instance
     ##define new_PathGraph new WorldmapNS::PathGraph
@@ -81,15 +81,18 @@ native @pure _new_GUI_Component(), _ScreenManager__instance(), _StatManager__ins
 
 class Worldmap with
     interface IWorldmap;
-    function @rec (void) => void set_starting_node;    
+    function @rec (void) => void set_starting_node;
 do
-    var _GraphicContextState&? gc_state = _new_GraphicContextState();
-    var _std__vector_Drawable&? drawables = _new_Vector_Drawable;
+    var _GraphicContextState&? gc_state_ = &_new_GraphicContextState();
+    var _std__vector_Drawable&? drawables_ = &_new_Vector_Drawable;
 
     finalize with
-        _delete_obj(gc_state);
-        _delete_obj(drawables);
+        _delete_obj(&&gc_state_!);
+        _delete_obj(&&drawables_!);
     end
+
+    var _GraphicContextState& gc_state = gc_state_!;
+    var _std__vector_Drawable& drawables = drawables_!;
 
     var int mouse_x = 0;
     var int mouse_y = 0;
@@ -97,63 +100,63 @@ do
     var int final_node;
 
     // Create all objects
-    loop i in pingus_worldmap:get_objects():size() do  
+    loop i in pingus_worldmap:get_objects():size() do
         var Drawable&&? drawable = null;
 
         //_DrawableFactory__create(pingus_worldmap:get_objects():at(i));
-        if pingus_worldmap:get_objects():at(i).get_name() == "surface" then  
-            spawn SpriteDrawable with                
+        if pingus_worldmap:get_objects():at(i).get_name() == "surface" then
+            spawn SpriteDrawable with
                 this.reader = (_FileReader&&)_addr(pingus_worldmap:get_objects():at(i));
                 this.worldmap = outer;
 
-                this.name = _new_String();
-                this.reader:read_string("name", _deref(this.name));
-                drawable = &this;
+                this.name = &_new_String();
+                this.reader:read_string("name", _deref(&&this.name!));
+                drawable! = &&this;
             end;
-        else  
+        else
             _log_error("can't create %1%", pingus_worldmap:get_objects():at(i).get_name());
         end
         ////////////////////////////
 
-        if drawable then            
-            _vector_push_back(drawables, drawable);
+        if drawable! then
+            _vector_push_back(&&drawables, drawable!);
         else
             _log_info("Worldmap::parse_objects: Parse Error");
         end
     end
-    
+
     var PathGraph path_graph with
         this.worldmap = outer;
-        this.path_graph = _new_PathGraph();
+        this.path_graph = &_new_PathGraph();
     end;
 
-    default_node = path_graph.path_graph.lookup_node(_deref(pingus_worldmap:get_default_node()));
-    final_node   = path_graph.path_graph.lookup_node(_deref(pingus_worldmap:get_final_node()));
+    default_node = path_graph.path_graph!.lookup_node(_deref(pingus_worldmap:get_default_node()!));
+    path_graph.path_graph!.lookup_node(_deref(pingus_worldmap:get_final_node()!));
 
-    var Pingus pingus with        
-        this.name = _new_String("pingus");
+    var Pingus pingus with
+        this.name = &_new_String("pingus");
         this.path_graph = path_graph;
-    end;    
+    end;
     call/rec set_starting_node();
-    add_drawable(&pingus);
+    add_drawable(&&pingus);
     gc_state.set_limit(_Rect(_Vector2i(0, 0), _Size(pingus_worldmap:get_width(), pingus_worldmap:get_height())));
 
     function (void) => IPingus&& get_pingus do
-        return &pingus;
+        return &&pingus;
     end
 
     function @rec (void) => void set_starting_node do
         // See if the user has played this map before.  If not, use the <default-node>
         // tag from the XML file.
         var int id;
-        var _std__string&& node_name = _new_String();
+        var _std__string&& node_name = &_new_String();
 
-        if _StatManager__instance():get_string(_scc2(_deref(pingus_worldmap:get_short_name()), "-current-node"), _deref(node_name)) then
+        if _StatManager__instance():get_string(_scc2(_deref(pingus_worldmap:get_short_name()!), "-current-node"), _deref(node_name)) then
             // Just in case that level doesn't exist, look it up.
-            id = path_graph.path_graph.lookup_node(_deref(node_name));
+            id = path_graph.path_graph!.lookup_node(_deref(node_name));
             if id == _WNS_NoNode then
                 id = default_node;
-            end        
+            end
         else
             id = default_node;
         end
@@ -162,10 +165,10 @@ do
 
         call/rec pingus.set_position(id);
 
-        var Dot&& dot = _PTR2REF(path_graph.get_dot_by_id(id));
-        if dot then        
+        var Dot&& dot = &_PTR2REF(path_graph.get_dot_by_id(id));
+        if dot then
             dot:unlock();
-        end        
+        end
     end
 
     function (Drawable&& a) => void add_drawable do
@@ -176,7 +179,7 @@ do
         return pingus_worldmap;
     end
 
-    function (void) => int get_width do    
+    function (void) => int get_width do
         return pingus_worldmap:get_width();
     end
 
@@ -184,7 +187,7 @@ do
         return pingus_worldmap:get_height();
     end
 
-    function @rec (int x, int y) => Dot&& find_dot do        
+    function @rec (int x, int y) => Dot&& find_dot do
         return call/rec path_graph.get_dot(
             gc_state.screen2world(_Vector2i(x, y)).x,
             gc_state.screen2world(_Vector2i(x, y)).y
@@ -193,21 +196,21 @@ do
 
     par/or do
         every startup do
-            _Sound__PingusSound__play_music(_deref(pingus_worldmap:get_music()));
+            _Sound__PingusSound__play_music(_deref(pingus_worldmap:get_music()!));
 
             //update_locked_nodes:
             //original FIXME: This shouldn't be a polling function
-            loop i in path_graph.path_graph.graph.nodes_size() do
-                var _WorldmapNS__Node_WorldmapNS__Drawable&& node = _addr(path_graph.path_graph.graph.get_node(i));
-                var Dot&& dot = _PTR2REF(node:data);
+            loop i in path_graph.path_graph!.graph.nodes_size() do
+                var _WorldmapNS__Node_WorldmapNS__Drawable&& node = &_addr(path_graph.path_graph!.graph.get_node(i));
+                var Dot&& dot = &_PTR2REF(node:data);
                 if dot:finished() then
-                    //log_info("Unlocking neightbours of: " << node.data);                    
-                    loop j in node:next.size() do                        
-                        var _WorldmapNS__Edge_WorldmapNS__Path&& edge = _addr(path_graph.path_graph.graph.resolve_edge(node:next.at(j)));
+                    //log_info("Unlocking neightbours of: " << node.data);
+                    loop j in node:next.size() do
+                        var _WorldmapNS__Edge_WorldmapNS__Path&& edge = &_addr(path_graph.path_graph!.graph.resolve_edge(node:next.at(j)));
 
-                        //original FIXME: This should be identical to node.data->unlock(), but not sure                        
-                        ((Dot&&)_graph_resolve_node(path_graph.path_graph.graph, edge:source).data):unlock();
-                        ((Dot&&)_graph_resolve_node(path_graph.path_graph.graph, edge:destination).data):unlock();
+                        //original FIXME: This should be identical to node.data->unlock(), but not sure
+                        ((Dot&&)_graph_resolve_node(path_graph.path_graph!.graph, edge:source).data):unlock();
+                        ((Dot&&)_graph_resolve_node(path_graph.path_graph!.graph, edge:destination).data):unlock();
                     end
                 end
             end
@@ -216,14 +219,14 @@ do
         every gc in draw do
             var Vector2i pingu_pos;
             pingu_pos.x = pingus.get_pos().x;
-            pingu_pos.y = pingus.get_pos().y; 
+            pingu_pos.y = pingus.get_pos().y;
 
             var int min;
             var int max;
             var int width  = pingus_worldmap:get_width();
             var int height = pingus_worldmap:get_height();
 
-            if width >= gc:get_width() then  
+            if width >= gc:get_width() then
                 min = gc:get_width()/2;
                 max = width - gc:get_width()/2;
             else
@@ -245,25 +248,25 @@ do
 
             gc_state.set_size(gc:get_width(), gc:get_height());
             gc_state.set_pos(_Vector2i(pingu_pos.x, pingu_pos.y));
-                
+
             gc_state.push(_deref(gc));
-  
-            loop i in drawables.size() do  
+
+            loop i in drawables.size() do
                 emit ((Drawable&&)drawables.at(i)):draw => gc;
             end
 
-            var Dot&& dot = _PTR2REF(call/rec find_dot(mouse_x, mouse_y));            
-            if dot then                
+            var Dot&& dot = &_PTR2REF(call/rec find_dot(mouse_x, mouse_y));
+            if dot then
                 emit dot:draw_hover => gc;
             end
-  
-            gc_state.pop(_deref(gc)); 
+
+            gc_state.pop(_deref(gc));
         end
     with
         every delta in update do
-            loop i in drawables.size() do  
+            loop i in drawables.size() do
                 emit ((Drawable&&)drawables.at(i)):update => delta;
-            end  
+            end
         end
     with
         every (x, y) in mouse_move do
@@ -288,25 +291,25 @@ do
             end
             */
 
-            var Dot&& dot = _PTR2REF(call/rec find_dot(x, y));            
-            if dot then                
+            var Dot&& dot = &_PTR2REF(call/rec find_dot(x, y));
+            if dot then
                 if _globals__developer_mode then
-                    _log_info("Worldmap: Clicked on: %1%", _deref(dot:name));
+                    _log_info("Worldmap: Clicked on: %1%", _deref(&&dot:name!));
                 end
 
-                if path_graph.path_graph.lookup_node(_deref(dot:name)) == pingus.get_node() then
+                if path_graph.path_graph!.lookup_node(_deref(&&dot:name!)) == pingus.get_node() then
                     if _globals__developer_mode then
                         _log_info("Worldmap: Pingu is on node, issue on_click()");
                     end
                     emit dot:on_click;
                 else
                     if dot:accessible() then
-                        if not call/rec pingus.walk_to_node(path_graph.path_graph.lookup_node(_deref(dot:name))) then
+                        if not call/rec pingus.walk_to_node(path_graph.path_graph!.lookup_node(_deref(&&dot:name!))) then
                             if _globals__developer_mode then
                                 _log_info("Worldmap: NO PATH TO NODE FOUND!");
                             end
                         else
-                            _StatManager__instance():set_string(_scc2(_deref(pingus_worldmap:get_short_name()), "-current-node"), _deref(dot:name));
+                            _StatManager__instance():set_string(_scc2(_deref(pingus_worldmap:get_short_name()!), "-current-node"), _deref(&&dot:name!));
                         end
                     else
                         _Sound__PingusSound__play_sound("chink");
@@ -317,7 +320,7 @@ do
     with
         every (x, y) in mouse_secondary_press do
             if _globals__developer_mode then
-                var Dot&& dot = _PTR2REF(call/rec find_dot(x, y));
+                var Dot&& dot = &_PTR2REF(call/rec find_dot(x, y));
                 if dot then
                     // FIXME: Dot NodeID missmatch...
                     var int id = call/rec path_graph.get_id(dot);
@@ -326,7 +329,7 @@ do
             end
         end
     with
-        await delete;        
+        await delete;
         emit path_graph.delete;
     end
 end

@@ -4,9 +4,11 @@
 #include "../../c.ceu"
 #include "../../sdl.ceu"
 #include "../../math/vector3f.ceu"
+#include "../../engine/display/sprite.ceu"
 #include "../iworld.ceu"
 #include "../worldobj.ceu"
 #include "iswitch_door_door.ceu"
+#include "../global_interface.ceu"
 
 class SwitchDoorDoor with
     interface ISwitchDoorDoor;
@@ -25,10 +27,10 @@ do
     call/rec door_box.reload_by_name("worldobjs/switchdoor_box");
     call/rec door_tile.reload_by_name("worldobjs/switchdoor_tile");
 
-    var _CollisionMask&? door_box_cmap = _new_CollisionMask("worldobjs/switchdoor_box");
-    var _CollisionMask&? door_tile_cmap = _new_CollisionMask("worldobjs/switchdoor_tile_cmap");
+    var _CollisionMask&? door_box_cmap = &_new_CollisionMask("worldobjs/switchdoor_box");
+    var _CollisionMask&? door_tile_cmap = &_new_CollisionMask("worldobjs/switchdoor_tile_cmap");
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 
@@ -37,9 +39,9 @@ do
     function @rec (void) => Vector3f get_pos do return pos; end
 
     finalize with
-        _delete_obj(id);
-        _delete_obj(door_box_cmap);
-        _delete_obj(door_tile_cmap);
+        _delete_obj(&&id!);
+        _delete_obj(&&door_box_cmap!);
+        _delete_obj(&&door_tile_cmap!);
     end;
 
     function (void) => void open_door do
@@ -50,7 +52,7 @@ do
          every e_STARTUP do
             _colmap_put(
                 global:world:get_colmap(),
-                door_box_cmap,
+                &&door_box_cmap!,
                 (int)pos.x,
                 (int)pos.y,
                 _GT_SOLID
@@ -59,7 +61,7 @@ do
             loop/100 i in door_height do
                 _colmap_put(
                     global:world:get_colmap(),
-                    door_tile_cmap,
+                    &&door_tile_cmap!,
                     (int)pos.x,
                     (int)pos.y + i*door_tile.get_height() + door_box.get_height(),
                     _GT_SOLID
@@ -92,7 +94,7 @@ do
                 if current_door_height+10 < door_height then
                     _colmap_put(
                         global:world:get_colmap(),
-                        door_box_cmap,
+                        &&door_box_cmap!,
                         (int)pos.x,
                         (int)pos.y,
                         _GT_NOTHING
@@ -101,7 +103,7 @@ do
                     loop/100 i in door_height do
                         _colmap_put(
                             global:world:get_colmap(),
-                            door_tile_cmap,
+                            &&door_tile_cmap!,
                             (int)pos.x,
                             (int)pos.y + i*door_tile.get_height() + door_box.get_height(),
                             _GT_NOTHING

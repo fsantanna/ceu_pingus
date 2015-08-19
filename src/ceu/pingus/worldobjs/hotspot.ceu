@@ -13,7 +13,7 @@ class Hotspot with
     var _Sprite&? sprite;
     var float para;
 do
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
     function (void) => float get_z_pos do return pos.z; end
@@ -21,17 +21,17 @@ do
     function @rec (void) => Vector3f get_pos do return pos; end
 
     finalize with
-        _delete_obj(sprite);
+        _delete_obj(&&sprite!);
     end
 
     par/or do
         every gc in global:draw do
             //original FIXME: para support doesnn't work correctly
-            _gc_color_draw2(gc, &sprite, _toVector3f(pos));
+            _gc_color_draw2(gc, &&sprite!, _toVector3f(pos));
         end
     with
         every global:world:update do
-            sprite.update(); //TODO: replace with autonomous sprite?
+            sprite!.update(); //TODO: replace with autonomous sprite?
                              //     (such sprites don't have any "para support",
                              //      but neither does this organism (even if wants to))
         end

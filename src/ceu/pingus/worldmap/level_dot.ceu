@@ -4,6 +4,7 @@
 #include "../../c.ceu"
 #include "../../sdl.ceu"
 #include "../../string.ceu"
+#include "../../math/vector2i.ceu"
 #include "../../engine/display/sprite.ceu"
 #include "../../util/file_reader.ceu"
 #include "dot.ceu"
@@ -20,7 +21,7 @@ native/pre do
     ##include "util/pathname.hpp"
     ##include <string>
     ##include "engine/display/sprite.hpp"
-    ##include "pingus/pingus_level.hpp"    
+    ##include "pingus/pingus_level.hpp"
     ##include "engine/display/drawing_context.hpp"
     ##include "engine/input/control.hpp"
     ##include "engine/screen/screen_manager.hpp"
@@ -70,18 +71,18 @@ do
     call/rec highlight_green_dot_sur.reload_by_name("core/worldmap/dot_green_hl");
     call/rec highlight_red_dot_sur.reload_by_name("core/worldmap/dot_red_hl");
 
-    var _std__string&? resname = _new_String();
-    reader:read_string("levelname", _deref(resname));
+    var _std__string&? resname = &_new_String();
+    reader:read_string("levelname", _deref(&&resname!));
 
-    var _PingusLevel&? plf = _new_PingusLevel(_PLFResMgr__load_plf(_deref(resname)));    
+    var _PingusLevel&? plf = &_new_PingusLevel(_PLFResMgr__load_plf(_deref(&&resname!)));
     finalize with
-        _delete_obj(name);
-        _delete_obj(plf);
+        _delete_obj(&&name!);
+        _delete_obj(&&plf!);
     end
-    _delete_obj(resname);
+    _delete_obj(&&resname!);
 
     function (void) => _PingusLevel&& get_plf do
-        return &plf;
+        return &&plf!;
     end
 
     function (void) => _Vector3f get_pos do
@@ -89,7 +90,7 @@ do
     end
 
     function (void) => bool finished do
-        var _Savegame&& savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
+        var _Savegame&& savegame = &_PTR2REF(_SavegameManager__instance():get(plf!.get_resname()));
         if savegame and savegame:get_status() == _Savegame__FINISHED then
             return true;
         else
@@ -98,7 +99,7 @@ do
     end
 
     function (void) => bool accessible do
-        var _Savegame&& savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
+        var _Savegame&& savegame = &_PTR2REF(_SavegameManager__instance():get(plf!.get_resname()));
         if savegame and savegame:get_status() != _Savegame__NONE then
             return true;
         else
@@ -107,12 +108,12 @@ do
     end
 
     function (void) => void unlock do
-        var _Savegame&& savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
-        if not savegame or savegame:get_status() == _Savegame__NONE then            
-            var _Savegame&? sg = _new_Savegame2(plf.get_resname(), _Savegame__ACCESSIBLE, 0, 0);
-            _SavegameManager__instance():store(_deref(sg));
-            _delete_obj(sg);
-        end        
+        var _Savegame&& savegame = &_PTR2REF(_SavegameManager__instance():get(plf!.get_resname()));
+        if not savegame or savegame:get_status() == _Savegame__NONE then
+            var _Savegame&? sg = &_new_Savegame2(plf!.get_resname(), _Savegame__ACCESSIBLE, 0, 0);
+            _SavegameManager__instance():store(_deref(&&sg!));
+            _delete_obj(&&sg!);
+        end
     end
 
     par/or do
@@ -122,7 +123,7 @@ do
                 gc:screen_to_world(
                     _Vector2i(
                         _Input__Controller__current():get_pointer(_Input__STANDARD_POINTER):get_pos()
-            )));            
+            )));
 
             var float x = ((float)mpos.x) - pos.x;
             var float y = ((float)mpos.y) - pos.y;
@@ -133,7 +134,7 @@ do
                 highlight = true;
             end
 
-            var _Savegame&& savegame = _PTR2REF(_SavegameManager__instance():get(plf.get_resname()));
+            var _Savegame&& savegame = &_PTR2REF(_SavegameManager__instance():get(plf!.get_resname()));
             if savegame and (savegame:get_status() == _Savegame__FINISHED or savegame:get_status() == _Savegame__ACCESSIBLE) then
                 if savegame:get_status() == _Savegame__FINISHED then
                     if highlight then
@@ -154,19 +155,19 @@ do
         end
     with
         every gc in draw_hover do
-            if accessible() then  
+            if accessible() then
                 gc:print_center(_Fonts__pingus_small, _Vector2i(pos.x, pos.y - 44), __(get_plf():get_levelname()), 10000);
             else
                 gc:print_center(_Fonts__pingus_small, _Vector2i(pos.x, pos.y - 44), __("???"), 10000);
             end
 
-            if _globals__developer_mode then  
+            if _globals__developer_mode then
                 gc:print_center(_Fonts__pingus_small, _Vector2i(pos.x, pos.y - 70), get_plf():get_resname(), 10000);
             end
         end
     with
         every on_click do
-            _ScreenManager__instance():push_screen(_std__make_shared_StartScreen(_deref(plf)));
+            _ScreenManager__instance():push_screen(_std__make_shared_StartScreen(_deref(&&plf!)));
         end
     with
         await delete;

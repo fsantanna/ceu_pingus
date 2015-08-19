@@ -21,7 +21,7 @@ do
     end;
     switch_sur.reload_by_name("worldobjs/switchdoor_switch");
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 
@@ -29,16 +29,16 @@ do
     function (Vector3f p) => void set_pos do pos = p; end
     function @rec (void) => Vector3f get_pos do return pos; end
 
-    finalize with _delete_obj(m_target); end;
+    finalize with _delete_obj(&&m_target!); end;
 
     var ISwitchDoorDoor&& m_door = null;
 
     par/or do
          every e_STARTUP do
-            if m_target.empty() then
+            if m_target!.empty() then
                 _log_error("target-id is empty");
             else
-                m_door = _PTR2REF(global:world:get_switch_door_door(m_target.c_str()));
+                m_door = _PTR2REF(global:world:get_switch_door_door(m_target!.c_str()));
                 if m_door == null then
                     _log_error("given target-id is not a SwitchDoorDoor");
                 end
@@ -51,7 +51,7 @@ do
             end
 
             // Check if a pingu is passing the switch
-            loop pingu in global:world:get_pingus().all_pingus do
+            loop pingu in global:world:get_pingus()!.all_pingus do
                 if pingu:get_x() > pos.x and
                    pingu:get_x() < pos.x+(float)switch_sur.get_width() and
                    pingu:get_y() > pos.y and

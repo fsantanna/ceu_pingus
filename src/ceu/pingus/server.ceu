@@ -33,26 +33,26 @@ end
 native @pure _stream_print();
 
 class Server with
-    interface IServer;    
-    function @rec (void) => bool is_finished;    
-    event _ServerEvent&& e_EVENT_SEND;    
+    interface IServer;
+    function @rec (void) => bool is_finished;
+    event _ServerEvent&& e_EVENT_SEND;
     event void e_FINISH_EVENT;
-    event void e_DELETE;    
+    event void e_DELETE;
 do
     var GoalManager goal_manager with
         this.server = outer;
-    end;    
+    end;
 
     var World world with
-        this.pingus_level = me.plf;
-        global:world = &this;
+        this.pingus_level = &me!.plf;
+        global:world = &&this;
     end;
 
     emit world.e_CREATE;
 
     function (_ServerEvent e) => void record do
-        if me.demostream.get() then
-            e.write(_deref(me.demostream));
+        if me!.demostream.get() then
+            e.write(_deref(me!.demostream));
         end
     end
 
@@ -70,7 +70,7 @@ do
     end
 
     function (void) => _PingusLevel get_plf do
-        return me.plf;
+        return me!.plf;
     end
 
     par/or do
@@ -98,12 +98,12 @@ do
                 )
             );
 
-            if me.action_holder.pop_action(_to_AN(action)) then
+            if me!.action_holder.pop_action(_to_AN(action)) then
                 var _SetActionPackage package;
-                package.action = action;            
-                emit pingu:request_set_action => &package;
-                if not package.result then 
-                    me.action_holder.push_action(_to_AN(action));
+                package.action = action;
+                emit pingu:request_set_action => &&package;
+                if not package.result then
+                    me!.action_holder.push_action(_to_AN(action));
                 end
             end
         end
@@ -116,7 +116,7 @@ do
             else/if server_event:type == _SE_END_EVENT then
                 // do nothing
             else/if server_event:type == _SE_PINGU_ACTION_EVENT then
-                emit do_pingu_action_event => (server_event, call/rec global:world:get_pingus().get_pingu(server_event:pingu_id));
+                emit do_pingu_action_event => (server_event, call/rec global:world:get_pingus()!.get_pingu(server_event:pingu_id));
             else
                 _assert(not "Unknown type");
             end
@@ -143,14 +143,14 @@ do
     with
         await e_DELETE;
 
-        //original FIXME: Any better place to put this? 
-        if me.demostream.get() then
-            //(*demostream) << "(end (time " << get_time() << "))" << std::endl;  
-            _stream_print(me.demostream, "(end (time ");
-            _stream_print(me.demostream, call/rec get_time());
-            _stream_print(me.demostream, "))");
-            _stream_print(me.demostream, _std__endl);
-        end        
+        //original FIXME: Any better place to put this?
+        if me!.demostream.get() then
+            //(*demostream) << "(end (time " << get_time() << "))" << std::endl;
+            _stream_print(me!.demostream, "(end (time ");
+            _stream_print(me!.demostream, call/rec get_time());
+            _stream_print(me!.demostream, "))");
+            _stream_print(me!.demostream, _std__endl);
+        end
     end
 
     emit world.e_DELETE;

@@ -29,8 +29,8 @@ class SmallMapImage with
     event float e_UPDATE;
 do
     /* Graphic surface for the generated rectanglar background of the small map */
-    var _Sprite&? sur = _new_Sprite();
-    finalize with _delete_obj(sur); end
+    var _Sprite&? sur = &_new_Sprite();
+    finalize with _delete_obj(&&sur!); end
 
     /* number of seconds till the smallmap will update itself */
     var float update_count = 0;
@@ -38,24 +38,24 @@ do
     /* The serial is used to track changes to the colmap */
     var u32 colmap_serial = 0;
 
-    finalize with _delete_obj(canvas); end
+    finalize with _delete_obj(&&canvas!); end
 
     function @rec (void) => void update_surface do
         var _uchar_ptr cbuffer;
-        var _CollisionMap&? colmap = _PTR2REF(global:world:get_colmap());
+        var _CollisionMap&? colmap = &_PTR2REF(global:world:get_colmap());
 
-        colmap_serial = colmap.get_serial();
+        colmap_serial = colmap!.get_serial();
 
-        canvas.lock();
+        canvas!.lock();
 
-        cbuffer = _PTR2REF((_uchar_ptr)canvas.get_data());
+        cbuffer = _PTR2REF((_uchar_ptr)(&&canvas!).get_data());
 
-        var int cmap_width  = colmap.get_width();
-        var int cmap_height = colmap.get_height();
+        var int cmap_width  = colmap!.get_width();
+        var int cmap_height = colmap!.get_height();
 
-        var int width  = canvas.get_width();
-        var int height = canvas.get_height();
-        var int pitch  = canvas.get_pitch();
+        var int width  = canvas!.get_width();
+        var int height = canvas!.get_height();
+        var int pitch  = canvas!.get_pitch();
 
         ///_assert(width < cmap_width and height < cmap_height);
         if width >= cmap_width or height >= cmap_height then
@@ -72,7 +72,7 @@ do
             loop x in width do
                 // Index on the smallmap canvas
                 var int i = y * pitch + 4 * x;
-                var int pixel = colmap.getpixel_fast(x*cmap_width/width, y*cmap_height/height);
+                var int pixel = colmap!.getpixel_fast(x*cmap_width/width, y*cmap_height/height);
 
                 if pixel == _GT_NOTHING then
                     _uchar_set(cbuffer, i + red, 0);
@@ -103,11 +103,12 @@ do
             end
         end
 
-        canvas.unlock();
+        canvas!.unlock();
 
         //original FIXME: surface -> clone -> displayFormat leaves room for
         // optimizations, clone isn't really needed
-        sur = _cSprite(canvas.clone());
+// TODO: should yield error (rebinding)
+        sur = &_cSprite(canvas!.clone());
     end
 
     function @rec (void) => _Sprite&& get_surface do
@@ -115,7 +116,7 @@ do
             call/rec update_surface();
         end
 
-        return &sur;
+        return &&sur!;
     end
 
     call/rec update_surface();

@@ -13,7 +13,7 @@ class SupermanAction with
     interface IAction;
     interface IPinguAction;
 do
-    pingu.ceu_action = &this;
+    pingu.ceu_action = &&this;
 
     function (int a) => bool change_allowed do
         return true;

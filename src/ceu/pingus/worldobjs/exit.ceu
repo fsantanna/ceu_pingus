@@ -3,6 +3,7 @@
 
 #include "../../c.ceu"
 #include "../../sdl.ceu"
+#include "../../engine/display/sprite.ceu"
 #include "../../engine/display/sprite3.ceu"
 #include "../iworld.ceu"
 #include "../worldobj.ceu"
@@ -30,7 +31,7 @@ do
         this.pos_giver = outer;
     end;
     call/rec smallmap_symbol.reload_by_name("core/misc/smallmap_exit");
-    sprite.reload_by_desc(&desc);
+    sprite.reload_by_desc(&&desc!);
 
     function (_FileReader&& reader) => void construct do
         //Unfortunately, we can't make `desc`/`sprite`/etc "private"
@@ -38,7 +39,7 @@ do
         //because this function's meant to be called in constructor
         //when the body is not executed yet
 
-        reader:read_desc  ("surface",  _deref(desc));
+        reader:read_desc  ("surface",  _deref(&&desc!));
         _reader_read_int(reader, "owner-id", owner_id);
 
         // Set default owner ID to 0
@@ -53,20 +54,21 @@ do
     function (Vector3f p) => void set_pos do pos = p; end
     function @rec (void) => Vector3f get_pos do return pos; end
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     finalize with
-        _delete_obj(desc);
-        _delete_obj(flag);
+        _delete_obj(&&desc!);
+        _delete_obj(&&flag!);
     end;
 
     par/or do
         every gc in global:draw do
-            _gc_color_draw2(gc, &flag, _toVector3f(pos) + _Vector3f(40, 0, 0.01)); //draw a bit later (on top of `sprite`)
+            _gc_color_draw2(gc, &&flag!, _toVector3f(pos) + _Vector3f(40, 0, 0.01)); 
+        //draw a bit later (on top of `sprite`)
         end
     with
         every e_STARTUP do
-            _colmap_removeD(global:world:get_colmap(), desc, (int)pos.x - sprite.get_width()/2, (int)pos.y - sprite.get_height());
+            _colmap_removeD(global:world:get_colmap(), &&desc!, (int)pos.x - sprite.get_width()/2, (int)pos.y - sprite.get_height());
         end
     with
         every smallmap in global:world:e_DRAW_SMALLMAP do
@@ -74,7 +76,7 @@ do
         end
     with
         every global:world:update do
-            loop pingu in global:world:get_pingus().all_pingus do
+            loop pingu in global:world:get_pingus()!.all_pingus do
                 // Make sure this particular exit is allowed for this pingu
                 if pingu:get_owner() != owner_id then
                     continue;

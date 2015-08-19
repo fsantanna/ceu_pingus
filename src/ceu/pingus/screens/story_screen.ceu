@@ -4,6 +4,7 @@
 #include "../../c.ceu"
 #include "../../sdl.ceu"
 #include "../../engine/gui/igui_component.ceu"
+#include "../../engine/gui/gui_manager.ceu"
 #include "../../engine/gui/surface_button.ceu"
 #include "../../engine/screen/screen.ceu"
 #include "../../engine/sound/sound.ceu"
@@ -131,7 +132,7 @@ do
     end
 
     par do
-        every mouse_click do            
+        every mouse_click do
             call/rec story_comp.next_text();
         end
     with
@@ -149,45 +150,48 @@ class StoryScreenComponent with
     var _WorldmapNS__WorldmapStory&& story;
     var bool m_credits;
 do
-    RECT_IS_AT(&me);
+    RECT_IS_AT(&&me);
 
     var Sprite background;
     var Sprite blackboard;
     call/rec background.reload_by_name("core/menu/wood");
     call/rec blackboard.reload_by_name("core/menu/blackboard");
 
-    var _std__string&? display_text = _new_String();
+    var _std__string&? display_text = &_new_String();
     var float time_passed  = 0;
     var bool page_displayed_completly = false;
-    var _std__vector_StoryPage&? pages = _new_Vector_StoryPage(story:get_pages());
-    var _StoryPage&? current_page = _new_StoryPage(pages.back());
+
+    var _std__vector_StoryPage&? pages_ = &_new_Vector_StoryPage(story:get_pages());
+    var _std__vector_StoryPage& pages = pages_!;
+
+    var _StoryPage&? current_page = &_new_StoryPage(pages.back());
     var Sprite page_surface;
-    call/rec page_surface.reload_by_desc(_addr(current_page.image));
+    call/rec page_surface.reload_by_desc(_addr(current_page!.image));
 
     finalize with
-        _delete_obj(display_text);
-        _delete_obj(pages);
-        _delete_obj(current_page);
-    end  
+        _delete_obj(&&display_text!);
+        _delete_obj(&&pages);
+        _delete_obj(&&current_page!);
+    end
 
     function @rec (void) => void next_text do
-        if not page_displayed_completly then  
+        if not page_displayed_completly then
             page_displayed_completly = true;
-            display_text = current_page.text;
-        else  
+            display_text! = current_page!.text;
+        else
             pages.pop_back();
-            if not pages.empty() then            
-                current_page = _PTR2REF(pages.back());
-                call/rec page_surface.reload_by_desc(_addr(current_page.image));
-                display_text = "";
+            if not pages.empty() then
+                current_page! = &_PTR2REF(pages.back());
+                call/rec page_surface.reload_by_desc(_addr(current_page!.image));
+                display_text! = "";
                 time_passed = 0;
                 page_displayed_completly = false;
             else
-                if m_credits then                    
+                if m_credits then
                     _ScreenManager__instance():replace_screen(
                         _std__make_shared_Credits(_Pathname("credits/pingus.credits", _Pathname__DATA_PATH))
                     );
-                else                    
+                else
                     _ScreenManager__instance():pop_screen();
                 end
             end
@@ -230,7 +234,7 @@ do
 
             gc:draw(_deref(page_surface.get()), _Vector2i(gc:get_width()/2, gc:get_height()/2 - 65));
 
-            gc:print_left(_Fonts__chalk_normal, _Vector2i(gc:get_width()/2  - 280, gc:get_height()/2 + 35), _deref(display_text));
+            gc:print_left(_Fonts__chalk_normal, _Vector2i(gc:get_width()/2  - 280, gc:get_height()/2 + 35), _deref(&&display_text!));
         end
     with
         every delta in global:update do
@@ -240,12 +244,12 @@ do
 
             time_passed = time_passed + delta;
 
-            if not page_displayed_completly then  
+            if not page_displayed_completly then
                 var _std__string__size_type len = 20.0 * time_passed;
-                var _std__string__size_type text_len = _UTF8__length(current_page.text);
-      
-                display_text = _UTF8__substr(current_page.text, 0, _Math__min(text_len, len));
-       
+                var _std__string__size_type text_len = &_UTF8__length(current_page!.text);
+
+                display_text! = &_UTF8__substr(current_page!.text, 0, _Math__min(text_len, len));
+
                 if text_len < len then
                     page_displayed_completly = true;
                 end
@@ -258,43 +262,43 @@ end
 
 class StoryScreen with
     interface Screen;
-do    
+do
     var GUIManager gui_manager with
-        this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
-        this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
+        this.me = &_new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
+        this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
         this.screen = outer;
-        this.gui_manager = &gui_manager;
+        this.gui_manager = &&gui_manager;
     end;
 
     var StoryScreenComponent story_comp with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
 
-        var _StoryScreen&? story_screen = (_StoryScreen&&)&me;
-        this.story = _PTR2REF(story_screen.story.get());
-        this.m_credits = story_screen.m_credits;
+        var _StoryScreen&? story_screen = &me;
+        this.story = &_PTR2REF(story_screen!.story.get());
+        this.m_credits = story_screen!.m_credits;
     end;
 
     var StoryScreenContinueButton continue_button with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
         this.story_comp = story_comp;
     end;
 
-    gui_manager.add(&story_comp.me);
-    gui_manager.add(&continue_button.me);
+    gui_manager.add(&&story_comp.me);
+    gui_manager.add(&&continue_button.me);
 
     var StoryScreenSkipButton&&? skip_button = null;
 
     if _globals__developer_mode then
         skip_button = spawn StoryScreenSkipButton with
-            this.me = _new_GUI_Component();
-            this.me.ceu = &this;
-            this.story_comp = &story_comp;
+            this.me = &_new_GUI_Component();
+            this.me.ceu = &&this;
+            this.story_comp = &&story_comp;
         end;
-        gui_manager.add(&skip_button:me);
+        gui_manager.add(&&skip_button!:me);
     end
 
     par/or do
@@ -313,12 +317,12 @@ do
     with
         every (width, height) in resize do
             call/rec continue_button.set_pos(width/2 + 260, height/2 + 212);
-            if skip_button then
-                call/rec skip_button:set_pos(width - 4, height - 26);
+            if skip_button? then
+                call/rec skip_button!:set_pos(width - 4, height - 26);
             end
         end
     with
-        var _StoryScreen&& e = await DELETE_STORY_SCREEN until (e == &me);
+        var _StoryScreen&& e = await DELETE_STORY_SCREEN until (e == &&me!);
     end
 end
 

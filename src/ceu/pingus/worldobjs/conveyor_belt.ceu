@@ -4,6 +4,7 @@
 #include "../../c.ceu"
 #include "../../sdl.ceu"
 #include "../../math/vector3f.ceu"
+#include "../../engine/display/sprite.ceu"
 #include "../iworld.ceu"
 #include "../worldobj.ceu"
 #include "../ipingu_holder.ceu"
@@ -28,7 +29,7 @@ do
     call/rec right_sur.reload_by_name("worldobjs/conveyorbelt_right");
     call/rec middle_sur.reload_by_name("worldobjs/conveyorbelt_middle");
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end
     function (void) => float get_z_pos do return pos.z; end
@@ -69,7 +70,7 @@ do
             middle_sur.update();
             right_sur.update();
 
-            loop pingu in global:world:get_pingus().all_pingus do
+            loop pingu in global:world:get_pingus()!.all_pingus do
                 if pingu:get_x() > pos.x and pingu:get_x() < pos.x + 15*(float)(width+2) and
                    pingu:get_y() > pos.y-2 and pingu:get_y() < pos.y+10 then
                     var Vector3f ppos = call/rec pingu:get_pos();

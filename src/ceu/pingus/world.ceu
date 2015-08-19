@@ -41,7 +41,7 @@ native/pre do
     ##include "pingus/resource.hpp"
     ##define Resource__load_surface Resource::load_surface
 
-    ##define opeq(x, y) *x = y    
+    ##define opeq(x, y) *x = y
 
     ##include "util/container.h"
     ##define new_Container() new Container()
@@ -66,7 +66,7 @@ native/pre do
     ##define vecget(v, i) v[i]
     ##define vecget_addr(v, i) &((*v)[i])
 
-    ##define new_OverrideFileReader(v, i, b) new OverrideFileReader((*v)[i], b)    
+    ##define new_OverrideFileReader(v, i, b) new OverrideFileReader((*v)[i], b)
 
     ##define new_std__vector_FileReader(package) new std::vector<FileReader>(package->reader->read_section("objects").get_sections())
     ##define new_PrefabFile(x) new PrefabFile(PrefabFile::from_resource(x))
@@ -121,17 +121,18 @@ class World with
     event _CreationPackage&& create_rain_generator;
     event _CreationPackage&& create_groundpiece;
 do
-    var _Container&? objs = _new_Container();
-    finalize with _delete_obj(objs); end
+    var _Container&? objs_ = &_new_Container();
+    finalize with _delete_obj(&&objs_!); end
+    var _Container& objs = objs_!;
 
     var bool do_armageddon = false;
     var int armageddon_count = 0;
     var int game_time = 0;
-    var _Color&? ambient_light = _new_Color(pingus_level.get_ambient_light());
-    finalize with _delete_obj(ambient_light); end
+    var _Color&? ambient_light = &_new_Color(pingus_level!.get_ambient_light());
+    finalize with _delete_obj(&&ambient_light!); end
 
     var PinguHolder holder with
-        this.number_of_allowed = pingus_level.get_number_of_pingus();
+        this.number_of_allowed = pingus_level!.get_number_of_pingus();
     end;
 
     var PinguParticlesHolder pingu_particles_holder;
@@ -140,7 +141,7 @@ do
     var SnowParticlesHolder snow_particles_holder;
 
     var GroundMap gfx_map with
-        this.gmap = _new_GroundMap(pingus_level.get_size().width, pingus_level.get_size().height);
+        this.gmap = &_new_GroundMap(pingus_level!.get_size().width, pingus_level!.get_size().height);
     end;
 
     finalize with global:world = null; end
@@ -204,19 +205,19 @@ do
     end
 
     function (void) => int get_width do
-        return gfx_map.gmap.get_width();
+        return gfx_map.gmap!.get_width();
     end
 
     function (void) => int get_height do
-        return gfx_map.gmap.get_height();
+        return gfx_map.gmap!.get_height();
     end
 
     function (void) => _GroundMap&& get_gfx_map do
-        return &gfx_map.gmap;
+        return &&gfx_map.gmap!;
     end
 
     function (void) => _CollisionMap&& get_colmap do
-        return gfx_map.gmap.colmap.get();
+        return gfx_map.gmap!.colmap.get();
     end
 
     function (void) => IPinguHolder&? get_pingus do
@@ -264,13 +265,13 @@ do
     end
 
     function (_CollisionMask&& mask, int x, int y, int type) => void put do
-        gfx_map.gmap.put(mask:get_surface(), x, y);
-        gfx_map.gmap.colmap:put(_deref(mask), x, y, _to_GT(type));
+        gfx_map.gmap!.put(mask:get_surface(), x, y);
+        gfx_map.gmap!.colmap:put(_deref(mask), x, y, _to_GT(type));
     end
 
     function (_CollisionMask&& mask, int x, int y) => void remove do
-        gfx_map.gmap.remove(mask:get_surface(), x, y);
-        gfx_map.gmap.colmap:remove(_deref(mask), x, y);
+        gfx_map.gmap!.remove(mask:get_surface(), x, y);
+        gfx_map.gmap!.colmap:remove(_deref(mask), x, y);
     end
 
     function (_const_char_string str, int x, int y, int t) => void put_str do
@@ -289,26 +290,29 @@ do
 
     par/or do
         every e_CREATE do
-            var _const_std__vector_FileReader&& ov = _addr(pingus_level.get_objects());
-            var _CreationPackage&& pack = _new_CreationPackage();            
+            var _const_std__vector_FileReader&& ov = _addr(pingus_level!.get_objects());
+
+            var _CreationPackage&? pack_ = &_new_CreationPackage();
+            var _CreationPackage& pack = pack_!;
+
             loop i in ov:size() do
-                pack:reader = _PTR2REF((_FileReader&&)_vecget_addr(ov, i));
-                pack:result.clear();                
-                emit create => pack;
+                pack.reader = _PTR2REF((_FileReader&&)_vecget_addr(ov, i));
+                pack.result.clear();
+                emit create => &&pack;
             end
-            _delete_obj(pack);
+            _delete_obj(&&pack);
 
             //first: there are few world objects (like pingu_holder) which are not created by WorldObjFactory up there
             //second: when you try to find an object by id, you want all objects to be already created (teleporters, doors)
             //third: now objects are sorted and will receive STARTUP in necessary order
-            loop i in objs.size() do                
+            loop i in objs.size() do
                 emit ((IWorldObj&&)objs.get(i)):e_STARTUP;
             end
             objs.cleanup();
         end
     with
         every wgc in e_DRAW do
-            wgc:light().fill_screen(_Color(_deref(ambient_light)));
+            wgc:light().fill_screen(_Color(_deref(&&ambient_light!)));
 
             if wgc != null then
                 emit global:draw => wgc;
@@ -333,7 +337,7 @@ do
 
             objs.cleanup(); //actually necessary before iterating `objs` only
 
-            global:world = _PTR2REF(&this);
+            global:world = &_PTR2REF(&&this);
             emit update;
         end
     with
@@ -344,52 +348,55 @@ do
         end
     with
         every package in create_group do
-            var _std__vector_FileReader&? sections = _new_std__vector_FileReader(package);
-            var _CreationPackage&& new_package = _new_CreationPackage();
+            var _std__vector_FileReader&? sections = &_new_std__vector_FileReader(package);
+            var _CreationPackage&? new_package_ = &_new_CreationPackage();
+            var _CreationPackage& new_package = new_package_!;
 
-            loop i in sections.size() do
-                new_package:reader = _vecget_addr(sections, i);
-                new_package:result.clear();
-                emit create_object => new_package;
+            loop i in sections!.size() do
+                new_package.reader = _vecget_addr(&&sections!, i);
+                new_package.result.clear();
+                emit create_object => &&new_package;
                 //TODO: recursive `create` emitting is not working, but may be required
                 //     (`create_object` -> ... -> `create_object`)
 
-                loop j in new_package:result.size() do
-                    if _vecget(new_package:result, j) then
-                        package:result.push_back(_vecget(new_package:result, j));
+                loop j in new_package.result.size() do
+                    if _vecget(new_package.result, j) then
+                        package:result.push_back(_vecget(new_package.result, j));
                     end
                 end
 
             end
-            _delete_obj(sections);
-            _delete_obj(new_package);
+            _delete_obj(&&sections!);
+            _delete_obj(&&new_package);
         end
     with
         every package in create_prefab do
-            var _std__string&? name = _new_String();
-            _string_read_string(name, package:reader, "name");
+            var _std__string&? name = &_new_String();
+            _string_read_string(&&name!, package:reader, "name");
 
             var Vector3f pos;
             _read_position(package:reader, pos);
 
-            var _PrefabFile&? prefab = _new_PrefabFile(_deref(name));
-            var _FileReader&? overrides = _new_FileReader();
-            package:reader:read_section("overrides", _deref(overrides));
+            var _PrefabFile&? prefab = &_new_PrefabFile(_deref(&&name!));
+            var _FileReader&? overrides = &_new_FileReader();
+            package:reader:read_section("overrides", _deref(&&overrides!));
 
-            var _const_std__vector_FileReader&& objects = _addr(prefab.get_objects());
-            var _CreationPackage&& new_package = _new_CreationPackage();
+            var _const_std__vector_FileReader&& objects = _addr(prefab!.get_objects());
+
+            var _CreationPackage&? new_package_ = &_new_CreationPackage();
+            var _CreationPackage& new_package = new_package_!;
 
             loop i in objects:size() do
-                var _OverrideFileReader&? override_reader = _new_OverrideFileReader(objects, i, _deref(overrides));
-                new_package:reader = _PTR2REF(override_reader);
-                new_package:result.clear();
-                emit create_object => new_package;
+                var _OverrideFileReader&? override_reader = &_new_OverrideFileReader(objects, i, _deref(&&overrides!));
+                new_package.reader = _PTR2REF(&&override_reader!);
+                new_package.result.clear();
+                emit create_object => &&new_package;
                 //TODO: recursive `create` emitting is not working, but may be required
                 //     (`create_object` -> ... -> `create_object`)
 
-                loop j in new_package:result.size() do
-                    if _vecget(new_package:result, j) then
-                        var IWorldObj&& wobject = (IWorldObj&&)_vecget(new_package:result, j);
+                loop j in new_package.result.size() do
+                    if _vecget(new_package.result, j) then
+                        var IWorldObj&& wobject = (IWorldObj&&)_vecget(new_package.result, j);
                         wobject:pos.x = wobject:pos.x + pos.x;
                         wobject:pos.y = wobject:pos.y + pos.y;
                         wobject:pos.z = wobject:pos.z + pos.z;
@@ -397,10 +404,10 @@ do
                     end
                 end
             end
-            _delete_obj(name);
-            _delete_obj(prefab);
-            _delete_obj(overrides);
-            _delete_obj(new_package);
+            _delete_obj(&&name!);
+            _delete_obj(&&prefab!);
+            _delete_obj(&&overrides!);
+            _delete_obj(&&new_package);
         end
     with
         every package in create_object do
@@ -445,7 +452,7 @@ do
     with
         every package in create_conveyorbelt do
             spawn ConveyorBelt with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
                 _read_position(package:reader, this.pos);
                 if not _reader_read_int(package:reader, "repeat", this.width) then
@@ -458,7 +465,7 @@ do
     with
         every package in create_entrance do
             spawn Entrance in entrances with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
                 this.direction = ED_MISC;
                 this.release_rate = 150;
@@ -473,7 +480,8 @@ do
                     this.owner_id = 0;
                 end
 
-                var _std__string&? direction_str = _new_String();
+                var _std__string&? direction_str_ = &_new_String();
+                var _std__string& direction_str = direction_str_!;
                 _string_read_string(direction_str, package:reader, "direction");
 
                 if direction_str == "left" then
@@ -483,40 +491,40 @@ do
                 else/if direction_str == "misc" then
                     this.direction = ED_MISC;
                 else
-                    _log_error("unknown direction: '%1%'", direction_str);
+                    _log_error("unknown direction: '%1%'", &&direction_str);
                     this.direction = ED_MISC;
                 end
 
-                _delete_obj(direction_str);
+                _delete_obj(&&direction_str);
             end;
         end;
     with
         every package in create_exit do
             spawn Exit with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
-                this.desc = _new_ResDescriptor();
+                this.desc = &_new_ResDescriptor();
 
                 _read_position(package:reader, this.pos);
                 this.construct(package:reader); //can't put reference initiation there =(
 
-                this.flag = _new_SpriteA(_scc2("core/misc/flag", _StringUtil__to_string(this.owner_id)));
+                this.flag = &_new_SpriteA(_scc2("core/misc/flag", _StringUtil__to_string(this.owner_id)));
             end;
         end
     with
         every package in create_fake_exit do
             spawn FakeExit with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
                 _read_position(package:reader, this.pos);
             end;
         end
     with
         every package in create_groundpiece do
             spawn Groundpiece with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
                 _read_position(package:reader, this.pos);
-                this.desc = _new_ResDescriptor();
-                package:reader:read_desc("surface", _deref(this.desc));
+                this.desc = &_new_ResDescriptor();
+                package:reader:read_desc("surface", _deref(&&this.desc!));
                 this.gptype = _GT_GROUND;
                 _reader_read_Groundtype(package:reader, "type", this.gptype);
             end;
@@ -524,37 +532,37 @@ do
     with
         every package in create_guillotine do
             spawn Guillotine with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
                 _read_position(package:reader, this.pos);
             end;
         end
     with
         every package in create_hammer do
             spawn Hammer with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
                 _read_position(package:reader, this.pos);
             end;
         end
     with
         every package in create_hotspot do
             spawn Hotspot with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
-                var _ResDescriptor&? desc = _new_ResDescriptor();
+                var _ResDescriptor&? desc = &_new_ResDescriptor();
 
                 _read_position(package:reader, this.pos);
-                package:reader:read_desc  ("surface",  _deref(desc));
+                package:reader:read_desc  ("surface",  _deref(&&desc!));
                 _reader_read_float(package:reader, "parallax", this.para);
 
-                this.sprite = _new_SpriteA(_deref(desc));
+                this.sprite = &_new_SpriteA(_deref(&&desc!));
 
-                _delete_obj(desc);
+                _delete_obj(&&desc!);
             end;
         end
     with
         every package in create_iceblock do
             spawn IceBlock with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
                 _read_position(package:reader, this.pos);
                 if not _reader_read_int(package:reader, "repeat", this.width) then
@@ -566,45 +574,45 @@ do
     with
         every package in create_laser_exit do
             spawn LaserExit with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
                 _read_position(package:reader, this.pos);
             end;
         end
     with
         every package in create_liquid do
             spawn Liquid with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
                 this.width = 0;
 
-                var _ResDescriptor&? desc = _new_ResDescriptor();
+                var _ResDescriptor&? desc = &_new_ResDescriptor();
 
                 _read_position(package:reader, this.pos);
-                package:reader:read_desc  ("surface",  _deref(desc));
+                package:reader:read_desc  ("surface",  _deref(&&desc!));
                 _reader_read_int(package:reader, "repeat", this.width);
 
-                this.sprite = _new_SpriteA(_deref(desc));
+                this.sprite = &_new_SpriteA(_deref(&&desc!));
 
-                _delete_obj(desc);
+                _delete_obj(&&desc!);
             end;
         end
     with
         every package in create_rain_generator do
             spawn RainGenerator with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
             end;
         end
     with
         every package in create_smasher do
             spawn Smasher with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
                 _read_position(package:reader, this.pos);
             end;
         end
     with
         every package in create_snow_generator do
             spawn SnowGenerator with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
                 this.intensity = 1;
                 _reader_read_float(package:reader, "intensity", this.intensity);
@@ -613,25 +621,25 @@ do
     with
         every package in create_solidcolor_background do
             spawn SolidColorBackground with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
-                this.color = _new_Color();
-                if not package:reader:read_colori("colori", _deref(this.color)) then
-                    package:reader:read_colorf("color", _deref(this.color));
+                this.color = &_new_Color();
+                if not package:reader:read_colori("colori", _deref(&&this.color!)) then
+                    package:reader:read_colorf("color", _deref(&&this.color!));
                 end
             end;
         end
     with
         every package in create_spike do
             spawn Spike with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
                 _read_position(package:reader, this.pos);
             end;
         end
     with
         every package in create_starfield_background do
             spawn StarfieldBackground with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
                 this.small_stars_count = 100;
                 this.middle_stars_count = 50;
@@ -645,13 +653,13 @@ do
     with
         every package in create_surface_background do
             spawn SurfaceBackground with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
                 this.para_x = 0.5;
                 this.para_y = 0.5;
                 this.scroll_x = 0;
                 this.scroll_y = 0;
-                this.color = _new_Color(0, 0, 0, 0);
+                this.color = &_new_Color(0, 0, 0, 0);
                 this.stretch_x = false;
                 this.stretch_y = false;
                 this.keep_aspect = false;
@@ -666,11 +674,11 @@ do
                     this.pos.z = -150;
                 end
 
-                var _ResDescriptor&? desc = _new_ResDescriptor();
-                package:reader:read_desc("surface",  _deref(desc));
+                var _ResDescriptor&? desc = &_new_ResDescriptor();
+                package:reader:read_desc("surface",  _deref(&&desc!));
 
-                if not package:reader:read_colori("colori", _deref(this.color)) then
-                    package:reader:read_colorf("color", _deref(this.color));
+                if not package:reader:read_colori("colori", _deref(&&this.color!)) then
+                    package:reader:read_colorf("color", _deref(&&this.color!));
                 end
 
                 _reader_read_float(package:reader, "para-x", this.para_x);
@@ -684,56 +692,57 @@ do
 
                 _reader_read_bool(package:reader, "keep-aspect", this.keep_aspect);
 
-                if not this.stretch_x and not this.stretch_y and this.color.a == 0 then
+                if not this.stretch_x and not this.stretch_y and this.color!.a == 0 then
                     //orignal FIXME: would be nice to allow surface manipulation with
                     // animated sprites, but it's not that easy to do
-                    this.sprite = _new_SpriteA(_deref(desc));
+                    this.sprite = &_new_SpriteA(_deref(&&desc!));
                 else
-                    var _Surface&? surface = _new_Surface();
-                    _opeq(surface, _Resource__load_surface(_deref(desc)));
+                    var _Surface&? surface_ = &_new_Surface();
+                    var _Surface& surface = surface_!;
+                    _opeq(&&surface, _Resource__load_surface(_deref(&&desc!)));
 
-                    if this.color.a != 0 and surface.is_indexed() then
+                    if this.color!.a != 0 and surface.is_indexed() then
                         if surface.has_colorkey() then
-                            _opeq(surface, surface.convert_to_rgba());
+                            _opeq(&&surface, surface.convert_to_rgba());
                         else
-                            _opeq(surface, surface.convert_to_rgb());
+                            _opeq(&&surface, surface.convert_to_rgb());
                         end
                     end
 
-                    surface.fill(_deref(this.color));
+                    surface.fill(_deref(&&this.color!));
 
                     // Scaling Code
                     if this.stretch_x and this.stretch_y then
-                        _opeq(surface, surface.scale(global:world:get_width(), global:world:get_height()));
+                        _opeq(&&surface, surface.scale(global:world:get_width(), global:world:get_height()));
                     else/if this.stretch_x and not this.stretch_y then
                         if this.keep_aspect then
                             var float aspect = (float)surface.get_height() / (float)surface.get_width();
-                            _opeq(surface, surface.scale(global:world:get_width(), (int)((float)global:world:get_width()*aspect)));
+                            _opeq(&&surface, surface.scale(global:world:get_width(), (int)((float)global:world:get_width()*aspect)));
                         else
-                            _opeq(surface, surface.scale(global:world:get_width(), surface.get_height()));
+                            _opeq(&&surface, surface.scale(global:world:get_width(), surface.get_height()));
                         end
                     else/if not this.stretch_x and this.stretch_y then
                         if this.keep_aspect then
                             var float aspect = (float)surface.get_width() / (float)surface.get_height();
-                            _opeq(surface, surface.scale((int)((float)global:world:get_height()*aspect), global:world:get_height()));
+                            _opeq(&&surface, surface.scale((int)((float)global:world:get_height()*aspect), global:world:get_height()));
                         else
-                            _opeq(surface, surface.scale(surface.get_width(), global:world:get_height()));
+                            _opeq(&&surface, surface.scale(surface.get_width(), global:world:get_height()));
                         end
                     end
 
-                    this.sprite = _new_SpriteA(_deref(surface));
+                    this.sprite = &_new_SpriteA(_deref(&&surface));
                 end
 
-                _delete_obj(desc);
+                _delete_obj(&&desc!);
             end;
         end
     with
         every package in create_switchdoor_door do
             spawn SwitchDoorDoor in switch_door_doors with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
-                this.id = _new_String();
-                _string_read_string(this.id, package:reader, "id");
+                this.id = &_new_String();
+                _string_read_string(&&this.id!, package:reader, "id");
 
                 _read_position(package:reader, this.pos);
 
@@ -744,36 +753,36 @@ do
     with
         every pack4ge in create_switchdoor_switch do
             spawn SwitchDoorSwitch with
-                pack4ge:result.push_back(&this) finalize with end;
+                pack4ge:result.push_back(&&this) finalize with end;
 
-                this.m_target = _new_String();
-                _string_read_string(this.m_target, pack4ge:reader, "target-id");
+                this.m_target = &_new_String();
+                _string_read_string(&&this.m_target!, pack4ge:reader, "target-id");
                 _read_position(pack4ge:reader, this.pos);
             end;
         end
     with
         every packag3 in create_teleporter do
             spawn Teleporter with
-                packag3:result.push_back(&this) finalize with end;
+                packag3:result.push_back(&&this) finalize with end;
 
                 _read_position(packag3:reader, this.pos);
-                this.target_id = _new_String();
-                _string_read_string(this.target_id, packag3:reader, "target-id");
+                this.target_id = &_new_String();
+                _string_read_string(&&this.target_id!, packag3:reader, "target-id");
             end;
         end
     with
         every package in create_teleporter_target do
             spawn TeleporterTarget in teleporter_targets with
-                package:result.push_back(&this) finalize with end;
+                package:result.push_back(&&this) finalize with end;
 
-                this.id = _new_String();
-                _string_read_string(this.id, package:reader, "id");
+                this.id = &_new_String();
+                _string_read_string(&&this.id!, package:reader, "id");
                 _read_position(package:reader, this.pos);
             end;
         end
     with
         await e_DELETE;
-    end    
+    end
 
     objs.cleanup();
     loop i in objs.size() do

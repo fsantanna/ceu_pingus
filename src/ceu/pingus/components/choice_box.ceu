@@ -34,24 +34,24 @@ class ChoiceBox with
     function (_const_char_string str) => void add_choice;
     function (int choice) => void set_current_choice;
 do
-    var _GUI_RectComponent&? rect = (_GUI_RectComponent&&)&me;
+    var _GUI_RectComponent&? rect = &me;
     var int current_choice = 0;
-    var _std__vector_String&? choices = _new_Vector_String();
+    var _std__vector_String&? choices = &_new_Vector_String();
 
-    finalize with _delete_obj(choices); end
+    finalize with _delete_obj(&&choices!); end
 
-    RECT_IS_AT(&rect);
+    RECT_IS_AT(&&rect!);
 
     function (int x, int y) => void shift_pos do
-        rect.set_rect(_Rect(_Vector2i(rect.rect.left + x, rect.rect.top + y), rect.rect.get_size()));        
+        rect!.set_rect(_Rect(_Vector2i(rect!.rect.left + x, rect!.rect.top + y), rect!.rect.get_size()));
     end
 
     function (_const_char_string str) => void add_choice do
-        choices.push_back(str);
+        choices!.push_back(str);
     end
 
     function (int choice) => void set_current_choice do
-        if choice >= 0 and choice < choices.size() then
+        if choice >= 0 and choice < choices!.size() then
             current_choice = choice;
         end
     end
@@ -59,38 +59,39 @@ do
     par do
         every gc in draw do
             if _globals__developer_mode then
-                gc:draw_rect(rect.rect, _Color(0, 255, 255)) finalize with end;
+                gc:draw_rect(rect!.rect, _Color(0, 255, 255)) finalize with end;
             end
 
-            if not choices.empty() then  
-                if current_choice >= 0 and current_choice < choices.size() then          
-                    gc:print_left(_Fonts__chalk_normal, _Vector2i(rect.rect.left, rect.rect.top) finalize with end, "<");      
-                    gc:print_right(_Fonts__chalk_normal, _Vector2i(rect.rect.right, rect.rect.top) finalize with end, ">");
+            if not choices!.empty() then
+                if current_choice >= 0 and current_choice < choices!.size() then
+                    gc:print_left(_Fonts__chalk_normal, 
+                    _Vector2i(rect!.rect.left, rect!.rect.top) finalize with end, "<");
+                    gc:print_right(_Fonts__chalk_normal, _Vector2i(rect!.rect.right, rect!.rect.top) finalize with end, ">");
 
-                    gc:print_center(_Fonts__chalk_normal, _Vector2i(rect.rect.left + rect.rect.get_width()/2, rect.rect.top) finalize with end, choices.at(current_choice));
-                end    
+                    gc:print_center(_Fonts__chalk_normal, _Vector2i(rect!.rect.left + rect!.rect.get_width()/2, rect!.rect.top) finalize with end, choices!.at(current_choice));
+                end
             end
         end
     with
         every (x, y) in mouse_press do
-            if not choices.empty() then    
+            if not choices!.empty() then
                 var int last_current_choice = current_choice;
-                x = x - rect.rect.left;
-              
-                if x > rect.rect.get_width()/2 then                
+                x = x - rect!.rect.left;
+
+                if x > rect!.rect.get_width()/2 then
                     current_choice = current_choice + 1;
-                    if current_choice >= choices.size() then
+                    if current_choice >= choices!.size() then
                         current_choice = 0;
-                    end                
+                    end
                 else
                     current_choice = current_choice - 1;
                     if current_choice < 0 then
-                        current_choice = choices.size() - 1;
+                        current_choice = choices!.size() - 1;
                     end
                 end
-      
+
                 if last_current_choice != current_choice then
-                    emit changed => choices.at(current_choice).c_str();
+                    emit changed => choices!.at(current_choice).c_str();
                 end
             end
         end

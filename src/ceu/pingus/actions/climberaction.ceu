@@ -12,7 +12,7 @@ class ClimberAction with
     interface IAction;
     interface IPinguAction;
 do
-    pingu.ceu_action = &this;
+    pingu.ceu_action = &&this;
 
     function (int a) => bool change_allowed do
         return (a==_A_FLOATER or a==_A_BOMBER or a==_A_JUMPER);

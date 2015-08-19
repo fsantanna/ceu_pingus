@@ -4,8 +4,8 @@
 #include "../../c.ceu"
 #include "../../sdl.ceu"
 #include "../../engine/display/sprite.ceu"
-#include "../../engine/gui/igui_component.ceu"
 #include "../../math/vector2i.ceu"
+#include "../../engine/gui/igui_component.ceu"
 #include "../../proxies/eventproxy.ceu"
 #include "../../proxies/pointerproxy.ceu"
 #include "../../proxies/primarybuttonproxy.ceu"
@@ -13,7 +13,7 @@
 #include "../iserver.ceu"
 #include "ibutton_panel.ceu"
 
-native/pre do    
+native/pre do
     ##include "engine/display/display.hpp"
     ##include "engine/display/drawing_context.hpp"
     ##include "engine/display/sprite.hpp"
@@ -42,10 +42,10 @@ native/pre do
     ##define Fonts__pingus_small Fonts::pingus_small
     ##define make_Sprite Sprite
 
-    struct ActionButton 
+    struct ActionButton
     {
         ActionName::Enum name;
-        Sprite sprite;        
+        Sprite sprite;
     };
 end
 
@@ -59,45 +59,47 @@ class ButtonPanel with
     interface IButtonPanel;
     var IServer& server;
 do
-    var _GUI_RectComponent&? button_panel = (_GUI_RectComponent&&)&me;
+    var _GUI_RectComponent& button_panel = &me;
 
-    RECT_IS_AT(&button_panel);
+    RECT_IS_AT(&&button_panel);
 
     var Sprite background;
     var Sprite highlight;
-    call/rec background.reload_by_name("core/buttons/buttonbackground");    
+    call/rec background.reload_by_name("core/buttons/buttonbackground");
     call/rec highlight.reload_by_name("core/buttons/buttonbackgroundhl");
 
     var int current_button = 0;
     var int tip_button = 0;
     var bool show_tip = false;
 
-    var _ActionHolder&? aholder_ = _addr(_deref(server.me.get_action_holder()));
-    var _Vector_ActionName&? actions = _new_Vector_ActionName(aholder_.get_available_actions());
+    var _ActionHolder&? aholder_ = &_addr(_deref(server.me!.get_action_holder()));
+    var _Vector_ActionName&? actions = &_new_Vector_ActionName(aholder_!.get_available_actions());
+    var _Vector_ActionName& actions_ = actions!;
 
     // Sort the action so that they always have the same order in the panel
-    _std__sort(actions.begin(), actions.end());
+    _std__sort(actions_.begin(), actions_.end());
 
-    var _Vector_ActionButton&? buttons = _new_Vector_ActionButton(actions.size());    
-    finalize with _delete_obj(buttons); end
+    var _Vector_ActionButton&? buttons_ = &_new_Vector_ActionButton(actions_.size());
+        finalize with _delete_obj(&&buttons_!); end
+    var _Vector_ActionButton& buttons = buttons_!;
 
-    loop/100 i in actions.size() do        
-        buttons.at(i).name   = _PTR2REF(actions.at(i));
-        buttons.at(i).sprite = _make_Sprite(_scc3("pingus/player0/", _ActionName__to_string(actions.at(i)), "/right"));
+    loop/100 i in actions_.size() do
+        buttons.at(i).name   = &_PTR2REF(actions_.at(i));
+        buttons.at(i).sprite = &_make_Sprite(_scc3("pingus/player0/", _ActionName__to_string(actions_.at(i)), "/right"));
         buttons.at(i).sprite.set_hotspot(_origin_center, 0, 0);
-        buttons.at(i).sprite.set_play_loop(true);        
+        buttons.at(i).sprite.set_play_loop(true);
     end
 
-    _delete_obj(actions);
-  
+    _delete_obj(actions_);
+
     function (void) => int get_action_name do
         return buttons[current_button].name;
     end
 
     function (int n) => void set_button do
-        if n >= 0 or n < ((int)buttons.size()-1) then  
-            current_button = n;  
-        else  
+        if n >= 0 or n < ((int)buttons.size()-1) then
+            current_button = n;
+        else
             //original FIXME: Play 'boing' sound here
         end
     end
@@ -120,8 +122,9 @@ do
     end
 
     par do
-        every gc in draw do        
-            var _ActionHolder&? aholder = _addr(_deref(server.me.get_action_holder()));
+        every gc in draw do
+            var _ActionHolder&? aholder_ = &_addr(_deref(server.me!.get_action_holder()));
+            var _ActionHolder& aholder = aholder_!;
 
             loop/100 i in buttons.size() do
                 var Vector3f pos;
@@ -136,15 +139,15 @@ do
 
                 gc:draw(buttons.at(i).sprite, _Vector2i(pos.x + 20, pos.y + 16));
 
-                if _globals__developer_mode then                                        
+                if _globals__developer_mode then
                     gc:print_left(_Fonts__pingus_small, _Vector2i(pos.x + 46, pos.y + 5),
-                                  _scc3(_SU2str(aholder.get_available(buttons.at(i).name)), " / ", _SU2str(aholder.get_used(buttons.at(i).name))));                    
+                                  _scc3(_SU2str(aholder.get_available(buttons.at(i).name)), " / ", _SU2str(aholder.get_used(buttons.at(i).name))));
                 else
                     gc:print_center(_Fonts__pingus_small, _Vector2i(pos.x + 46, pos.y + 5),
                                     _SU2str(aholder.get_available(buttons.at(i).name)));
                 end
 
-                if show_tip and tip_button == i then    
+                if show_tip and tip_button == i then
                     gc:print_left(_Fonts__pingus_small, _Vector2i(pos.x + 65, pos.y + 5),
                                   _ActionName__to_screenname(buttons.at(i).name));
                 end

@@ -6,6 +6,7 @@
 #include "../../string.ceu"
 #include "../../engine/gui/igui_component.ceu"
 #include "../../engine/gui/surface_button.ceu"
+#include "../../engine/gui/gui_manager.ceu"
 #include "../../engine/screen/screen.ceu"
 #include "../../engine/sound/sound.ceu"
 #include "../../math/vector2i.ceu"
@@ -51,7 +52,7 @@ native/pre do
     ##define Fonts__chalk_small Fonts::chalk_small
 
     ##define std__make_shared_StoryScreen std::make_shared<StoryScreen>
-    ##define Pathname__DATA_PATH Pathname::DATA_PATH    
+    ##define Pathname__DATA_PATH Pathname::DATA_PATH
 
     ##define std__vector_std__string std::vector<std::string>
 
@@ -101,7 +102,7 @@ do
     end
 
     par do
-        every mouse_click do            
+        every mouse_click do
             parent.close();
             _Sound__PingusSound__play_sound("yipee");
         end
@@ -117,14 +118,14 @@ end
 class Credits with
     interface ICredits;
 do
-    var _Credits&? credits_screen = (_Credits&&)&me;
+    var _Credits&? credits_screen = &me;
     var GUIManager gui_manager with
-        this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
-        this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
+        this.me = &_new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
+        this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
         this.screen = outer;
-        this.gui_manager = &gui_manager;
+        this.gui_manager = &&gui_manager;
     end;
 
     var Sprite background;
@@ -136,56 +137,56 @@ do
 
     var float end_offset = 0;
     var float offset = 0;
-    var _std__vector_std__string&? credits = _new_Vector_String();
-    var _SceneContext&? scene_context = _new_SceneContext();
+    var _std__vector_std__string&? credits = &_new_Vector_String();
+    var _SceneContext&? scene_context = &_new_SceneContext();
 
     var CreditsOkButton button with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
         this.parent = outer;
     end;
 
-    gui_manager.add(&button.me);
+    gui_manager.add(&&button.me);
 
     // The credits vector holds the strings to display. The first
     // character of each string is a special character, which indicates
     // the size of the font or other special stuff. "-" means large
     // font, "_" is a small font and "n" means a newline.
-  
-    do // read credit information from filename        
-        var _std__ifstream&? fin = _new_std__ifstream(credits_screen.filename.get_sys_path());
-        if not fin then
-            _log_error("couldn't open %1%", credits_screen.filename);            
-            _couldnt_open(credits_screen.filename, _deref(credits));
+
+    do // read credit information from filename
+        var _std__ifstream&? fin = &_new_std__ifstream(credits_screen!.filename.get_sys_path());
+        if not fin? then
+            _log_error("couldn't open %1%", credits_screen!.filename);
+            _couldnt_open(credits_screen!.filename, _deref(&&credits!));
         else
-            _read_file(_deref(fin), _deref(credits));
+            _read_file(_deref(&&fin!), _deref(&&credits!));
         end
     end
 
     end_offset = - ((float)_Display__get_height())/2 - 50; // screen height + grace time
 
-    loop i in credits.size() do  
-        if credits.at(i)[0] == '-' then
+    loop i in credits!.size() do
+        if credits!.at(i)[0] == '-' then
             end_offset = end_offset + (float)(_Fonts__chalk_large.get_height() + 5);
-        else/if credits.at(i)[0] == '_' then
+        else/if credits!.at(i)[0] == '_' then
             end_offset = end_offset + (float)(_Fonts__chalk_large.get_height() + 5);
-        else/if credits.at(i)[0] == 'n' then
+        else/if credits!.at(i)[0] == 'n' then
             end_offset = end_offset + 50;
         else
-            _log_error("Credits: Syntax error: Unknown format: '%1%'", credits.at(i)[0]);
+            _log_error("Credits: Syntax error: Unknown format: '%1%'", credits!.at(i)[0]);
         end
     end
 
     end_offset = -end_offset;
 
     finalize with
-        _delete_obj(scene_context);
-        _delete_obj(credits);
+        _delete_obj(&&scene_context!);
+        _delete_obj(&&credits!);
         _StatManager__instance():set_bool("credits-seen", true);
     end
 
     function (void) => void close do
-        var bool credits_seen = false;   
+        var bool credits_seen = false;
         _StatManager__instance():get_bool("credits-seen", credits_seen);
         if not credits_seen then
             _ScreenManager__instance():pop_screen();
@@ -221,27 +222,27 @@ do
             gc:draw(_deref(blackboard.get()), _Vector2i(gc:get_width()/2, gc:get_height()/2));
             gc:draw(_deref(pingu.get()), _Vector2i(gc:get_width()/2, gc:get_height()/2 - 20));
 
-            scene_context.clear();
-            scene_context.set_cliprect(
+            scene_context!.clear();
+            scene_context!.set_cliprect(
                 _Rect(gc:get_width()/2 - 685/2, gc:get_height()/2 - 250,
                       gc:get_width()/2 + 685/2, gc:get_height()/2 + 250)
             );
 
-            loop i in credits.size() do
-                if credits.at(i)[0] == '-' then
-                    scene_context.color().print_center(_Fonts__chalk_large, _Vector2i(x, (y + yof)), credits.at(i).substr(1));
+            loop i in credits!.size() do
+                if credits!.at(i)[0] == '-' then
+                    scene_context!.color().print_center(_Fonts__chalk_large, _Vector2i(x, (y + yof)), credits!.at(i).substr(1));
                     yof = yof + _Fonts__chalk_large.get_height() + 5;
-                else/if credits.at(i)[0] == '_' then
-                    scene_context.color().print_center(_Fonts__chalk_large, _Vector2i(x, (y + yof)), credits.at(i).substr(1));
+                else/if credits!.at(i)[0] == '_' then
+                    scene_context!.color().print_center(_Fonts__chalk_large, _Vector2i(x, (y + yof)), credits!.at(i).substr(1));
                     yof = yof + _Fonts__chalk_large.get_height() + 5;
-                else/if credits.at(i)[0] == 'n' then
+                else/if credits!.at(i)[0] == 'n' then
                     yof = yof + 50;
                 else
-                    _log_error("Credits: Syntax error: Unknown format: '%1%'", credits.at(i)[0]);
+                    _log_error("Credits: Syntax error: Unknown format: '%1%'", credits!.at(i)[0]);
                 end
             end
 
-            gc:draw(_new_SceneContextDrawingRequest(scene_context, _Vector2i(0, 0), 100));
+            gc:draw(_new_SceneContextDrawingRequest(scene_context!, _Vector2i(0, 0), 100));
         end
     with
         loop do
@@ -269,10 +270,10 @@ do
         end
     with
         every on_escape_press do
-            close();            
+            close();
         end
     with
-        var _Credits&& e = await DELETE_CREDITS until (e == &credits_screen);
+        var _Credits&& e = await DELETE_CREDITS until (e == &&credits_screen!);
     end
 end
 

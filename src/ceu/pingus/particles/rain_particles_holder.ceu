@@ -3,6 +3,7 @@
 
 #include "../../c.ceu"
 #include "../../sdl.ceu"
+#include "../../engine/display/sprite.ceu"
 #include "../iworld.ceu"
 #include "../global_interface.ceu"
 #include "../worldobj.ceu"
@@ -11,16 +12,18 @@
 class RainParticlesHolder with
     interface IRainParticlesHolder;
 do
-    var _Vector_RainParticle&? particles = _new_Vector_RainParticle();
+    var _Vector_RainParticle&? particles_ = &_new_Vector_RainParticle();
     var Sprite rain1_surf;
     var Sprite rain2_surf;
     var Sprite rain_splash;
     call/rec rain1_surf.reload_by_name("particles/rain1");
     call/rec rain2_surf.reload_by_name("particles/rain2");
     call/rec rain_splash.reload_by_name("particles/rain_splash");
-    finalize with _delete_obj(particles); end
+    finalize with _delete_obj(&&particles_!); end
 
-    call/rec global:world:add_object(&this);
+    var _Vector_RainParticle& particles = particles_!;
+
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end
     function (void) => float get_z_pos do return 1000; end
@@ -30,10 +33,10 @@ do
     function @rec (int x, int y) => void add_particle do
         // search for dead entry to replace
         loop j in particles.size() do
-            var _RainParticle&? it = _get_particle(particles, j);
+            var _RainParticle&? it = &_get_particle(particles, j);
 
-            if not it.alive then
-                it = _makeRainParticle(x, y);
+            if not it!.alive then
+                it! = _makeRainParticle(x, y);
                 return;
             end
         end
@@ -45,7 +48,8 @@ do
     par/or do
         every gc in global:draw do
             loop j in particles.size() do
-                var _RainParticle&? it = _get_particle(particles, j);
+                var _RainParticle&? it_ = &_get_particle(particles, j);
+                var _RainParticle& it = it_!;
 
                 // skip dead/invisible particles
                 if not it.alive or it.pos.x > global:world:get_width() then
@@ -67,7 +71,8 @@ do
     with
         every global:world:update do
             loop j in particles.size() do
-                var _RainParticle&? it = _get_particle(particles, j);
+                var _RainParticle&? it_ = &_get_particle(particles, j);
+                var _RainParticle& it = it_!;
 
                 // skip dead particles
                 if not it.alive then

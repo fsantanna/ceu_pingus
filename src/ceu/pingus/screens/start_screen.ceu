@@ -228,38 +228,38 @@ class StartScreen with
     interface IStartScreen;
 do
     var GUIManager gui_manager with
-        this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
-        this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
+        this.me = &_new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
+        this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
         this.screen = outer;
-        this.gui_manager = &gui_manager;
+        this.gui_manager = &&gui_manager;
     end;
 
     var StartScreenComponent comp with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
         this.parent = outer;
     end;
 
     var StartScreenOkButton ok_button with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
         this.parent = outer;
     end;
 
     var StartScreenAbortButton abort_button with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
         this.parent = outer;
     end;
 
-    gui_manager.add(&comp.me);
-    gui_manager.add(&ok_button.me);
-    gui_manager.add(&abort_button.me);
+    gui_manager.add(&&comp.me);
+    gui_manager.add(&&ok_button.me);
+    gui_manager.add(&&abort_button.me);
 
     function (void) => void start_game do
-        _ScreenManager__instance():replace_screen(_std__make_shared_GameSession(((_StartScreen&&)&me):plf, true));
+        _ScreenManager__instance():replace_screen(_std__make_shared_GameSession(((_StartScreen&&)&&me!):plf, true));
     end
 
     function (void) => void cancel_game do
@@ -267,7 +267,7 @@ do
     end
 
     function (void) => _PingusLevel&& get_plf do
-        return &((_StartScreen&&)&me):plf;
+        return &&((_StartScreen&&)&&me!):plf;
     end
 
     par/or do
@@ -288,7 +288,7 @@ do
             call/rec ok_button.set_pos(width/2 + 245, height/2 + 150);
         end
     with
-        var _StartScreen&& e = await DELETE_START_SCREEN until (e == &me);
+        var _StartScreen&& e = await DELETE_START_SCREEN until (e == &&me!);
     end
 end
 

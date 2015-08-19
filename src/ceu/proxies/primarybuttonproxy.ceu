@@ -16,19 +16,19 @@ class PrimaryButtonProxy with
 do
     par do
         every package in ON_PRIMARY_BUTTON_PRESS do
-            if package:component == &gui.me then
+            if package:component == &&gui.me then
                 emit gui.mouse_press => (package:mouse_pos.x, package:mouse_pos.y);
             end
         end
     with
         every package in ON_PRIMARY_BUTTON_RELEASE do
-            if package:component == &gui.me then
+            if package:component == &&gui.me then
                 emit gui.mouse_release => (package:mouse_pos.x, package:mouse_pos.y);
             end
         end
     with
         every package in ON_PRIMARY_BUTTON_CLICK do
-            if package:component == &gui.me then
+            if package:component == &&gui.me then
                 emit gui.mouse_click => (package:mouse_pos.x, package:mouse_pos.y);
             end
         end

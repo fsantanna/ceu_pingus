@@ -19,7 +19,7 @@ class SolidColorBackground with
     interface IWorldObj;
     var _Color&? color;
 do
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 
@@ -28,13 +28,13 @@ do
     function @rec (void) => Vector3f get_pos do return pos; end
 
     finalize with
-        _delete_obj(color);
+        _delete_obj(&&color!);
     end
 
     par/or do
         every gc in global:draw do
             //fill_screen() passes request with `z` = -1000
-            _gc_color_fill_screen(gc, _deref(color));
+            _gc_color_fill_screen(gc, _deref(&&color!));
         end
     with
         await e_DELETE;

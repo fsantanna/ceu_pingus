@@ -8,6 +8,7 @@
 #include "../particles/particles.ceu"
 #include "../iworld.ceu"
 #include "../worldobj.ceu"
+#include "../global_interface.ceu"
 
 native/pre do
     ##define globals__tile_size globals::tile_size
@@ -17,7 +18,7 @@ class SnowGenerator with
     interface IWorldObj;
     var float intensity;
 do
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 

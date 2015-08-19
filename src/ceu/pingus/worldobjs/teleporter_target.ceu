@@ -19,7 +19,7 @@ do
     end;
     sprite.reload_by_name("worldobjs/teleportertarget");
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 
@@ -27,7 +27,7 @@ do
     function (Vector3f p) => void set_pos do pos = p; end
     function @rec (void) => Vector3f get_pos do return pos; end
 
-    finalize with _delete_obj(id); end;
+    finalize with _delete_obj(&&id!); end;
 
     function (void) => void teleporter_used do
         sprite.restart();

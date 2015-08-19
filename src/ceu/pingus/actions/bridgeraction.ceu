@@ -27,7 +27,7 @@ class BridgerAction with
     interface IPinguAction;
     interface IPosGiver;
 do
-    pingu.ceu_action = &this;
+    pingu.ceu_action = &&this;
 
     function (int a) => bool change_allowed do
         return true;
@@ -49,11 +49,11 @@ do
         return name.get();
     end
 
-    var _CollisionMask&? brick_l = _new_CollisionMask("other/brick_left");
-    finalize with _delete_obj(brick_l); end;
+    var _CollisionMask&? brick_l = &_new_CollisionMask("other/brick_left");
+    finalize with _delete_obj(&&brick_l!); end;
 
-    var _CollisionMask&? brick_r = _new_CollisionMask("other/brick_right");
-    finalize with _delete_obj(brick_r); end;
+    var _CollisionMask&? brick_r = &_new_CollisionMask("other/brick_right");
+    finalize with _delete_obj(&&brick_r!); end;
 
     // way_is_free() needs to stop BRIDGERS from getting stuck between a brick
     // and the ceiling.  The routine also stops cases of Bridgers building up but
@@ -92,13 +92,13 @@ do
 
         if pingu.direction().is_right() then
             global:world:put(
-                       &brick_r,
-                       (int)(pingu.get_x() + 10.0 - (float)brick_r.get_width()),
+                       &&brick_r!,
+                       (int)(pingu.get_x() + 10.0 - (float)brick_r!.get_width()),
                        (int)pingu.get_y(),
                        _GT_BRIDGE);
         else
             global:world:put(
-                       &brick_l,
+                       &&brick_l!,
                        (int)(pingu.get_x() - 10.0),
                        (int)pingu.get_y(),
                        _GT_BRIDGE);

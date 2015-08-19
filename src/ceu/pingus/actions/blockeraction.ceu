@@ -13,7 +13,7 @@ class BlockerAction with
     interface IAction;
     interface IPinguAction;
 do
-    pingu.ceu_action = &this;
+    pingu.ceu_action = &&this;
 
     function (int a) => bool change_allowed do
         return true;
@@ -53,9 +53,9 @@ do
             escape _A_FALLER;
         end
 
-        loop catched in global:world:get_pingus().all_pingus do
+        loop catched in global:world:get_pingus()!.all_pingus do
             // avoid 'self' catch
-            if catched == &pingu then
+            if catched == &&pingu then
                 continue;
             end
 

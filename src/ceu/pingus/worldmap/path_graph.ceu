@@ -38,9 +38,9 @@ native/pre do
     ##include "pingus/screens/result_screen.hpp"
     ##include "pingus/screens/story_screen.hpp"
     ##include "pingus/server.hpp"
-    ##include "pingus/stat_manager.hpp"    
+    ##include "pingus/stat_manager.hpp"
     ##include "pingus/string_format.hpp"
-    ##include "pingus/worldmap/graph.hpp"    
+    ##include "pingus/worldmap/graph.hpp"
     ##include "pingus/worldmap/path.hpp"
     ##include "pingus/worldmap/path_graph.hpp"
     ##include "pingus/worldmap/pathfinder.hpp"
@@ -73,7 +73,7 @@ native/pre do
     ##define new_Pingus(x) new WorldmapNS::Pingus(x)
 
     ##define WorldmapNS__Worldmap WorldmapNS::Worldmap
-    ##define WorldmapNS__WorldmapScreen WorldmapNS::WorldmapScreen    
+    ##define WorldmapNS__WorldmapScreen WorldmapNS::WorldmapScreen
 
     ##define StatManager__instance StatManager::instance
     ##define new_PathGraph new WorldmapNS::PathGraph
@@ -98,30 +98,32 @@ class PathGraph with
 do
     //parse_nodes:
     do
-    var _std__vector_FileReader&? childs = _new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("nodes").get_sections());
+    var _std__vector_FileReader&? childs_ = &_new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("nodes").get_sections());
+    var _std__vector_FileReader& childs = childs_!;
+
     loop i in childs.size() do
         var Drawable&&? dot = null;
 
         //DotFactory:
-        if childs.at(i).get_name() == "storydot" then            
+        if childs.at(i).get_name() == "storydot" then
             spawn StoryDot in sds with
-                dot = &this;
+                dot = &&this;
                 this.reader = (_FileReader&&)_addr(childs.at(i));
 
                 _reader_read_Vector3f(childs.at(i).read_section("dot"), this.pos);
-                this.name = _new_String();
-                childs.at(i).read_section("dot").read_string("name", _deref(this.name));
-                _assert(not this.name.empty());
+                this.name = &_new_String();
+                childs.at(i).read_section("dot").read_string("name", _deref(&&this.name!));
+                _assert(not this.name!.empty());
             end;
         else/if childs.at(i).get_name() == "leveldot" then
             spawn LevelDot in lds with
-                dot = &this;
-                this.reader = (_FileReader&&)_addr(childs.at(i));                
-                
+                dot = &&this;
+                this.reader = (_FileReader&&)_addr(childs.at(i));
+
                 _reader_read_Vector3f(childs.at(i).read_section("dot"), this.pos);
-                this.name = _new_String();
-                childs.at(i).read_section("dot").read_string("name", _deref(this.name));
-                _assert(not this.name.empty());
+                this.name! = &_new_String();
+                childs.at(i).read_section("dot").read_string("name", _deref(&&this.name!));
+                _assert(not this.name!.empty());
             end;
         else
             _log_error("DotFactory: unknown tag: %1%", childs.at(i).get_name());
@@ -129,83 +131,87 @@ do
 
         if dot then
             // add the dot to the pathfinding
-            var int id = path_graph.graph.add_node(dot) finalize with end;
+            var int id = path_graph!.graph.add_node(dot!) finalize with end;
 
             //log_info("Adding to lookup table: " << dot->get_name());
-            path_graph.node_lookup[_deref(dot:name)] = id;
+            path_graph!.node_lookup[_deref(&&dot!:name!)] = id;
 
             // add the dot to the list of drawables
-            worldmap.add_drawable(dot);            
+            worldmap.add_drawable(dot!);
 
             //original FIXME: should be use this for freeing the stuff?
-            path_graph.dots.push_back(dot) finalize with end;
+            path_graph!.dots.push_back(dot!) finalize with end;
         else
             _log_info("PathGraph: Couldn't create node");
         end
     end
-    _delete_obj(childs);
+    _delete_obj(&&childs);
     end
     ////////
 
-    //parse_edges:   
+    //parse_edges:
     do
-    var _std__vector_FileReader&? childs = _new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("edges").get_sections());
+    var _std__vector_FileReader&? childs_ = &_new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("edges").get_sections());
+    var _std__vector_FileReader& childs = childs_!;
 
-    var _std__string&& name = _new_String();
-    var _std__string&& source = _new_String();
-    var _std__string&& destination = _new_String();
+    var _std__string&& name = &_new_String();
+    var _std__string&& source = &_new_String();
+    var _std__string&& destination = &_new_String();
     loop i in childs.size() do
-        if childs.at(i).get_name() == "edge" then            
+        if childs.at(i).get_name() == "edge" then
             childs.at(i).read_string("name", _deref(name));
             childs.at(i).read_string("source", _deref(source));
             childs.at(i).read_string("destination", _deref(destination));
-              
+
             //original FIXME: add path-data parsing here
-            var _WorldmapNS__Path&& path = _new_Path();
-              
-            var _std__vector_FileReader&? childs2 = _new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("edges").read_section("positions").get_sections());
-              
-            loop j in childs2.size() do
-                if childs2.at(j).get_name() == "position" then                
+            var _WorldmapNS__Path&& path = &_new_Path();
+
+            var _std__vector_FileReader&? childs2 =
+              &_new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("edges").read_section("positions").get_sections());
+
+            loop j in childs2!.size() do
+                if childs2!.at(j).get_name() == "position" then
                     var Vector3f pos;
-                    childs2.at(j).read_float("x", pos.x);
-                    childs2.at(j).read_float("y", pos.y);
-                    childs2.at(j).read_float("z", pos.z);
+                    childs2!.at(j).read_float("x", pos.x);
+                    childs2!.at(j).read_float("y", pos.y);
+                    childs2!.at(j).read_float("z", pos.z);
                     path:push_back(_toVector3f(pos));
                 end
             end
 
-            var _WorldmapNS__Path&? full_path = _new_Path();
-            full_path.push_back(((Dot&&)path_graph.graph.resolve_node(path_graph.lookup_node(_deref(source))).data):get_pos());
-            full_path.insert(*path) finalize with end;
-            full_path.push_back(((Dot&&)path_graph.graph.resolve_node(path_graph.lookup_node(_deref(destination))).data):get_pos());
+            var _WorldmapNS__Path&? full_path = &_new_Path();
+            full_path!.push_back(((Dot&&)path_graph!.graph.resolve_node(path_graph!.lookup_node(_deref(source))).data):get_pos());
+            full_path!.insert(*path) finalize with end;
+            full_path!.push_back(((Dot&&)path_graph!.graph.resolve_node(path_graph!.lookup_node(_deref(destination))).data):get_pos());
 
             //original FIXME: merge this together with the Pingus::distance() stuff in a seperate Path class
-            var float cost = full_path.length();
+            var float cost = full_path!.length();
 
-            if _globals__developer_mode then                
+            if _globals__developer_mode then
                 spawn PathDrawable in pds with
-                    this.name = _new_String();                    
-                    worldmap.add_drawable(&this);
-                    this.path = _PTR2REF(full_path); //delete inside
+                    this.name = &_new_String();
+                    worldmap.add_drawable(&&this);
+                    this.path = &_PTR2REF(&&full_path!); //delete inside
                 end;
             end
 
             //original FIXME: No error checking,
-            var int id1 = path_graph.graph.add_edge(path, //original FIXME: Memory leak!
-                                      path_graph.lookup_node(_deref(destination)), path_graph.lookup_node(_deref(source)),
+            var int id1 = path_graph!.graph.add_edge(path, //original FIXME: Memory leak!
+                                      path_graph!.lookup_node(_deref(destination)), 
+                                      path_graph!.lookup_node(_deref(source)),
                                       cost) finalize with end;
 
-            var _WorldmapNS__Path&& path2 = _new_Path();
+            var _WorldmapNS__Path&& path2 = &_new_Path();
             path2:reverse_insert(*path) finalize with end;
             //EdgeId id2 =
-            path_graph.graph.add_edge(path2, //original FIXME: Memory leak!
-                         path_graph.lookup_node(_deref(source)), path_graph.lookup_node(_deref(destination)),
+            path_graph!.graph.add_edge(path2, //original FIXME: Memory leak!
+                         path_graph!.lookup_node(_deref(source)), 
+                         path_graph!.lookup_node(_deref(destination)),
                          cost) finalize with end;
 
             //original FIXME: edge lookup is flawed, since we have different edges in both directions
-            path_graph.edge_lookup[_deref(name)] = id1;
-            
+            path_graph!.edge_lookup[_deref(name)] = id1;
+
             ///_delete_obj(path);
             ///_delete_obj(path2);
             ///_delete_obj(full_path);
@@ -221,16 +227,17 @@ do
     ////////
 
     // Init the pathfinder cache
-    path_graph.pathfinder_cache.resize(path_graph.graph.max_node_handler_value());
-    path_graph.pathfinder_cache.assign(path_graph.pathfinder_cache.size(), 0);
+    path_graph!.pathfinder_cache.resize(path_graph!.graph.max_node_handler_value());
+    path_graph!.pathfinder_cache.assign(path_graph!.pathfinder_cache.size(), 
+0);
 
-    finalize with        
-        _delete_obj(path_graph);
+    finalize with
+        _delete_obj(&&path_graph!);
     end
 
     function @rec (float x_pos, float y_pos) => Dot&& get_dot do
-        loop/1000 i in path_graph.dots.size() do  
-            var Dot&& r = _PTR2REF((Dot&&)path_graph.dots.at(i));
+        loop/1000 i in path_graph!.dots.size() do
+            var Dot&& r = &_PTR2REF((Dot&&)path_graph!.dots.at(i));
             var float x = x_pos - r:get_pos().x;
             var float y = y_pos - r:get_pos().y;
 
@@ -243,12 +250,12 @@ do
     end
 
     function (int id) => Dot&& get_dot_by_id do
-        return (Dot&&)path_graph.graph.resolve_node(id).data;
+        return (Dot&&)path_graph!.graph.resolve_node(id).data;
     end
 
     function @rec (Dot&& dot) => int get_id do
-        loop/1000 i in path_graph.dots.size() do 
-            if path_graph.dots.at(i) == dot then
+        loop/1000 i in path_graph!.dots.size() do
+            if path_graph!.dots.at(i) == dot then
                 return i;
             end
         end

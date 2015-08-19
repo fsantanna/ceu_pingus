@@ -24,17 +24,18 @@ class CaptureRectangle with
     event _SceneContext&& draw;
 do
     var IPingu&& pingu = null;
-    var _std__string&? action_str = _new_String();
-    finalize with _delete_obj(action_str); end;
+    var _std__string&? action_str_ = &_new_String();
+    finalize with _delete_obj(&&action_str_!); end;
+    var _std__string& action_str = action_str_!;
 
-    var _Sprite&? good = _new_SpriteA("game/cursors/capgood");
-    var _Sprite&? bad = _new_SpriteA("game/cursors/capbad");
-    var _Sprite&? arrow_left = _new_SpriteA("game/cursors/arrow_left");
-    var _Sprite&? arrow_right = _new_SpriteA("game/cursors/arrow_right");
-    finalize with _delete_obj(good); end;
-    finalize with _delete_obj(bad); end;
-    finalize with _delete_obj(arrow_left); end;
-    finalize with _delete_obj(arrow_right); end;
+    var _Sprite&? good = &_new_SpriteA("game/cursors/capgood");
+    var _Sprite&? bad = &_new_SpriteA("game/cursors/capbad");
+    var _Sprite&? arrow_left = &_new_SpriteA("game/cursors/arrow_left");
+    var _Sprite&? arrow_right = &_new_SpriteA("game/cursors/arrow_right");
+    finalize with _delete_obj(&&good!); end;
+    finalize with _delete_obj(&&bad!); end;
+    finalize with _delete_obj(&&arrow_left!); end;
+    finalize with _delete_obj(&&arrow_right!); end;
 
     function @rec (IPingu&& p) => void set_pingu do
         pingu = p;
@@ -68,16 +69,16 @@ do
             if pingu:ceu_action:catchable then
                 // Draw the capture rectangle
                 if session and pingu:ceu_action:change_allowed(session:get_action_name()) then
-                    _gc_color_draw2(gc, good, _toVector3f(call/rec pingu:get_center_pos()) + _Vector3f(0, 0, 1000));
+                    _gc_color_draw2(gc, &&good!, _toVector3f(call/rec pingu:get_center_pos()) + _Vector3f(0, 0, 1000));
                 else
-                    _gc_color_draw2(gc, bad, _toVector3f(call/rec pingu:get_center_pos()) + _Vector3f(0, 0, 1000));
+                    _gc_color_draw2(gc, &&bad!, _toVector3f(call/rec pingu:get_center_pos()) + _Vector3f(0, 0, 1000));
                 end
 
                 // Paint the direction arrow
                 if pingu:direction().is_left() then
-                    _gc_color_draw2(gc, arrow_left, _toVector3f(call/rec pingu:get_center_pos()) + _Vector3f(0, 2, 1000));
+                    _gc_color_draw2(gc, &&arrow_left!, _toVector3f(call/rec pingu:get_center_pos()) + _Vector3f(0, 2, 1000));
                 else
-                    _gc_color_draw2(gc, arrow_right, _toVector3f(call/rec pingu:get_center_pos()) + _Vector3f(0, 2, 1000));
+                    _gc_color_draw2(gc, &&arrow_right!, _toVector3f(call/rec pingu:get_center_pos()) + _Vector3f(0, 2, 1000));
                 end
 
                 var Vector3f pc = call/rec pingu:get_center_pos();

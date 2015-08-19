@@ -15,7 +15,7 @@ class MinerAction with
     interface IAction;
     interface IPinguAction;
 do
-    pingu.ceu_action = &this;
+    pingu.ceu_action = &&this;
 
     function (int a) => bool change_allowed do
         return true;
@@ -35,31 +35,32 @@ do
 
     var int delay_count = 0;
 
-    var _CollisionMask&? miner_radius = _new_CollisionMask("pingus/common/miner_radius_gfx", "pingus/common/miner_radius");
-    finalize with _delete_obj(miner_radius); end;
+    var _CollisionMask&? miner_radius = &_new_CollisionMask("pingus/common/miner_radius_gfx", "pingus/common/miner_radius");
+    finalize with _delete_obj(&&miner_radius!); end;
 
-    var _CollisionMask&? miner_radius_left = _new_CollisionMask("pingus/common/miner_radius_left_gfx", "pingus/common/miner_radius_left");
-    finalize with _delete_obj(miner_radius_left); end;
+    var _CollisionMask&? miner_radius_left = &_new_CollisionMask("pingus/common/miner_radius_left_gfx", "pingus/common/miner_radius_left");
+    finalize with _delete_obj(&&miner_radius_left!); end;
 
-    var _CollisionMask&? miner_radius_right = _new_CollisionMask("pingus/common/miner_radius_right_gfx", "pingus/common/miner_radius_right");
-    finalize with _delete_obj(miner_radius_right); end;
+    var _CollisionMask&? miner_radius_right = &_new_CollisionMask("pingus/common/miner_radius_right_gfx", "pingus/common/miner_radius_right");
+    finalize with _delete_obj(&&miner_radius_right!); end;
 
     function @rec (bool final) => void mine do
         if not final then
             // regular mine action
-            global:world:remove(&miner_radius,
-                               (int)pingu.get_x() - (miner_radius.get_width() / 2) + pingu.direction().value,
-                               (int)pingu.get_y() - miner_radius.get_height() + 2);
+            global:world:remove(&&miner_radius!,
+                               (int)pingu.get_x() - (miner_radius!.get_width() / 2) + pingu.direction().value,
+                               (int)pingu.get_y() - miner_radius!.get_height() + 2);
         else
             // the last mine action before switching to another action
             if pingu.direction().value == D_LEFT then
-                global:world:remove(&miner_radius_left,
-                                   pingu.get_x() - (miner_radius_left.get_width() / 2) + pingu.direction().value,
-                                   pingu.get_y() - miner_radius_left.get_height() + 2);
+                global:world:remove(&&miner_radius_left!,
+                                   pingu.get_x() - 
+                                   (miner_radius_left!.get_width() / 2) + pingu.direction().value,
+                                   pingu.get_y() - miner_radius_left!.get_height() + 2);
             else
-                global:world:remove(&miner_radius_right,
-                                   pingu.get_x() - (miner_radius_right.get_width() / 2) + pingu.direction().value,
-                                   pingu.get_y() - miner_radius_right.get_height() + 2);
+                global:world:remove(&&miner_radius_right!,
+                                   pingu.get_x() - (miner_radius_right!.get_width() / 2) + pingu.direction().value,
+                                   pingu.get_y() - miner_radius_right!.get_height() + 2);
             end;
         end;
     end

@@ -3,6 +3,7 @@
 
 #include "../../c.ceu"
 #include "../../sdl.ceu"
+#include "../../math/vector2i.ceu"
 #include "../../engine/gui/igui_component.ceu"
 #include "../../proxies/eventproxy.ceu"
 #include "../../proxies/pointerproxy.ceu"
@@ -23,10 +24,10 @@ do
     var _DrawingContext&& gc_ptr = null;
 
     var SmallMapImage image with
-        this.canvas = _new_Surface(rect.rect.get_width(), rect.rect.get_height());
+        this.canvas = &_new_Surface(rect!.rect.get_width(), rect!.rect.get_height());
     end;
 
-    RECT_IS_AT(&rect);
+    RECT_IS_AT(&&rect!);
 
     function @rec (_Sprite&& sprite, _Vector3f pos) => void draw_sprite do
         if global:world == null then
@@ -39,8 +40,8 @@ do
             return;
         end
 
-        var float x = (float)(rect.rect.left) + (pos.x * (float)(rect.rect.get_width())  / (float)(global:world:get_width()));
-        var float y = (float)(rect.rect.top)  + (pos.y * (float)(rect.rect.get_height()) / (float)(global:world:get_height()));
+        var float x = (float)(rect!.rect.left) + (pos.x * (float)(rect!.rect.get_width())  / (float)(global:world:get_width()));
+        var float y = (float)(rect!.rect.top)  + (pos.y * (float)(rect!.rect.get_height()) / (float)(global:world:get_height()));
         gc_ptr:draw(_deref(sprite), _Vector3f(x, y));
     end
 
@@ -60,32 +61,33 @@ do
 
             if global:world != null then
                 if global:world:get_width() > gc_ptr:get_width() then
-                    var int rwidth = gc_ptr:get_width()  * rect.rect.get_width()  / global:world:get_width();
-                    view_rect_left  = rect.rect.left + (of.x * rect.rect.get_width()  / global:world:get_width()) - rwidth/2;
+                    var int rwidth = gc_ptr:get_width()  * rect!.rect.get_width()  / global:world:get_width();
+                    view_rect_left  = rect!.rect.left + (of.x * rect!.rect.get_width()  / global:world:get_width()) - rwidth/2;
                     view_rect_right = view_rect_left + rwidth;
                 else
-                    view_rect_left  = rect.rect.left;
-                    view_rect_right = rect.rect.left + rect.rect.get_width();
+                    view_rect_left  = rect!.rect.left;
+                    view_rect_right = rect!.rect.left + rect!.rect.get_width();
                 end
 
                 if global:world:get_height() > gc_ptr:get_height() then
-                    var int rheight = gc_ptr:get_height() * rect.rect.get_height() / global:world:get_height();
-                    view_rect_top    = rect.rect.top + (of.y * rect.rect.get_height() / global:world:get_height()) - rheight/2;
+                    var int rheight = gc_ptr:get_height() * rect!.rect.get_height() / global:world:get_height();
+                    view_rect_top    = rect!.rect.top + (of.y * rect!.rect.get_height() / global:world:get_height()) - rheight/2;
                     view_rect_bottom = view_rect_top + rheight;
                 else
-                    view_rect_top    = rect.rect.top;
-                    view_rect_bottom = rect.rect.top + rect.rect.get_height();
+                    view_rect_top    = rect!.rect.top;
+                    view_rect_bottom = rect!.rect.top + rect!.rect.get_height();
                 end
 
-                gc_ptr:draw(_deref(call/rec image.get_surface()), _Vector2i(rect.rect.left, rect.rect.top) finalize with end);
+                gc_ptr:draw(_deref(call/rec image.get_surface()), 
+                _Vector2i(rect!.rect.left, rect!.rect.top) finalize with end);
                 gc_ptr:draw_rect(_Rect(view_rect_left, view_rect_top, view_rect_right, view_rect_bottom), _Color(0, 255, 0));
 
-                emit global:world:e_DRAW_SMALLMAP => &this;
+                emit global:world:e_DRAW_SMALLMAP => &&this;
 
                 // Draw Pingus
-                loop pingu in global:world:get_pingus().all_pingus do
-                    var int x = (float)rect.rect.left + pingu:get_x()*(float)rect.rect.get_width()/(float)global:world:get_width();
-                    var int y = (float)rect.rect.top + pingu:get_y()*(float)rect.rect.get_height()/(float)global:world:get_height();
+                loop pingu in global:world:get_pingus()!.all_pingus do
+                    var int x = (float)rect!.rect.left + pingu:get_x()*(float)rect!.rect.get_width()/(float)global:world:get_width();
+                    var int y = (float)rect!.rect.top + pingu:get_y()*(float)rect!.rect.get_height()/(float)global:world:get_height();
 
                     _gc_draw_line(gc_ptr, _Vector2i(x, y), _Vector2i(x, y-2), _Color(255, 255, 0));
                 end
@@ -104,8 +106,8 @@ do
     with
         every (x, y) in mouse_move do
             if scroll_mode then
-                var int cx = (x - rect.rect.left) * (int)(global:world:get_width()  / rect.rect.get_width());
-                var int cy = (y - rect.rect.top) * (int)(global:world:get_height() / rect.rect.get_height());
+                var int cx = (x - rect!.rect.left) * (int)(global:world:get_width()  / rect!.rect.get_width());
+                var int cy = (y - rect!.rect.top) * (int)(global:world:get_height() / rect!.rect.get_height());
 
                 playfield.set_viewpoint(cx, cy);
             end
@@ -115,8 +117,8 @@ do
             scroll_mode = true;
 
             // set view to the given COs
-            var int cx = (x - rect.rect.left) * (int)(global:world:get_width()) / rect.rect.get_width();
-            var int cy = (y - rect.rect.top) * (int)(global:world:get_height()) / rect.rect.get_height();
+            var int cx = (x - rect!.rect.left) * (int)(global:world:get_width()) / rect!.rect.get_width();
+            var int cy = (y - rect!.rect.top) * (int)(global:world:get_height()) / rect!.rect.get_height();
 
             playfield.set_viewpoint(cx, cy);
         end

@@ -37,18 +37,18 @@ do
     call/rec m_story_dot_highlight.reload_by_name("core/worldmap/story_dot_highlight");
     call/rec m_story_dot.reload_by_name("core/worldmap/story_dot");
 
-    var _std__string&? m_name = _new_String();
-    var _std__string&? m_story = _new_String();
+    var _std__string&? m_name = &_new_String();
+    var _std__string&? m_story = &_new_String();
     var bool m_credits = false;
         
-    reader:read_string("name", _deref(m_name));
-    reader:read_string("story", _deref(m_story));
+    reader:read_string("name", _deref(&&m_name!));
+    reader:read_string("story", _deref(&&m_story!));
     reader:read_bool("credits", m_credits);
     
     finalize with
-        _delete_obj(name);
-        _delete_obj(m_name);
-        _delete_obj(m_story);
+        _delete_obj(&&name!);
+        _delete_obj(&&m_name!);
+        _delete_obj(&&m_story!);
     end
 
     function (void) => _Vector3f get_pos do
@@ -66,14 +66,14 @@ do
     with
         every gc in draw_hover do
             gc:draw(_deref(m_story_dot_highlight.get()), _toVector3f(pos));
-            gc:print_center(_Fonts__pingus_small, _Vector2i(pos.x, pos.y - 44), __(_deref(m_name)), 10000);
+            gc:print_center(_Fonts__pingus_small, _Vector2i(pos.x, pos.y - 44), __(_deref(&&m_name!)), 10000);
         end
     with
         every on_click do            
             //it throws std::exception, but I won't catch it and log_error() it - there is no `try`/`catch` in Ceu
             _ScreenManager__instance():push_screen(
                 _std__make_shared_StoryScreen(
-                    _FileReader__parse(_Pathname(_deref(m_story), _Pathname__DATA_PATH)),
+                    _FileReader__parse(_Pathname(_deref(&&m_story!), _Pathname__DATA_PATH)),
                     m_credits
                 )
             );

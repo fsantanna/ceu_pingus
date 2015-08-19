@@ -28,7 +28,7 @@ class BasherAction with
     interface IAction;
     interface IPinguAction;
 do
-    pingu.ceu_action = &this;
+    pingu.ceu_action = &&this;
 
     function (int a) => bool change_allowed do
         return true;
@@ -49,8 +49,9 @@ do
     var bool odd_frame = true; //-1th, I hope first block will execute not odd_frame faster
     var bool first_bash = true;    
 
-    var _CollisionMask&? bash_radius = _new_CollisionMask("pingus/common/bash_radius_gfx", "pingus/common/bash_radius");
-    finalize with _delete_obj(bash_radius); end;
+    var _CollisionMask&? bash_radius_ = &_new_CollisionMask("pingus/common/bash_radius_gfx", "pingus/common/bash_radius");
+    finalize with _delete_obj(&&bash_radius_!); end;
+    var _CollisionMask& bash_radius = bash_radius_!;
 
     _assert(bash_radius.get_width() % 2 == 0);
     var int bash_reach = bash_radius.get_width();
@@ -64,7 +65,7 @@ do
     var int max_bash_height = 33;
 
     function @rec (void) => void bash do
-        global:world:remove(&bash_radius,
+        global:world:remove(&&bash_radius,
                             (int)pingu.get_x() - bash_radius.get_width()/2,
                             (int)pingu.get_y() - bash_radius.get_height()+1);
     end

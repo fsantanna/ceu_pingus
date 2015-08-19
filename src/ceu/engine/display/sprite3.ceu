@@ -54,11 +54,13 @@ do
     var Vector2i frame_pos;
     var Size     frame_size;
     var int      frame_delay;
-    var _CeuSpriteImpl&? core = _new_CeuSpriteImpl();
-    finalize with _delete_obj(core); end
+
+    var _CeuSpriteImpl&? core_ = &_new_CeuSpriteImpl();
+    finalize with _delete_obj(&&core_!); end
+    var _CeuSpriteImpl& core = core_!;
 
     function (_SpriteDescription&& desc, int mod) => void load_desc do
-        core.filename = _PTR2REF(desc:filename);
+        core.filename = &_PTR2REF(desc:filename);
         core.framebuffer_surface = _load_framebuffer_surface(desc:filename, _to_RM(mod));        
 
         finished_ = false;

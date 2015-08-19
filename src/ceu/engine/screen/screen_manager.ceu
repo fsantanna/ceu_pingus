@@ -5,6 +5,7 @@
 #include "../../sdl.ceu"
 #include "screen.ceu"
 #include "../../pingus/fps_counter.ceu"
+#include "../../pingus/global_interface.ceu"
 
 native/pre do
     ##include "engine/screen/screen_manager.hpp"
@@ -33,7 +34,7 @@ input _ScreenManager&& DELETE_SCREEN_MANAGER;
 
 class ScreenManager with
     //interface IScreenManager;
-    var _ScreenManager&? screen_manager;
+    var _ScreenManager&&? screen_manager;
 
     event (_Screen&&, _Screen&&) fade_over;
 do
@@ -42,7 +43,7 @@ do
 
     par/or do
         every package in SCREEN_MANAGER_UPDATE do
-            if package:screen_manager != &screen_manager then
+            if package:screen_manager != (&&screen_manager!) then
                 continue;
             end
 
@@ -60,63 +61,63 @@ do
                     mouse_pos.y = package:events.at(i).pointer.y;
                 end
 
-                screen = _PTR2REF((Screen&&)package:screen:ceu);
-                if screen then
-                    emit screen:call_update_event => _addr(package:events.at(i));
+                screen! = _PTR2REF((Screen&&)package:screen:ceu);
+                if screen? then
+                    emit screen!:call_update_event => _addr(package:events.at(i));
                 else
                     package:screen:update(package:events.at(i));
                 end
 
-                if package:screen != screen_manager.get_current_screen() then
+                if package:screen != screen_manager!.get_current_screen() then
                     do_fade_over = true;
                     break;
                 end
             end
 
             if do_fade_over then
-                emit fade_over => (package:screen.get(), screen_manager.get_current_screen().get());
+                emit fade_over => (package:screen.get(), screen_manager!.get_current_screen().get());
                 continue;
             end
 
             emit global:update => package:delta;
-            
-            screen = _PTR2REF((Screen&&)package:screen:ceu);
-            if not screen then
+
+            screen! = _PTR2REF((Screen&&)package:screen:ceu);
+            if not screen! then
                 _log_error("Screen has no `ceu` organism binded!");
                 package:screen:update(package:delta) finalize with end;
             end
 
-            if package:screen != screen_manager.get_current_screen() then 
-                emit fade_over => (package:screen.get(), screen_manager.get_current_screen().get());
+            if package:screen != screen_manager!.get_current_screen() then
+                emit fade_over => (package:screen.get(), screen_manager!.get_current_screen().get());
                 continue;
             end
 
             // Draw screen to DrawingContext
-            screen = _PTR2REF((Screen&&)screen_manager.get_current_screen():ceu);
-            if screen then
-                emit screen:call_draw => screen_manager.display_gc.get();
+            screen! = _PTR2REF((Screen&&)screen_manager!.get_current_screen():ceu);
+            if screen! then
+                emit screen!:call_draw => screen_manager!.display_gc.get();
             else
-                screen_manager.get_current_screen():draw(*screen_manager.display_gc) finalize with end;
+                screen_manager!.get_current_screen():draw(*screen_manager!.display_gc) finalize with end;
             end
-  
+
             // Render the DrawingContext to the screen
-            screen_manager.display_gc:render(*_Display__get_framebuffer(), _Rect(_Vector2i(0, 0), _Size(_Display__get_width(), _Display__get_height())));
-            screen_manager.display_gc:clear();
+            screen_manager!.display_gc:render(*_Display__get_framebuffer(), _Rect(_Vector2i(0, 0), _Size(_Display__get_width(), _Display__get_height())));
+            screen_manager!.display_gc:clear();
 
             // Draw the mouse pointer
             if _globals__software_cursor then
-                screen_manager.cursor.render(mouse_pos.x, mouse_pos.y, *_Display__get_framebuffer());
+                screen_manager!.cursor.render(mouse_pos.x, mouse_pos.y, *_Display__get_framebuffer());
             end
 
             // Draw FPS Counter
             var int y_pos = 35;
-            if _globals__print_fps then            
+            if _globals__print_fps then
                 fps_counter.draw();
                 y_pos = 60;
             end
 
             if _globals__developer_mode then
-              _Fonts__pingus_small.render(_origin_center, _Display__get_width()/2, y_pos, 
+              _Fonts__pingus_small.render(_origin_center, _Display__get_width()/2, y_pos,
                                          "Developer Mode", *_Display__get_framebuffer());
             end
 
@@ -127,7 +128,7 @@ do
             if not old_screen or not new_screen then
                 continue;
             end
-            
+
             var u32 last_ticks = _SDL_GetTicks();
             var float progress = 0.01;
             loop do
@@ -138,39 +139,39 @@ do
                 var int border_x = ((float)_Display__get_width()/2)  * (1.0 - progress);
                 var int border_y = ((float)_Display__get_height()/2) * (1.0 - progress);
 
-                if old_screen:ceu == null then                    
-                    old_screen:draw(*screen_manager.display_gc) finalize with end;
-                else            
+                if old_screen:ceu == null then
+                    old_screen:draw(*screen_manager!.display_gc) finalize with end;
+                else
                     _fflush(_stdout);
-                    emit ((Screen&&)old_screen:ceu):call_draw => screen_manager.display_gc.get();
+                    emit ((Screen&&)old_screen:ceu):call_draw => screen_manager!.display_gc.get();
                 end
-                screen_manager.display_gc:render({*Display::get_framebuffer(), Rect(Vector2i(0, 0), Size(Display::get_width(), Display::get_height()))});
-                screen_manager.display_gc:clear();
-                    
+                screen_manager!.display_gc:render({*Display::get_framebuffer(), Rect(Vector2i(0, 0), Size(Display::get_width(), Display::get_height()))});
+                screen_manager!.display_gc:clear();
+
                 ({Display::get_framebuffer()}):push_cliprect(
-                    _Rect(_Vector2i(0 + border_x, 0 + border_y), 
+                    _Rect(_Vector2i(0 + border_x, 0 + border_y),
                           _Size(_Display__get_width() - 2*border_x, _Display__get_height() - 2*border_y))
                 );
-                
+
                 if new_screen:ceu == null then
-                    new_screen:draw(*screen_manager.display_gc) finalize with end;
-                else            
-                    emit ((Screen&&)new_screen:ceu):call_draw => screen_manager.display_gc.get();
+                    new_screen:draw(*screen_manager!.display_gc) finalize with end;
+                else
+                    emit ((Screen&&)new_screen:ceu):call_draw => screen_manager!.display_gc.get();
                 end
-                screen_manager.display_gc:render({*Display::get_framebuffer(), Rect(Vector2i(0, 0), Size(Display::get_width(), Display::get_height()))});
-                screen_manager.display_gc:clear();
-                    
+                screen_manager!.display_gc:render({*Display::get_framebuffer(), Rect(Vector2i(0, 0), Size(Display::get_width(), Display::get_height()))});
+                screen_manager!.display_gc:clear();
+
                 ({Display::get_framebuffer()}):pop_cliprect();
                 ({Display::get_framebuffer()}):flip();
-                screen_manager.display_gc:clear();
-                    
-                progress = (float)(_SDL_GetTicks() - last_ticks)/1000.0 * 2.0;        
+                screen_manager!.display_gc:clear();
+
+                progress = (float)(_SDL_GetTicks() - last_ticks)/1000.0 * 2.0;
             end
 
-            screen_manager.input_manager.refresh();
+            screen_manager!.input_manager.refresh();
         end
     with
-        var _ScreenManager&& e = await DELETE_SCREEN_MANAGER until (e == &screen_manager);
+        var _ScreenManager&& e = await DELETE_SCREEN_MANAGER until (e == (screen_manager!));
     end
 end
 

@@ -16,7 +16,7 @@ class StarfieldBackground with
     var int middle_stars_count;
     var int large_stars_count;
 do
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end;
 
@@ -29,19 +29,19 @@ do
 
     loop i in small_stars_count do
         spawn StarfieldBackgroundStars in stars with
-            this.sprite = _new_SpriteA("game/stars/small_star");
+            this.sprite = &_new_SpriteA("game/stars/small_star");
         end;
     end
 
     loop i in middle_stars_count do
         spawn StarfieldBackgroundStars in stars with
-            this.sprite = _new_SpriteA("game/stars/middle_star");
+            this.sprite = &_new_SpriteA("game/stars/middle_star");
         end;
     end
 
     loop i in large_stars_count do
         spawn StarfieldBackgroundStars in stars with
-            this.sprite = _new_SpriteA("game/stars/large_star");
+            this.sprite = &_new_SpriteA("game/stars/large_star");
         end;
     end
     

@@ -34,7 +34,7 @@ input _ScreenResizePackage&& SCREEN_RESIZE;
 input _ScreenAxisMovePackage&& ON_ACTION_AXIS_MOVE;
 
 interface Screen with
-    var _GUIScreen&? me;    
+    var _GUIScreen&? me;
 
     event _DrawingContext&& call_draw;
     event _const_Input__Event&& call_update_event;
@@ -71,90 +71,92 @@ class ScreenFramework with
 do
     par do
         every gc in screen.call_draw do
-            var _DrawingContext&? ref = _addr(_deref(gc));
-            emit screen.draw_background => &ref;
+            var _DrawingContext&? ref = &_addr(_deref(gc));
+            emit screen.draw_background => (&&ref!);
             if gui_manager then
-                emit gui_manager:draw => &ref;
+                emit gui_manager:draw => (&&ref!);
             end
-            emit screen.draw_foreground => &ref;
+            emit screen.draw_foreground => (&&ref!);
         end
     with
         every e in screen.call_update_event do
-            var _const_Input__Event&? ref = _deref(_addr(e));
+            var _const_Input__Event&? ref = &_deref(_addr(e));
+            var _const_Input__Event& ref_ = ref!;
             // Dispatch the recieved input events
             if gui_manager then
-                emit gui_manager:update_event => &ref;
+                emit gui_manager:update_event => (&&ref_);
             end
 
-            if ref.type == {Input::BUTTON_EVENT_TYPE} then    
-                emit process_button_event => _addr(ref.button);
-            else/if ref.type == {Input::AXIS_EVENT_TYPE} then
-                if ref.axis.name == {Input::ACTION_AXIS} then      
-                    emit screen.on_action_axis_move => ref.axis.dir;
+            if ref_.type == {Input::BUTTON_EVENT_TYPE} then
+                emit process_button_event => _addr(ref_.button);
+            else/if ref_.type == {Input::AXIS_EVENT_TYPE} then
+                if ref_.axis.name == {Input::ACTION_AXIS} then
+                    emit screen.on_action_axis_move => ref_.axis.dir;
                 end
             end
 
-            emit screen.update_event => &ref;
+            emit screen.update_event => (&&ref_);
         end
     with
         every e in process_button_event do
-            var _const_Input__ButtonEvent&? ref = _addr(_deref(e));
-            if ref.state == {Input::BUTTON_PRESSED} then
-                if ref.name == {Input::PRIMARY_BUTTON} or e:name == {Input::SECONDARY_BUTTON} then
-                    // ignoring, handled in the gui_manager                       
-                else/if ref.name == {Input::PAUSE_BUTTON} then
+            var _const_Input__ButtonEvent&? ref = &_addr(_deref(e));
+            var _const_Input__Event& ref_ = ref!;
+            if ref_.state == {Input::BUTTON_PRESSED} then
+                if ref_.name == {Input::PRIMARY_BUTTON} or e:name == {Input::SECONDARY_BUTTON} then
+                    // ignoring, handled in the gui_manager
+                else/if ref_.name == {Input::PAUSE_BUTTON} then
                     emit screen.on_pause_press;
-                else/if ref.name == {Input::SINGLE_STEP_BUTTON} then
+                else/if ref_.name == {Input::SINGLE_STEP_BUTTON} then
                     emit screen.on_single_step_press;
-                else/if ref.name == {Input::FAST_FORWARD_BUTTON} then
+                else/if ref_.name == {Input::FAST_FORWARD_BUTTON} then
                     emit screen.on_fast_forward_press;
-                else/if ref.name == {Input::ARMAGEDDON_BUTTON} then
+                else/if ref_.name == {Input::ARMAGEDDON_BUTTON} then
                     emit screen.on_armageddon_press;
-                else/if ref.name == {Input::ESCAPE_BUTTON} then
+                else/if ref_.name == {Input::ESCAPE_BUTTON} then
                     emit screen.on_escape_press;
-                else/if ref.name == {Input::ACTION_UP_BUTTON} then
+                else/if ref_.name == {Input::ACTION_UP_BUTTON} then
                     emit screen.on_action_up_press;
-                else/if ref.name == {Input::ACTION_DOWN_BUTTON} then
+                else/if ref_.name == {Input::ACTION_DOWN_BUTTON} then
                     emit screen.on_action_down_press;
                 else
-                    _log_debug("unhandled event: %1%", ref.name);                        
+                    _log_debug("unhandled event: %1%", ref_.name);
                 end
-            else/if ref.state == {Input::BUTTON_RELEASED} then
-                if ref.name == {Input::PRIMARY_BUTTON} or e:name == {Input::SECONDARY_BUTTON} then
-                    // ignoring, handled in the gui_manager                       
-                else/if ref.name == {Input::PAUSE_BUTTON} then
+            else/if ref_.state == {Input::BUTTON_RELEASED} then
+                if ref_.name == {Input::PRIMARY_BUTTON} or e:name == {Input::SECONDARY_BUTTON} then
+                    // ignoring, handled in the gui_manager
+                else/if ref_.name == {Input::PAUSE_BUTTON} then
                     emit screen.on_pause_release;
-                else/if ref.name == {Input::SINGLE_STEP_BUTTON} then
+                else/if ref_.name == {Input::SINGLE_STEP_BUTTON} then
                     emit screen.on_single_step_release;
-                else/if ref.name == {Input::FAST_FORWARD_BUTTON} then
+                else/if ref_.name == {Input::FAST_FORWARD_BUTTON} then
                     emit screen.on_fast_forward_release;
-                else/if ref.name == {Input::ARMAGEDDON_BUTTON} then
+                else/if ref_.name == {Input::ARMAGEDDON_BUTTON} then
                     emit screen.on_armageddon_release;
-                else/if ref.name == {Input::ESCAPE_BUTTON} then
+                else/if ref_.name == {Input::ESCAPE_BUTTON} then
                     emit screen.on_escape_release;
-                else/if ref.name == {Input::ACTION_UP_BUTTON} then
+                else/if ref_.name == {Input::ACTION_UP_BUTTON} then
                     emit screen.on_action_up_release;
-                else/if ref.name == {Input::ACTION_DOWN_BUTTON} then
+                else/if ref_.name == {Input::ACTION_DOWN_BUTTON} then
                     emit screen.on_action_down_release;
                 else
-                    _log_debug("unhandled event: %1%", ref.name);
+                    _log_debug("unhandled event: %1%", ref_.name);
                 end
             else
-                _log_error("got unknown event.state: %1%", ref.state);
+                _log_error("got unknown event.state: %1%", ref_.state);
             end
-        end    
+        end
     with
         every screen_ptr in ON_STARTUP do
-            if screen_ptr == &screen.me then
+            if screen_ptr == &&screen.me! then
                 emit screen.on_startup;
             end
         end
     with
         loop do
-            var _ScreenResizePackage&& package = await SCREEN_RESIZE until package:screen == &screen.me;            
+            var _ScreenResizePackage&& package = await SCREEN_RESIZE until package:screen == &&screen.me!;
 
             if gui_manager then
-                ((_GUI_RectComponent&&)&gui_manager:me):set_rect(_Rect(_Vector2i(0, 0), package:size) finalize with end);
+                ((_GUI_RectComponent&&)&&gui_manager:me):set_rect(_Rect(_Vector2i(0, 0), package:size) finalize with end);
             end
 
             var int w = package:size.width;

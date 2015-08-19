@@ -3,8 +3,10 @@
 
 #include "../../c.ceu"
 #include "../../sdl.ceu"
+#include "../../engine/display/sprite.ceu"
 #include "../../engine/gui/igui_component.ceu"
 #include "../../proxies/pointerproxy.ceu"
+#include "../screens/ipingus_menu.ceu"
 
 native/pre do
     ##include "engine/sound/sound.hpp"
@@ -31,8 +33,8 @@ class MenuButton with
     function (int x, int y) => void set_pos;
 do
     finalize with
-        _delete_obj(desc);
-        _delete_obj(text);
+        _delete_obj(&&desc!);
+        _delete_obj(&&text!);
     end
 
     var Sprite surface_p;
@@ -55,19 +57,19 @@ do
             par/or do
                 every gc in draw do
                     gc:draw(_deref(surface_p.get()), _Vector2i(x_pos, y_pos));
-                    gc:print_center(_Fonts__chalk_large, _Vector2i(x_pos, y_pos - 28), _deref(text));
+                    gc:print_center(_Fonts__chalk_large, _Vector2i(x_pos, y_pos - 28), _deref(&&text!));
                 end
             with
                 await mouse_enter;
                 _Sound__PingusSound__play_sound("tick");
-                menu.set_hint(desc.c_str());
+                menu.set_hint(desc!.c_str());
             end
 
             par/or do
                 every gc in draw do
                     gc:draw(_deref(surface_p.get()), _Vector2i(x_pos, y_pos));
                     gc:draw(_deref(highlight.get()), _Vector2i(x_pos, y_pos));
-                    gc:print_center(_Fonts__chalk_large, _Vector2i(x_pos, y_pos - 28), _deref(text));
+                    gc:print_center(_Fonts__chalk_large, _Vector2i(x_pos, y_pos - 28), _deref(&&text!));
                 end
             with
                 await mouse_leave;                

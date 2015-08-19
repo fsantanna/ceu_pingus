@@ -25,7 +25,7 @@ class SpriteDrawable with
     var _FileReader&& reader;
     var IWorldmap& worldmap;
 do
-    finalize with _delete_obj(name); end
+    finalize with _delete_obj(&&name!); end
 
     var Sprite surface;
     var Vector3f pos;

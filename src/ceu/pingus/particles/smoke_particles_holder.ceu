@@ -11,14 +11,15 @@
 class SmokeParticlesHolder with
     interface ISmokeParticlesHolder;
 do
-    var _Vector_SmokeParticle&? particles = _new_Vector_SmokeParticle();
+    var _Vector_SmokeParticle&? particles_ = &_new_Vector_SmokeParticle();
     var Sprite surf1;
     var Sprite surf2;
     call/rec surf1.reload_by_name("particles/smoke");
     call/rec surf2.reload_by_name("particles/smoke2");
-    finalize with _delete_obj(particles); end
+    finalize with _delete_obj(&&particles_!); end
+    var _Vector_SmokeParticle& particles = particles_!;
 
-    call/rec global:world:add_object(&this);
+    call/rec global:world:add_object(&&this);
 
     function (_FileReader&& reader) => void construct do end
     function (void) => float get_z_pos do return 1000; end
@@ -28,10 +29,10 @@ do
     function @rec (int x, int y, float vx, float vy) => void add_particle do
         // search for dead entry to replace
         loop j in particles.size() do
-            var _SmokeParticle&? it = _get_particle(particles, j);
+            var _SmokeParticle&? it = &_get_particle(particles, j);
 
-            if not it.livetime then
-                it = _makeSmokeParticle(x, y, vx, vy);
+            if not it!.livetime then
+                it! = _makeSmokeParticle(x, y, vx, vy);
                 return;
             end
         end
@@ -43,16 +44,16 @@ do
     par/or do
         every gc in global:draw do
             loop j in particles.size() do
-                var _SmokeParticle&? it = _get_particle(particles, j);
+                var _SmokeParticle&? it = &_get_particle(particles, j);
 
-                if not it.livetime then
+                if not it!.livetime then
                     continue;
                 end
 
-                if not it.use_surf2 then
-                    gc:color().draw(_deref(surf1.get()), it.pos) finalize with end;
+                if not it!.use_surf2 then
+                    gc:color().draw(_deref(surf1.get()), it!.pos) finalize with end;
                 else
-                    gc:color().draw(_deref(surf2.get()), it.pos) finalize with end;
+                    gc:color().draw(_deref(surf2.get()), it!.pos) finalize with end;
                 end
             end
         end
@@ -60,18 +61,18 @@ do
         every global:world:update do
             // update all contained particles
             loop j in particles.size() do
-                var _SmokeParticle&? it = _get_particle(particles, j);
+                var _SmokeParticle&? it = &_get_particle(particles, j);
 
                 // skip dead particles
-                if not it.livetime then
+                if not it!.livetime then
                     continue;
                 end
 
-                it.pos.x = it.pos.x + it.velocity.x;
-                it.pos.y = it.pos.y + it.velocity.y;
-                it.pos.z = 1000; //z pos
+                it!.pos.x = it!.pos.x + it!.velocity.x;
+                it!.pos.y = it!.pos.y + it!.velocity.y;
+                it!.pos.z = 1000; //z pos
 
-                it.livetime = it.livetime - 1;
+                it!.livetime = it!.livetime - 1;
             end
         end
     with
