@@ -64,7 +64,7 @@ do
     dir.value = init_direction_value;
 
     function (void) => Direction& direction do
-        return dir;
+        return &&dir;
     end
 
     velocity.x = 0;
@@ -179,7 +179,7 @@ do
     end
 
     function (void) => IPingu& get_ref do
-        return this;
+        return &&this;
     end
 
     // Returns the distance between the Pingu and a given coordinate

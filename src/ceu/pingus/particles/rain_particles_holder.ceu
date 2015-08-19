@@ -33,7 +33,7 @@ do
     function @rec (int x, int y) => void add_particle do
         // search for dead entry to replace
         loop j in particles.size() do
-            var _RainParticle&? it = &_get_particle(particles, j);
+            var _RainParticle&? it = &_get_particle(&&particles, j);
 
             if not it!.alive then
                 it! = _makeRainParticle(x, y);
@@ -48,7 +48,7 @@ do
     par/or do
         every gc in global:draw do
             loop j in particles.size() do
-                var _RainParticle&? it_ = &_get_particle(particles, j);
+                var _RainParticle&? it_ = &_get_particle(&&particles, j);
                 var _RainParticle& it = &it_!;
 
                 // skip dead/invisible particles
@@ -71,7 +71,7 @@ do
     with
         every global:world:update do
             loop j in particles.size() do
-                var _RainParticle&? it_ = &_get_particle(particles, j);
+                var _RainParticle&? it_ = &_get_particle(&&particles, j);
                 var _RainParticle& it = &it_!;
 
                 // skip dead particles

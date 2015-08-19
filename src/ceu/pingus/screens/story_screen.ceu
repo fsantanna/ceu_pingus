@@ -186,7 +186,8 @@ do
         else
             pages.pop_back();
             if not pages.empty() then
-                current_page! = &_PTR2REF(pages.back());
+// TODO(changed)
+                current_page = &_new_StoryPage(pages.back());
                 call/rec page_surface.reload_by_desc(_addr(current_page!.image));
                 display_text! = "";
                 time_passed = 0;

@@ -17,7 +17,7 @@ native/pre do
     ##define Display__get_width() Display::get_width()
     ##define Display__get_framebuffer() Display::get_framebuffer()
     ##define SU2str(x) StringUtil::to_string(x)
-    ##define STRadd(x,y) x+y
+    ##define STRadd(x,y) (x+y)
 end
 
 class FPSCounter with

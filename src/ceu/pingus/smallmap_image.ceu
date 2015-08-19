@@ -48,7 +48,7 @@ do
 
         canvas!.lock();
 
-        cbuffer = _PTR2REF((_uchar_ptr)(&&canvas!).get_data());
+        cbuffer = &_PTR2REF((_uchar_ptr)canvas!.get_data());
 
         var int cmap_width  = colmap!.get_width();
         var int cmap_height = colmap!.get_height();
@@ -108,11 +108,11 @@ do
         //original FIXME: surface -> clone -> displayFormat leaves room for
         // optimizations, clone isn't really needed
 // TODO: should yield error (rebinding)
-        sur = &_cSprite(canvas!.clone());
+        sur! = _cSprite(canvas!.clone());
     end
 
     function @rec (void) => _Sprite&& get_surface do
-        if not sur then
+        if not sur? then
             call/rec update_surface();
         end
 

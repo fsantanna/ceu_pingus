@@ -134,6 +134,10 @@ do
             package:result = call/rec is_at_func(iap);
         end
     with
+        native do
+            #define GUI_MANAGER_DRAW(what,ctx) what->draw(ctx)
+        end
+        native @nohold _GUI_MANAGER_DRAW();
         every parent_gc in draw do
             drawing_context!.clear();
 
@@ -141,14 +145,14 @@ do
                 if children_.at(i):is_visible() then
                     if children_.at(i):ceu == null then
                         _log_warn("draw/ceu==null\n");
-                        children_.at(i):draw(_deref(drawing_context!));
+                        _GUI_MANAGER_DRAW(children_.at(i),drawing_context!);
                     else
                         emit ((IGUI_Component&&)(children_.at(i):ceu)):draw => &&drawing_context!;
                     end
                 end
             end
 
-            parent_gc:draw(_deref(drawing_context!));
+            _GUI_MANAGER_DRAW(parent_gc,drawing_context!);
         end
     with
         every delta in global:update do

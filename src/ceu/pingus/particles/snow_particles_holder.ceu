@@ -41,7 +41,7 @@ do
         //default c == false
         // search for dead entry to replace
         loop j in particles.size() do
-            var _SnowParticle&? it = &_get_particle(particles, j);
+            var _SnowParticle&? it = &_get_particle(&&particles, j);
 
             if not it!.alive then
                 it! = _makeSnowParticle(x, y, c);
@@ -56,7 +56,7 @@ do
     par/or do
         every gc in global:draw do
             loop j in particles.size() do
-                var _SnowParticle&? it_ = &_get_particle(particles, j);
+                var _SnowParticle&? it_ = &_get_particle(&&particles, j);
                 var _SnowParticle& it = &it_!;
 
                 if not it.alive then
@@ -75,7 +75,7 @@ do
         every global:world:update do
             // update all contained particles
             loop j in particles.size() do
-                var _SnowParticle&? it_ = &_get_particle(particles, j);
+                var _SnowParticle&? it_ = &_get_particle(&&particles, j);
                 var _SnowParticle& it = &it_!;
 
                 // skip dead particles

@@ -246,7 +246,7 @@ do
     _Sound__PingusSound__play_music("pingus-1.wav");
 
     function (_const_char_string str) => void set_hint do
-        hint! = &_PTR2REF(str);
+        hint! = str;
     end
 
     par/or do

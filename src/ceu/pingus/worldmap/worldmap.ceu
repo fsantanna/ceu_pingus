@@ -130,8 +130,8 @@ do
         this.path_graph = &_new_PathGraph();
     end;
 
-    default_node = path_graph.path_graph!.lookup_node(_deref(pingus_worldmap:get_default_node()!));
-    path_graph.path_graph!.lookup_node(_deref(pingus_worldmap:get_final_node()!));
+    default_node = path_graph.path_graph!.lookup_node(_deref(pingus_worldmap:get_default_node()));
+    path_graph.path_graph!.lookup_node(_deref(pingus_worldmap:get_final_node()));
 
     var Pingus pingus with
         XXX_NO_FIN(this.name, &_new_String("pingus"));
@@ -158,7 +158,7 @@ do
         end
 
         if _StatManager__instance():get_string(
-                _scc2(_deref(pingus_worldmap:get_short_name()!),
+                _scc2(_deref(pingus_worldmap:get_short_name()),
                       "-current-node"),
                 _deref(&&node_name!))
         then
@@ -206,7 +206,7 @@ do
 
     par/or do
         every startup do
-            _Sound__PingusSound__play_music(_deref(pingus_worldmap:get_music()!));
+            _Sound__PingusSound__play_music(_deref(pingus_worldmap:get_music()));
 
             //update_locked_nodes:
             //original FIXME: This shouldn't be a polling function
@@ -319,7 +319,10 @@ do
                                 _log_info("Worldmap: NO PATH TO NODE FOUND!");
                             end
                         else
-                            _StatManager__instance():set_string(_scc2(_deref(pingus_worldmap:get_short_name()!), "-current-node"), _deref(&&dot:name!));
+                            _StatManager__instance():set_string(
+                                _scc2(_deref(pingus_worldmap:get_short_name()),
+                                      "-current-node"),
+                                _deref(&&dot:name!));
                         end
                     else
                         _Sound__PingusSound__play_sound("chink");

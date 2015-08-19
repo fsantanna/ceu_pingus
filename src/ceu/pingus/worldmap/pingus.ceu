@@ -104,7 +104,7 @@ do
                 // No path could be found
                 return false;
             else
-                node_path! = &_PTR2REF(path_graph.path_graph!.get_path(current_node, target).path);
+                node_path! = &_PTR2REF(&&path_graph.path_graph!.get_path(current_node, target).path);
 
                 // Simulate that we just reached current_node, then update the edge_path
                 target_node = &_PTR2REF(node_path!.back()); // equal to current_node;
@@ -136,7 +136,7 @@ do
                         _delete_obj(&&node_path2!);
                         return false;
                     else
-                        node_path! = &_PTR2REF(node_path2!.path);
+                        node_path! = &_PTR2REF(&&node_path2!.path);
                     end
                 else
                     // Select the shorter path

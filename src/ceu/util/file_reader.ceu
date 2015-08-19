@@ -12,6 +12,6 @@ native/pre do
     ##define FileReader__parse FileReader::parse
 end
 
-native @pure _new_FileReader(), _new_Vector_FileReader(), _FileReader__parse();
+native @pure _new_FileReader(), _new_Vector_FileReader();
 
 #endif

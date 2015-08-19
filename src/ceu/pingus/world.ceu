@@ -221,23 +221,23 @@ do
     end
 
     function (void) => IPinguHolder& get_pingus do
-        return holder;
+        return &&holder;
     end
 
     function (void) => IPinguParticlesHolder&& get_pingu_particles_holder do
-        return pingu_particles_holder;
+        return &&pingu_particles_holder;
     end
 
     function (void) => IRainParticlesHolder&& get_rain_particles_holder do
-        return rain_particles_holder;
+        return &&rain_particles_holder;
     end
 
     function (void) => ISmokeParticlesHolder&& get_smoke_particles_holder do
-        return smoke_particles_holder;
+        return &&smoke_particles_holder;
     end
 
     function (void) => ISnowParticlesHolder&& get_snow_particles_holder do
-        return snow_particles_holder;
+        return &&snow_particles_holder;
     end
 
     function (void) => float get_gravity do
@@ -246,7 +246,7 @@ do
 
     function (_const_char_string id) => ITeleporterTarget&& get_teleporter_target do
         loop target in teleporter_targets do
-            if target:id == id then
+            if target:id! == id then
                 return target;
             end
         end
@@ -256,7 +256,7 @@ do
 
     function (_const_char_string id) => ISwitchDoorDoor&& get_switch_door_door do
         loop door in switch_door_doors do
-            if door:id == id then
+            if door:id! == id then
                 return door;
             end
         end

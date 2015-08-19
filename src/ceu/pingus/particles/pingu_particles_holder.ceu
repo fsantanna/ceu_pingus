@@ -31,7 +31,7 @@ do
 
         // fill gaps from dead entries
         loop j in particles.size() do
-            var _PinguParticle&? it = &_get_particle(particles, j);
+            var _PinguParticle&? it = &_get_particle(&&particles, j);
 
             if not it!.livetime then
                 it! = _makePinguParticle(x, y);
@@ -56,7 +56,7 @@ do
     par/or do
         every gc in global:draw do
            loop i in particles.size() do
-                var _PinguParticle&? it = &_get_particle(particles, i);
+                var _PinguParticle&? it = &_get_particle(&&particles, i);
 
                 // skip dead particles
                 if not it!.livetime then
@@ -73,7 +73,7 @@ do
 
             // update all contained particles
             loop i in particles.size() do
-                var _PinguParticle&? it_ = &_get_particle(particles, i);
+                var _PinguParticle&? it_ = &_get_particle(&&particles, i);
                 var _PinguParticle& it = &it_!;
 
                 // skip dead particles
