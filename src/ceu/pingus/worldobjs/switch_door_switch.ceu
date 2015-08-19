@@ -17,7 +17,7 @@ class SwitchDoorSwitch with
 do
     var bool is_triggered = false;
     var Sprite3 switch_sur with
-        this.pos_giver = outer;
+        this.pos_giver = &outer;
     end;
     switch_sur.reload_by_name("worldobjs/switchdoor_switch");
 

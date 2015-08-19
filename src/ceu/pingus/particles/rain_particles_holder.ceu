@@ -21,7 +21,7 @@ do
     call/rec rain_splash.reload_by_name("particles/rain_splash");
     finalize with _delete_obj(&&particles_!); end
 
-    var _Vector_RainParticle& particles = particles_!;
+    var _Vector_RainParticle& particles = &particles_!;
 
     call/rec global:world:add_object(&&this);
 
@@ -49,7 +49,7 @@ do
         every gc in global:draw do
             loop j in particles.size() do
                 var _RainParticle&? it_ = &_get_particle(particles, j);
-                var _RainParticle& it = it_!;
+                var _RainParticle& it = &it_!;
 
                 // skip dead/invisible particles
                 if not it.alive or it.pos.x > global:world:get_width() then
@@ -72,7 +72,7 @@ do
         every global:world:update do
             loop j in particles.size() do
                 var _RainParticle&? it_ = &_get_particle(particles, j);
-                var _RainParticle& it = it_!;
+                var _RainParticle& it = &it_!;
 
                 // skip dead particles
                 if not it.alive then

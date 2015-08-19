@@ -13,7 +13,7 @@ class LaserExit with
     interface IWorldObj;
 do
     var Sprite3 surface with
-        this.pos_giver = outer;
+        this.pos_giver = &outer;
         this.active = false;
     end;
     surface.reload_by_name("traps/laser_exit");

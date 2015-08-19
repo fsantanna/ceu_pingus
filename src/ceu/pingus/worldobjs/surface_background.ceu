@@ -73,7 +73,7 @@ do
             if not sprite? then
                 continue;
             end
-            var _Sprite& sprite_ = sprite!;
+            var _Sprite& sprite_ = &sprite!;
 
             var int offset_x = gc:color().world_to_screen(_Vector2i(0,0)).x - gc:color().get_rect().left;
             var int offset_y = gc:color().world_to_screen(_Vector2i(0,0)).y - gc:color().get_rect().top;
@@ -114,7 +114,7 @@ do
             if not sprite? or _globals__static_graphics then
                 continue;
             end
-            var _Sprite& sprite_ = sprite!;
+            var _Sprite& sprite_ = &sprite!;
             sprite_.update();
 
             if scroll_x then

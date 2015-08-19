@@ -41,7 +41,7 @@ do
 
         if pingu.direction().value == D_RIGHT then
             var Sprite3 right with
-                this.pos_giver = pos_giver;
+                this.pos_giver = &pos_giver;
             end;
             right.reload_by_name(right_name:c_str());
             current = _PTR2REF(&&right);
@@ -58,7 +58,7 @@ do
 
         if pingu.direction().value == D_LEFT then
             var Sprite3 left with
-                this.pos_giver = pos_giver;
+                this.pos_giver = &pos_giver;
             end;
             left.reload_by_name(left_name:c_str());
             current = _PTR2REF(&&left);

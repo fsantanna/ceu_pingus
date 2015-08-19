@@ -65,9 +65,9 @@ do
     mouse_pos.y = 300;
 
     var _std__vector_Component&? children = &_new_Vector_Component();
-    var _std__vector_Component& children_ = children!;
+    var _std__vector_Component& children_ = &children!;
 
-    var _DrawingContext& drawing_context_ = drawing_context!;
+    var _DrawingContext& drawing_context_ = &drawing_context!;
 
     var _GUI__Component&& mouse_over_comp = null;
     var _GUI__Component&& focused_comp = null;
@@ -89,9 +89,9 @@ do
         children_.push_back(comp);
     end
 
-    var PrimaryButtonProxy p with this.gui = outer; end;
-    var PointerProxy pp with this.gui = outer; end;
-    var EventProxy ep with this.gui = outer; end;
+    var PrimaryButtonProxy p with this.gui = &outer; end;
+    var PointerProxy pp with this.gui = &outer; end;
+    var EventProxy ep with this.gui = &outer; end;
 
     function @rec (Vector2i pos) => bool is_at_func do
         var Vector2i mpos;

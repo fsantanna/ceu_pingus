@@ -74,7 +74,7 @@ do
     var _CeuSpriteImpl&? core = &_new_CeuSpriteImpl();
     finalize with _delete_obj((&&core!)); end
 
-    var _CeuSpriteImpl& core_ = core!;
+    var _CeuSpriteImpl& core_ = &core!;
 
     function (_SpriteDescription&& desc, int mod) => void load_desc do
         (&&core_).filename = _PTR2REF(desc:filename);

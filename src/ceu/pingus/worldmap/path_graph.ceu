@@ -99,7 +99,7 @@ do
     //parse_nodes:
     do
     var _std__vector_FileReader&? childs_ = &_new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("nodes").get_sections());
-    var _std__vector_FileReader& childs = childs_!;
+    var _std__vector_FileReader& childs = &childs_!;
 
     loop i in childs.size() do
         var Drawable&&? dot = null;
@@ -152,7 +152,7 @@ do
     //parse_edges:
     do
     var _std__vector_FileReader&? childs_ = &_new_Vector_FileReader(worldmap.pingus_worldmap:get_graph():read_section("edges").get_sections());
-    var _std__vector_FileReader& childs = childs_!;
+    var _std__vector_FileReader& childs = &childs_!;
 
     var _std__string&& name = &_new_String();
     var _std__string&& source = &_new_String();

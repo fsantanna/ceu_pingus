@@ -91,8 +91,8 @@ do
         _delete_obj(&&drawables_!);
     end
 
-    var _GraphicContextState& gc_state = gc_state_!;
-    var _std__vector_Drawable& drawables = drawables_!;
+    var _GraphicContextState& gc_state = &gc_state_!;
+    var _std__vector_Drawable& drawables = &drawables_!;
 
     var int mouse_x = 0;
     var int mouse_y = 0;
@@ -107,7 +107,7 @@ do
         if pingus_worldmap:get_objects():at(i).get_name() == "surface" then
             spawn SpriteDrawable with
                 this.reader = (_FileReader&&)_addr(pingus_worldmap:get_objects():at(i));
-                this.worldmap = outer;
+                this.worldmap = &outer;
 
                 this.name = &_new_String();
                 this.reader:read_string("name", _deref(&&this.name!));
@@ -126,7 +126,7 @@ do
     end
 
     var PathGraph path_graph with
-        this.worldmap = outer;
+        this.worldmap = &outer;
         this.path_graph = &_new_PathGraph();
     end;
 
@@ -135,7 +135,7 @@ do
 
     var Pingus pingus with
         this.name = &_new_String("pingus");
-        this.path_graph = path_graph;
+        this.path_graph = &path_graph;
     end;
     call/rec set_starting_node();
     add_drawable(&&pingus);

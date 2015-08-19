@@ -17,7 +17,7 @@ do
     call/rec surf1.reload_by_name("particles/smoke");
     call/rec surf2.reload_by_name("particles/smoke2");
     finalize with _delete_obj(&&particles_!); end
-    var _Vector_SmokeParticle& particles = particles_!;
+    var _Vector_SmokeParticle& particles = &particles_!;
 
     call/rec global:world:add_object(&&this);
 

@@ -35,7 +35,7 @@ do
         //not finished
         do
             var Sprite3 block_sur with
-                this.pos_giver = outer;
+                this.pos_giver = &outer;
             end;
             block_sur.reload_by_name("worldobjs/iceblock");
 

@@ -45,7 +45,7 @@ native @pure _PA_get_activation_mode(), _StringUtil__to_string();
 #define DO_ACTION(n, c) \
     else/if current_action == n then \
         current_action = do c with \
-            this.pingu = outer; \
+            this.pingu = &outer; \
         end;
 
 #define PA_INSTANT 0

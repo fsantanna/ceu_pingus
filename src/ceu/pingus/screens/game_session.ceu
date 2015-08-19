@@ -88,7 +88,7 @@ do
         this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
-        this.screen = outer;
+        this.screen = &outer;
         this.gui_manager = &&gui_manager;
     end;
 
@@ -100,7 +100,7 @@ do
     var ButtonPanel button_panel with
         this.me = &_new_RectComponent(_Rect());
         this.me.ceu = &&this;
-        this.server = server;
+        this.server = &server;
     end;
 
     do
@@ -113,7 +113,7 @@ do
     var PingusCounter pcounter with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.server = server;
+        this.server = &server;
     end;
 
     var Playfield playfield with
@@ -132,7 +132,7 @@ do
         this.me.ceu = &&this;
         this.scene_context = &_new_SceneContext(_deref(&&rect!));
         this.state = &_new_GraphicContextState(rect!.get_width(), rect!.get_height());
-        this.server = server;
+        this.server = &server;
         this.session = &&outer;
 
         _delete_obj(&&rect!);
@@ -140,33 +140,33 @@ do
 
     var SmallMap small_map with
         this.rect = &_new_RectComponent(_Rect(_Vector2i(5, game_session!.size.height - 105), _Size(175, 100)));
-        this.me = this.rect;
+        this.me = &this.rect;
         this.me.ceu = &&this;
-        this.playfield = playfield;
+        this.playfield = &playfield;
     end;
 
     var ArmageddonButton armageddon_button with
         this.me = &_new_RectComponent(_Rect(_Vector2i(_Display__get_width() - 40, _Display__get_height()-62), _Size(38, 60)));
         this.me.ceu = &&this;
-        this.server = server;
+        this.server = &server;
     end;
 
     var ForwardButton forward_button with
         this.me = &_new_RectComponent(_Rect(_Vector2i(_Display__get_width() - 40*2, _Display__get_height()-62), _Size(38, 60)));
         this.me.ceu = &&this;
-        this.session = outer;
+        this.session = &outer;
     end;
 
     var PauseButton pause_button with
         this.me = &_new_RectComponent(_Rect(_Vector2i(_Display__get_width() - 40*3, _Display__get_height()-62), _Size(38, 60)));
         this.me.ceu = &&this;
-        this.session = outer;
+        this.session = &outer;
     end;
 
     var TimeDisplay time_display with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.server = server;
+        this.server = &server;
     end;
 
     gui_manager.add(&&playfield.me);
@@ -214,7 +214,7 @@ do
         every delta in global:update do
             if call/rec server.is_finished() then
                 var _Result&? result_ = &_new_Result();
-                var _Result& result = result_!;
+                var _Result& result = &result_!;
 
                 finalize result.plf = server.get_plf(); with end
 

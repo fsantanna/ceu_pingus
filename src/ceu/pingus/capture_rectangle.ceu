@@ -26,7 +26,7 @@ do
     var IPingu&& pingu = null;
     var _std__string&? action_str_ = &_new_String();
     finalize with _delete_obj(&&action_str_!); end;
-    var _std__string& action_str = action_str_!;
+    var _std__string& action_str = &action_str_!;
 
     var _Sprite&? good = &_new_SpriteA("game/cursors/capgood");
     var _Sprite&? bad = &_new_SpriteA("game/cursors/capbad");

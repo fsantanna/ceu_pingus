@@ -69,14 +69,14 @@ class StartScreenOkButton with
     function @rec (int x, int y) => void set_pos;
 do
     var SurfaceButton sb with
-        this.me = outer.me;
+        this.me = &outer.me;
         this.pos.x = _Display__get_width()/2 + 245;
         this.pos.y = _Display__get_height()/2 + 150;
     end;
 
     var Relay r with
-        this.src = outer;
-        this.dst = sb;
+        this.src = &outer;
+        this.dst = &sb;
     end;
 
     function @rec (Vector2i pos) => bool is_at_func do
@@ -122,14 +122,14 @@ class StartScreenAbortButton with
     function @rec (int x, int y) => void set_pos;
 do
     var SurfaceButton sb with
-        this.me = outer.me;
+        this.me = &outer.me;
         this.pos.x = _Display__get_width()/2 - 300;
         this.pos.y = _Display__get_height()/2 + 200;
     end;
 
     var Relay r with
-        this.src = outer;
-        this.dst = sb;
+        this.src = &outer;
+        this.dst = &sb;
     end;
 
     function @rec (Vector2i pos) => bool is_at_func do
@@ -232,26 +232,26 @@ do
         this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
-        this.screen = outer;
+        this.screen = &outer;
         this.gui_manager = &&gui_manager;
     end;
 
     var StartScreenComponent comp with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.parent = outer;
+        this.parent = &outer;
     end;
 
     var StartScreenOkButton ok_button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.parent = outer;
+        this.parent = &outer;
     end;
 
     var StartScreenAbortButton abort_button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.parent = outer;
+        this.parent = &outer;
     end;
 
     gui_manager.add(&&comp.me);

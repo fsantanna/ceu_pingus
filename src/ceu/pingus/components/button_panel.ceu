@@ -74,14 +74,14 @@ do
 
     var _ActionHolder&? aholder_ = &_addr(_deref(server.me!.get_action_holder()));
     var _Vector_ActionName&? actions = &_new_Vector_ActionName(aholder_!.get_available_actions());
-    var _Vector_ActionName& actions_ = actions!;
+    var _Vector_ActionName& actions_ = &actions!;
 
     // Sort the action so that they always have the same order in the panel
     _std__sort(actions_.begin(), actions_.end());
 
     var _Vector_ActionButton&? buttons_ = &_new_Vector_ActionButton(actions_.size());
         finalize with _delete_obj(&&buttons_!); end
-    var _Vector_ActionButton& buttons = buttons_!;
+    var _Vector_ActionButton& buttons = &buttons_!;
 
     loop/100 i in actions_.size() do
         buttons.at(i).name   = &_PTR2REF(actions_.at(i));
@@ -124,7 +124,7 @@ do
     par do
         every gc in draw do
             var _ActionHolder&? aholder_ = &_addr(_deref(server.me!.get_action_holder()));
-            var _ActionHolder& aholder = aholder_!;
+            var _ActionHolder& aholder = &aholder_!;
 
             loop/100 i in buttons.size() do
                 var Vector3f pos;

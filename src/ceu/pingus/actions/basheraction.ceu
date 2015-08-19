@@ -51,7 +51,7 @@ do
 
     var _CollisionMask&? bash_radius_ = &_new_CollisionMask("pingus/common/bash_radius_gfx", "pingus/common/bash_radius");
     finalize with _delete_obj(&&bash_radius_!); end;
-    var _CollisionMask& bash_radius = bash_radius_!;
+    var _CollisionMask& bash_radius = &bash_radius_!;
 
     _assert(bash_radius.get_width() % 2 == 0);
     var int bash_reach = bash_radius.get_width();
@@ -100,8 +100,8 @@ do
     call/rec bash();
 
     var RightLeftSprite sprite with
-        this.pingu = pingu;
-        this.pos_giver = pingu;
+        this.pingu = &pingu;
+        this.pos_giver = &pingu;
         this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/basher/left"));
         this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/basher/right"));
     end;

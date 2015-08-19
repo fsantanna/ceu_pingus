@@ -123,7 +123,7 @@ class World with
 do
     var _Container&? objs_ = &_new_Container();
     finalize with _delete_obj(&&objs_!); end
-    var _Container& objs = objs_!;
+    var _Container& objs = &objs_!;
 
     var bool do_armageddon = false;
     var int armageddon_count = 0;
@@ -293,7 +293,7 @@ do
             var _const_std__vector_FileReader&& ov = _addr(pingus_level!.get_objects());
 
             var _CreationPackage&? pack_ = &_new_CreationPackage();
-            var _CreationPackage& pack = pack_!;
+            var _CreationPackage& pack = &pack_!;
 
             loop i in ov:size() do
                 pack.reader = _PTR2REF((_FileReader&&)_vecget_addr(ov, i));
@@ -350,7 +350,7 @@ do
         every package in create_group do
             var _std__vector_FileReader&? sections = &_new_std__vector_FileReader(package);
             var _CreationPackage&? new_package_ = &_new_CreationPackage();
-            var _CreationPackage& new_package = new_package_!;
+            var _CreationPackage& new_package = &new_package_!;
 
             loop i in sections!.size() do
                 new_package.reader = _vecget_addr(&&sections!, i);
@@ -384,7 +384,7 @@ do
             var _const_std__vector_FileReader&& objects = _addr(prefab!.get_objects());
 
             var _CreationPackage&? new_package_ = &_new_CreationPackage();
-            var _CreationPackage& new_package = new_package_!;
+            var _CreationPackage& new_package = &new_package_!;
 
             loop i in objects:size() do
                 var _OverrideFileReader&? override_reader = &_new_OverrideFileReader(objects, i, _deref(&&overrides!));
@@ -481,7 +481,7 @@ do
                 end
 
                 var _std__string&? direction_str_ = &_new_String();
-                var _std__string& direction_str = direction_str_!;
+                var _std__string& direction_str = &direction_str_!;
                 _string_read_string(direction_str, package:reader, "direction");
 
                 if direction_str == "left" then
@@ -698,7 +698,7 @@ do
                     this.sprite = &_new_SpriteA(_deref(&&desc!));
                 else
                     var _Surface&? surface_ = &_new_Surface();
-                    var _Surface& surface = surface_!;
+                    var _Surface& surface = &surface_!;
                     _opeq(&&surface, _Resource__load_surface(_deref(&&desc!)));
 
                     if this.color!.a != 0 and surface.is_indexed() then

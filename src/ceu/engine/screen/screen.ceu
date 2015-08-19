@@ -81,7 +81,7 @@ do
     with
         every e in screen.call_update_event do
             var _const_Input__Event&? ref = &_deref(_addr(e));
-            var _const_Input__Event& ref_ = ref!;
+            var _const_Input__Event& ref_ = &ref!;
             // Dispatch the recieved input events
             if gui_manager then
                 emit gui_manager:update_event => (&&ref_);
@@ -100,7 +100,7 @@ do
     with
         every e in process_button_event do
             var _const_Input__ButtonEvent&? ref = &_addr(_deref(e));
-            var _const_Input__Event& ref_ = ref!;
+            var _const_Input__Event& ref_ = &ref!;
             if ref_.state == {Input::BUTTON_PRESSED} then
                 if ref_.name == {Input::PRIMARY_BUTTON} or e:name == {Input::SECONDARY_BUTTON} then
                     // ignoring, handled in the gui_manager

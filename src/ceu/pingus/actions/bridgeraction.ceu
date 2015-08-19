@@ -139,8 +139,8 @@ do
         //building step
         do
             var RightLeftSprite build_sprite with
-                this.pingu = pingu;
-                this.pos_giver = outer;
+                this.pingu = &pingu;
+                this.pos_giver = &outer;
                 this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/bridger/left"));
                 this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/bridger/right"));
             end;
@@ -166,8 +166,8 @@ do
         //walking step
         do
             var RightLeftSprite walk_sprite with
-                this.pingu = pingu;
-                this.pos_giver = outer;
+                this.pingu = &pingu;
+                this.pos_giver = &outer;
                 this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/bridger_walk/left"));
                 this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/bridger_walk/right"));
             end;

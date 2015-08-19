@@ -5,6 +5,7 @@
 #include "../../sdl.ceu"
 #include "../../engine/gui/igui_component.ceu"
 #include "../../engine/gui/surface_button.ceu"
+#include "../../engine/gui/gui_manager.ceu"
 #include "../../engine/screen/screen.ceu"
 #include "../../engine/sound/sound.ceu"
 #include "../../math/math.ceu"
@@ -51,7 +52,7 @@ native/pre do
 
     ##define new_SceneContextE() new SceneContext()
 
-    ##define WorldmapNS__WorldmapScreen WorldmapNS::WorldmapScreen    
+    ##define WorldmapNS__WorldmapScreen WorldmapNS::WorldmapScreen
 end
 
 native @pure _new_GUI_Component(), _ScreenManager__instance(), _std__make_shared_GameScreen(), _std__make_shared_StoryScreen(),
@@ -66,9 +67,9 @@ interface IWorldmapScreen with
     interface Screen;
 
     function (void) => void show_intro_story;
-    function (void) => void show_end_story;    
+    function (void) => void show_end_story;
     function (void) => Worldmap&&? get_ceu_worldmap;
-    function (void) => Rect get_trans_rect;    
+    function (void) => Rect get_trans_rect;
 
     event _Pathname&& load;
 end
@@ -82,14 +83,14 @@ class WorldmapScreenCreditsButton with
     function @rec (int x, int y) => void set_pos;
 do
     var SurfaceButton sb with
-        this.me = outer.me;
+        this.me = &outer.me;
         this.pos.x = _Display__get_width() - 150;
         this.pos.y = 0;
     end;
 
     var Relay relay with
-        this.src = outer;
-        this.dst = sb;
+        this.src = &outer;
+        this.dst = &sb;
     end;
 
     function @rec (Vector2i pos) => bool is_at_func do
@@ -131,14 +132,14 @@ class WorldmapScreenCloseButton with
     function @rec (int x, int y) => void set_pos;
 do
     var SurfaceButton sb with
-        this.me = outer.me;
+        this.me = &outer.me;
         this.pos.x = 0;
         this.pos.y = _Display__get_height() - 37;
     end;
 
     var Relay relay with
-        this.src = outer;
-        this.dst = sb;
+        this.src = &outer;
+        this.dst = &sb;
     end;
 
     function @rec (Vector2i pos) => bool is_at_func do
@@ -180,8 +181,9 @@ class WorldmapScreenComponent with
     event void fast_forward_press;
     event void fast_forward_release;
 do
-    var _SceneContext&? scene_context = _new_SceneContextE();
-    finalize with _delete_obj(scene_context); end
+    var _SceneContext&? scene_context_ = &_new_SceneContextE();
+    finalize with _delete_obj(&&scene_context_!); end
+    var _SceneContext& scene_context = &scene_context_!;
 
     function @rec (Vector2i pos) => bool is_at_func do
         return true;
@@ -202,7 +204,7 @@ do
                         continue;
                     end
 
-                    emit parent.get_ceu_worldmap():update => delta;
+                    emit parent.get_ceu_worldmap()!:update => delta;
                 end
             with
                 await fast_forward_press;
@@ -213,9 +215,9 @@ do
                     if not me.is_visible() then
                         continue;
                     end
-                    
+
                     loop i in _globals__fast_forward_time_scale do
-                        emit parent.get_ceu_worldmap():update => delta;
+                        emit parent.get_ceu_worldmap()!:update => delta;
                     end
                 end
             with
@@ -229,10 +231,10 @@ do
             scene_context.clear();
 
             scene_context.push_modelview();
-            if parent.get_ceu_worldmap() then
-                emit parent.get_ceu_worldmap():draw => _addr(scene_context.color());
+            if parent.get_ceu_worldmap()! then
+                emit parent.get_ceu_worldmap()!:draw => _addr(scene_context.color());
             end
-            gc:draw(_new_SceneContextDrawingRequest(&scene_context, _Vector2i(0, 0), -1000));
+            gc:draw(_new_SceneContextDrawingRequest(&&scene_context, _Vector2i(0, 0), -1000));
             scene_context.pop_modelview();
 
             // Draw border
@@ -250,17 +252,17 @@ do
     with
         every (x, y) in mouse_press do
             var Rect cliprect = parent.get_trans_rect();
-            emit parent.get_ceu_worldmap():mouse_press => (x - cliprect.left, y - cliprect.top);
+            emit parent.get_ceu_worldmap()!:mouse_press => (x - cliprect.left, y - cliprect.top);
         end
     with
         every (x, y) in mouse_secondary_press do
             var Rect cliprect = parent.get_trans_rect();
-            emit parent.get_ceu_worldmap():mouse_secondary_press => (x - cliprect.left, y - cliprect.top);
+            emit parent.get_ceu_worldmap()!:mouse_secondary_press => (x - cliprect.left, y - cliprect.top);
         end
     with
         every (x, y) in mouse_move do
             var Rect cliprect = parent.get_trans_rect();
-            emit parent.get_ceu_worldmap():mouse_move => (x - cliprect.left, y - cliprect.top);
+            emit parent.get_ceu_worldmap()!:mouse_move => (x - cliprect.left, y - cliprect.top);
         end
     end
 end
@@ -271,60 +273,60 @@ class WorldmapScreen with
     interface IWorldmapScreen;
 do
     var GUIManager gui_manager with
-        this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
-        this.drawing_context = _new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
+        this.me = &_new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
+        this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
 
     var Worldmap&&? worldmap = null;
     var bool exit_worldmap = false;
 
     var ScreenFramework sf with
-        this.screen = outer;
-        this.gui_manager = &gui_manager;
+        this.screen = &outer;
+        this.gui_manager = &&gui_manager;
     end;
 
     var WorldmapScreenComponent comp with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;        
-        this.parent = outer;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
+        this.parent = &outer;
     end;
 
     var WorldmapScreenCloseButton close_button with
-        this.me = _new_GUI_Component();
-        this.me.ceu = &this;
-        this.parent = outer;
+        this.me = &_new_GUI_Component();
+        this.me.ceu = &&this;
+        this.parent = &outer;
     end;
 
     var WorldmapScreenCreditsButton&&? credits_button = null;
 
-    gui_manager.add(&comp.me);
-    gui_manager.add(&close_button.me);
+    gui_manager.add(&&comp.me);
+    gui_manager.add(&&close_button.me);
 
     function (void) => void show_intro_story do
         _ScreenManager__instance():push_screen(_std__make_shared_StoryScreen(
-            _deref(worldmap:get_worldmap():get_intro_story())
+            _deref(worldmap!:get_worldmap():get_intro_story())
         ));
     end
 
     function (void) => void show_end_story do
         _ScreenManager__instance():push_screen(_std__make_shared_StoryScreen(
-            _deref(worldmap:get_worldmap():get_end_story())
+            _deref(worldmap!:get_worldmap():get_end_story())
         ));
     end
 
     function (void) => Worldmap&&? get_ceu_worldmap do
-        return worldmap;
+        return worldmap!;
     end
 
     function (void) => Rect get_trans_rect do
         var Rect r;
-        if worldmap then
+        if worldmap! then
             Rect_load_XYWH(
                 r,
-                _Math__max((_Display__get_width()  - worldmap:get_width())/2,  0),
-                _Math__max((_Display__get_height() - worldmap:get_height())/2, 0),
-                _Math__min(_Display__get_width(),  worldmap:get_width()),
-                _Math__min(_Display__get_height(), worldmap:get_height())
+                _Math__max((_Display__get_width()  - worldmap!:get_width())/2,  0),
+                _Math__max((_Display__get_height() - worldmap!:get_height())/2, 0),
+                _Math__min(_Display__get_width(),  worldmap!:get_width()),
+                _Math__min(_Display__get_height(), worldmap!:get_height())
             );
         else
             Rect_load_XYWH(
@@ -340,33 +342,34 @@ do
 
     par/or do
         every package in LOAD_WORLDMAP_SCREEN do
-            if package:screen != &me then
+            if package:screen != &&me! then
                 continue;
             end
 
-            emit load => (_Pathname&&)&package:filename;
+            emit load => (_Pathname&&)&&package:filename;
         end
     with
         every filename in load do
             var PingusWorldmap&&? pingus_worldmap = spawn PingusWorldmap;
-            var _FileReader&? fr = _new_FileReader(_FileReader__parse(_deref(filename)));
-            call/rec pingus_worldmap:parse_file(&fr);
-            _delete_obj(fr);
+            var _FileReader&? fr = &_new_FileReader(_FileReader__parse(_deref(filename)));
+            call/rec pingus_worldmap!:parse_file(&&fr!);
+            _delete_obj(&&fr!);
 
-            worldmap = spawn Worldmap with                
-                this.pingus_worldmap = pingus_worldmap;
+            worldmap = spawn Worldmap with
+                this.pingus_worldmap = pingus_worldmap!;
             end;
 
             var bool credits_unlocked = false;
             //originally commented out:
-            //StatManager::instance()->get_bool(worldmap:me:get_short_name() + "-endstory-seen", credits_unlocked);
+            //StatManager::instance()->get_bool(worldmap!:me:get_short_name() + 
+            //"-endstory-seen", credits_unlocked);
             if credits_unlocked then
                 credits_button = spawn WorldmapScreenCreditsButton with
-                    this.me = _new_GUI_Component();
-                    this.me.ceu = &this;
-                    this.parent = outer;
-                end;                
-                gui_manager.add(&credits_button:me);
+                    this.me = &_new_GUI_Component();
+                    this.me.ceu = &&this;
+                    this.parent = &outer;
+                end;
+                gui_manager.add(&&credits_button!:me);
             end
         end
     with
@@ -374,8 +377,8 @@ do
             exit_worldmap = false;
             _Sound__PingusSound__stop_music();
 
-            if worldmap then
-                emit worldmap:startup;
+            if worldmap! then
+                emit worldmap!:startup;
             end
         end
     with
@@ -387,7 +390,7 @@ do
         end
     with
         every on_escape_press do
-            exit_worldmap = true;            
+            exit_worldmap = true;
         end
     with
         every on_fast_forward_press do
@@ -401,13 +404,13 @@ do
         every (width, height) in resize do
             call/rec close_button.set_pos(0, height - 37);
             if credits_button then
-                call/rec credits_button:set_pos(width - 150, 0);
+                call/rec credits_button!:set_pos(width - 150, 0);
             end
         end
     with
-        var _GUIScreen&& e = await DELETE_WORLDMAP_SCREEN until (e == &me);
-        if worldmap then
-            emit worldmap:delete;
+        var _GUIScreen&& e = await DELETE_WORLDMAP_SCREEN until (e == &&me!);
+        if worldmap! then
+            emit worldmap!:delete;
         end
     end
 end

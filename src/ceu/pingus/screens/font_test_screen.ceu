@@ -43,7 +43,7 @@ do
         this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
-        this.screen = outer;
+        this.screen = &outer;
         this.gui_manager = &&gui_manager;
     end;
 
@@ -53,10 +53,10 @@ do
     _log_info(">>> Loading font file: %1%", _deref(fontfile));
 
     var _Font&? font_ = &_new_Font(_FontDescription(_deref(fontfile)));
-    var _Font& font = font_!;
+    var _Font& font = &font_!;
 
     var _Font&? reference_ = &_new_Font(_FontDescription(_Pathname("images/fonts/reference-iso-8859-1.font", _Pathname__DATA_PATH)));
-    var _Font& reference = reference_!;
+    var _Font& reference = &reference_!;
 
     finalize with
         _delete_obj(&&font);

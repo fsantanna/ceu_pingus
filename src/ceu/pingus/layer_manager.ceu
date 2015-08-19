@@ -72,7 +72,7 @@ do
                     this.y_update = y_u;
                     this.x_offset = x_o;
                     this.y_offset = y_o;
-                    this.parent = outer;
+                    this.parent = &outer;
                 end;
                 l!:load(sprite);
             end

@@ -28,7 +28,7 @@ do
         _delete_obj(&&particles_!);
         _delete_obj(&&ground!);
     end
-    var _Vector_PinguParticle& particles = particles_!;
+    var _Vector_PinguParticle& particles = &particles_!;
 
     call/rec global:world:add_object(&&this);
 
@@ -57,7 +57,7 @@ do
         every gc in global:draw do
             loop j in particles.size() do
                 var _SnowParticle&? it_ = &_get_particle(particles, j);
-                var _SnowParticle& it = it_!;
+                var _SnowParticle& it = &it_!;
 
                 if not it.alive then
                     continue;
@@ -76,7 +76,7 @@ do
             // update all contained particles
             loop j in particles.size() do
                 var _SnowParticle&? it_ = &_get_particle(particles, j);
-                var _SnowParticle& it = it_!;
+                var _SnowParticle& it = &it_!;
 
                 // skip dead particles
                 if not it.alive then

@@ -81,14 +81,14 @@ class CreditsOkButton with
     function @rec (int x, int y) => void set_pos;
 do
     var SurfaceButton sb with
-        this.me = outer.me;
+        this.me = &outer.me;
         this.pos.x = _Display__get_width()/2 + 260;
         this.pos.y = _Display__get_height()/2 + 170;
     end;
 
     var Relay r with
-        this.src = outer;
-        this.dst = sb;
+        this.src = &outer;
+        this.dst = &sb;
     end;
 
     call/rec sb.load("core/start/ok", "core/start/ok_clicked", "core/start/ok_hover");
@@ -124,7 +124,7 @@ do
         this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
-        this.screen = outer;
+        this.screen = &outer;
         this.gui_manager = &&gui_manager;
     end;
 
@@ -143,7 +143,7 @@ do
     var CreditsOkButton button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.parent = outer;
+        this.parent = &outer;
     end;
 
     gui_manager.add(&&button.me);

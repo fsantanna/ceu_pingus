@@ -50,15 +50,15 @@ class DemoSession with
     event void update_demo;
 do
     var _DemoSession&? demo_session_ = &me;
-    var _DemoSession& demo_session = demo_session_!;
+    var _DemoSession& demo_session = &demo_session_!;
 
     var GUIManager gui_manager with
-        this.me = _new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
+        this.me = &_new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
         this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
 
     var ScreenFramework sf with
-        this.screen = outer;
+        this.screen = &outer;
         this.gui_manager = &&gui_manager;
     end;
 
@@ -70,7 +70,7 @@ do
     var PingusCounter pcounter with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.server = server;
+        this.server = &server;
     end;
 
     var Playfield playfield with
@@ -89,7 +89,7 @@ do
         this.me.ceu = &&this;
         this.scene_context = &_new_SceneContext(_deref(&&rect!));
         this.state = &_new_GraphicContextState(rect!.get_width(), rect!.get_height());
-        this.server = server;
+        this.server = &server;
         this.session = null;
 
         _delete_obj(&&rect!);
@@ -99,13 +99,13 @@ do
         this.rect = &_new_RectComponent(_Rect(_Vector2i(5, demo_session.size.height - 105), _Size(175, 100)));
         this.me = &this.rect;
         this.me.ceu = &&this;
-        this.playfield = playfield;
+        this.playfield = &playfield;
     end;
 
     var ButtonPanel button_panel with
         this.me = &_new_RectComponent(_Rect());
         this.me.ceu = &&this;
-        this.server = server;
+        this.server = &server;
     end;
 
     do

@@ -17,7 +17,7 @@ do
     var Sprite sprite;
     call/rec sprite.reload_by_name("particles/pingu_explo");
     finalize with _delete_obj(&&particles_!); end
-    var _Vector_PinguParticle& particles = particles_!;
+    var _Vector_PinguParticle& particles = &particles_!;
 
     call/rec global:world:add_object(&&this);
 
@@ -74,7 +74,7 @@ do
             // update all contained particles
             loop i in particles.size() do
                 var _PinguParticle&? it_ = &_get_particle(particles, i);
-                var _PinguParticle& it = it_!;
+                var _PinguParticle& it = &it_!;
 
                 // skip dead particles
                 if not it.livetime then

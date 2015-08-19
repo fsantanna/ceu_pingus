@@ -149,7 +149,7 @@ do
         this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
-        this.screen = outer;
+        this.screen = &outer;
         this.gui_manager = &&gui_manager;
     end;
 
@@ -162,8 +162,8 @@ do
     var MenuButton start_button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.menu = outer;
-        this.func = do_start;
+        this.menu = &outer;
+        this.func = &do_start;
         this.x_pos = _Display__get_width()/2 - 125;
         this.y_pos = _Display__get_height()/2 - 20;
         this.text = &_new_String(__("Story"));
@@ -173,8 +173,8 @@ do
     var MenuButton editor_button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.menu = outer;
-        this.func = do_edit;
+        this.menu = &outer;
+        this.func = &do_edit;
         this.x_pos = _Display__get_width()/2 + 125;
         this.y_pos = _Display__get_height()/2 - 20;
         this.text = &_new_String(__("Editor"));
@@ -184,8 +184,8 @@ do
     var MenuButton options_button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.menu = outer;
-        this.func = do_options;
+        this.menu = &outer;
+        this.func = &do_options;
         this.x_pos = _Display__get_width()/2 + 125;
         this.y_pos = _Display__get_height()/2 + 50;
         this.text = &_new_String(__("Options"));
@@ -195,8 +195,8 @@ do
     var MenuButton contrib_button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.menu = outer;
-        this.func = do_contrib;
+        this.menu = &outer;
+        this.func = &do_contrib;
         this.x_pos = _Display__get_width()/2 - 125;
         this.y_pos = _Display__get_height()/2 + 50;
         this.text = &_new_String(__("Levelsets"));
@@ -206,8 +206,8 @@ do
     var MenuButton quit_button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.menu = outer;
-        this.func = do_quit;
+        this.menu = &outer;
+        this.func = &do_quit;
         this.x_pos = _Display__get_width()/2;
         this.y_pos = _Display__get_height()/2 + 120;
         this.text = &_new_String(__("Exit"));

@@ -40,8 +40,8 @@ do
     end
 
     var RightLeftSprite sprite with
-        this.pingu = pingu;
-        this.pos_giver = pingu;
+        this.pingu = &pingu;
+        this.pos_giver = &pingu;
         this.left_name = _new_String(_concat2(pingu.get_owner_str(), "/blocker/left"));
         this.right_name = _new_String(_concat2(pingu.get_owner_str(), "/blocker/right"));
     end;

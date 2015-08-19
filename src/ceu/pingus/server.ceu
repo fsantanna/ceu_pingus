@@ -40,7 +40,7 @@ class Server with
     event void e_DELETE;
 do
     var GoalManager goal_manager with
-        this.server = outer;
+        this.server = &outer;
     end;
 
     var World world with

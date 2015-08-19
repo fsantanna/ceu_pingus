@@ -27,7 +27,7 @@ do
             //not killing
             do                
                 var Sprite3 sprite_idle with
-                    this.pos_giver = outer;
+                    this.pos_giver = &outer;
                 end;
                 sprite_idle.reload_by_name("traps/guillotineidle");
                 sprite_idle.set_play_loop(true);
@@ -54,7 +54,7 @@ do
             //killing
             do
                 var Sprite3 sprite_kill with
-                    this.pos_giver = outer;
+                    this.pos_giver = &outer;
                 end;
                 if direction.is_left() then
                     sprite_kill.reload_by_name("traps/guillotinekill/left");    

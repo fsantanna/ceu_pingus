@@ -96,14 +96,14 @@ class OptionMenuCloseButton with
     function @rec (int x, int y) => void set_pos;
 do
     var SurfaceButton sb with
-        this.me = outer.me;
+        this.me = &outer.me;
         this.pos.x = _Display__get_width()/2 + 245;
         this.pos.y = _Display__get_height()/2 + 150;
     end;
 
     var Relay relay with
-        this.src = outer;
-        this.dst = sb;
+        this.src = &outer;
+        this.dst = &sb;
     end;
 
     function @rec (Vector2i pos) => bool is_at_func do
@@ -172,7 +172,7 @@ do
     var OptionMenuCloseButton ok_button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.parent = outer;
+        this.parent = &outer;
     end;
     gui_manager.add(&&ok_button.me);
 
@@ -181,7 +181,7 @@ do
 
     var _std__vector_Option&? options_ = &_new_Vector_Option();
     finalize with _delete_obj(&&options_!); end
-    var _std__vector_Option& options = options_!;
+    var _std__vector_Option& options = &options_!;
 
     MakeChoiceBox(resolution_box);
     do
@@ -336,7 +336,7 @@ _Pathname__SYSTEM_PATH);
     call/rec blackboard.reload_by_name("core/menu/blackboard");
 
     var ScreenFramework sf with
-        this.screen = outer;
+        this.screen = &outer;
         this.gui_manager = &&gui_manager;
     end;
 

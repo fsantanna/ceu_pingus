@@ -40,7 +40,7 @@ do
             //killing
             do
                 var Sprite3 surface with
-                    this.pos_giver = outer;
+                    this.pos_giver = &outer;
                 end;
                 surface.reload_by_name("traps/spike");
 

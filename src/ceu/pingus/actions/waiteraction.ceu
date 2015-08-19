@@ -32,7 +32,7 @@ do
     end
 
     var Sprite3 sprite with
-        this.pos_giver = pingu;
+        this.pos_giver = &pingu;
     end;
     sprite.reload_by_name(_scc3("pingus/player", pingu.get_owner_str(), "/waiter/left").c_str());
     

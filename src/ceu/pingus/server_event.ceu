@@ -23,7 +23,7 @@ do
     par/or do
         await FOREVER;
     with
-        var _ServerEvent&& e = await DELETE_SERVER_EVENT until (e == &me);
+        var _ServerEvent&& e = await DELETE_SERVER_EVENT until (e == &&me!);
     end
 end
 

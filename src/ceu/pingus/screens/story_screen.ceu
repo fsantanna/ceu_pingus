@@ -64,14 +64,14 @@ class StoryScreenSkipButton with
     function @rec (int x, int y) => void set_pos;
 do
     var SurfaceButton sb with
-        this.me = outer.me;
+        this.me = &outer.me;
         this.pos.x = _Display__get_width() - 4;
         this.pos.y = _Display__get_height() - 26;
     end;
 
     var Relay r with
-        this.src = outer;
-        this.dst = sb;
+        this.src = &outer;
+        this.dst = &sb;
     end;
 
     function @rec (Vector2i pos) => bool is_at_func do
@@ -111,14 +111,14 @@ class StoryScreenContinueButton with
     function @rec (int x, int y) => void set_pos;
 do
     var SurfaceButton sb with
-        this.me = outer.me;
+        this.me = &outer.me;
         this.pos.x = _Display__get_width()/2 + 260;
         this.pos.y = _Display__get_height()/2 + 212;
     end;
 
     var Relay r with
-        this.src = outer;
-        this.dst = sb;
+        this.src = &outer;
+        this.dst = &sb;
     end;
 
     function @rec (Vector2i pos) => bool is_at_func do
@@ -162,7 +162,7 @@ do
     var bool page_displayed_completly = false;
 
     var _std__vector_StoryPage&? pages_ = &_new_Vector_StoryPage(story:get_pages());
-    var _std__vector_StoryPage& pages = pages_!;
+    var _std__vector_StoryPage& pages = &pages_!;
 
     var _StoryPage&? current_page = &_new_StoryPage(pages.back());
     var Sprite page_surface;
@@ -268,7 +268,7 @@ do
         this.drawing_context = &_new_DrawingContext(_Rect(0, 0, _Display__get_width(), _Display__get_height()), false);
     end;
     var ScreenFramework sf with
-        this.screen = outer;
+        this.screen = &outer;
         this.gui_manager = &&gui_manager;
     end;
 
@@ -284,7 +284,7 @@ do
     var StoryScreenContinueButton continue_button with
         this.me = &_new_GUI_Component();
         this.me.ceu = &&this;
-        this.story_comp = story_comp;
+        this.story_comp = &story_comp;
     end;
 
     gui_manager.add(&&story_comp.me);
