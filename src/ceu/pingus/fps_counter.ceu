@@ -39,7 +39,8 @@ do
             fps_count = 0;
             start_time = _SDL_GetTicks();
 
-            fps_string = &_SU2str(_STRadd(current_fps,_make_String(" fps")));
+            fps_string! = _SU2str(_STRadd(_SU2str(current_fps),_make_String(" fps")));
+            //fps_string! = _SU2str(current_fps);
         end
     end
 
@@ -58,7 +59,7 @@ do
                 _origin_center,
                 _Display__get_width()/2,
                 35,
-                _STRadd(_make_String("+ "), _STRadd(&&fps_string!,_make_String(" +"))),
+                _STRadd(_make_String("+ "), _STRadd(_SU2str(&&fps_string!),_make_String(" +"))),
                 _deref(_Display__get_framebuffer()));
         end
 

@@ -4,9 +4,7 @@
 #include "../../c.ceu"
 #include "../../sdl.ceu"
 #include "screen.ceu"
-#ifdef XXX_NO
 #include "../../pingus/fps_counter.ceu"
-#endif
 #include "../../pingus/global_interface.ceu"
 
 native/pre do
@@ -36,9 +34,7 @@ class ScreenManager with
 
     event (_Screen&&, _Screen&&) fade_over;
 do
-#ifdef XXX_NO
     var FPSCounter fps_counter;
-#endif
     var Vector2i mouse_pos;
 
     par/or do
@@ -61,7 +57,7 @@ do
                     mouse_pos.y = package:events.at(i).pointer.y;
                 end
 
-                screen! = _PTR2REF((Screen&&)package:screen:ceu);
+                screen = _PTR2REF((Screen&&)package:screen:ceu);
                 if screen? then
                     emit screen!:call_update_event => _addr(package:events.at(i));
                 else
@@ -82,7 +78,7 @@ do
             emit global:update => package:delta;
 
             screen! = _PTR2REF((Screen&&)package:screen:ceu);
-            if not screen! then
+            if not screen? then
                 _log_error("Screen has no `ceu` organism binded!");
                 package:screen:update(package:delta) finalize with end;
             end
@@ -94,7 +90,7 @@ do
 
             // Draw screen to DrawingContext
             screen! = _PTR2REF((Screen&&)screen_manager!.get_current_screen():ceu);
-            if screen! then
+            if screen? then
                 emit screen!:call_draw => screen_manager!.display_gc.get();
             else
                 screen_manager!.get_current_screen():draw(*screen_manager!.display_gc) finalize with end;
@@ -112,9 +108,7 @@ do
             // Draw FPS Counter
             var int y_pos = 35;
             if _globals__print_fps then
-#ifdef XXX_NO
                 fps_counter.draw();
-#endif
                 y_pos = 60;
             end
 

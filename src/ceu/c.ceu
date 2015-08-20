@@ -92,7 +92,7 @@ native @pure _Display__get_framebuffer(), _Display__flip_display(),
              _Display__get_width(), _Display__get_height();
 native @pure _new_SceneContext(), _new_SceneContextDrawingRequest(), _StatManager__instance();
 
-native @pure _SU2str();
+native @pure _SU2str(), _STRadd();
 
 native @pure _new_Vector_String();
 native @pure _XXX_PURE_ID();

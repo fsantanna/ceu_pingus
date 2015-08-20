@@ -442,7 +442,7 @@ end
 class LevelMenu with
     interface ILevelMenu;
 do
-    var _LevelMenu&? level_menu = &me;
+    var _LevelMenu&? level_menu = &(_LevelMenu&)me!;
     var GUIManager gui_manager with
         this.me = &_new_GUI__RectComponent(_Rect(0, 0, _Display__get_width(), _Display__get_height()));
         XXX_NO_FIN(this.drawing_context,

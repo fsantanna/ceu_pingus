@@ -15,8 +15,8 @@ end
 #include "pingus/screens/result_screen.ceu"
 #endif
 #include "pingus/screens/pingus_menu.ceu"
-#ifdef XXX_NO
 #include "pingus/screens/level_menu.ceu"
+#ifdef XXX_NO
 #include "pingus/screens/option_menu.ceu"
 #endif
 #include "pingus/screens/credits.ceu"
@@ -65,8 +65,8 @@ input _WorldmapNS__WorldmapScreen&& NEW_WORLDMAP_SCREEN;
 #endif
 input _PingusMenu&& NEW_PINGUS_MENU;
 input _Credits&&    NEW_CREDITS;
-#ifdef XXX_NO
 input _LevelMenu&& NEW_LEVEL_MENU;
+#ifdef XXX_NO
 input _Pathname&& PUSH_FONT_TEST_SCREEN;
 #endif
 input _ScreenManager&& NEW_SCREEN_MANAGER;
@@ -96,9 +96,10 @@ WITH_SCREEN_CEU(_WorldmapNS__WorldmapScreen, WorldmapScreen, NEW_WORLDMAP_SCREEN
 with
     SCREEN_CEU(_PingusMenu, PingusMenu, NEW_PINGUS_MENU)
 with
-    SCREEN_CEU(_Credits, Credits, NEW_CREDITS)
+    SCREEN_CEU(_Credits,    Credits,    NEW_CREDITS)
+with
+    SCREEN_CEU(_LevelMenu,  LevelMenu,  NEW_LEVEL_MENU)
 #ifdef XXX_NO
-WITH_SCREEN_CEU(_LevelMenu, LevelMenu, NEW_LEVEL_MENU)
 with
     every push_worldmap_tutorial_screen do
         /*
