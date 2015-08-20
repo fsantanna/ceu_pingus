@@ -31,13 +31,12 @@ native/pre do
     ##define Display__has_grab() Display::has_grab()
     ##define Display__get_width() Display::get_width()
     ##define Display__get_height() Display::get_height()
-    ##define new_SceneContextDrawingRequest(a, b, c) new SceneContextDrawingRequest(a, b, c)
 end
 
 input _Vector2i&& PLAYFIELD_CLICK;
 input _GUI_RectComponent&& RECT_COMPONENT_UPDATE_LAYOUT;
 
-native @pure _get_uint(), _read_coords(), _new_SceneContextDrawingRequest();
+native @pure _get_uint(), _read_coords();
 
 class Playfield with
     interface IGUI_Component;

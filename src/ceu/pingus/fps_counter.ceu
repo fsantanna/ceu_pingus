@@ -14,8 +14,6 @@ native/pre do
     ##include "pingus/fonts.hpp"
     ##include "util/string_util.hpp"
     ##define Fonts__pingus_small Fonts::pingus_small
-    ##define Display__get_width() Display::get_width()
-    ##define Display__get_framebuffer() Display::get_framebuffer()
     ##define SU2str(x) StringUtil::to_string(x)
     ##define STRadd(x,y) (x+y)
 end

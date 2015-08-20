@@ -40,7 +40,6 @@ native/pre do
     ##define new_GUI_Component() new GUI::Component()
     ##define new_RectComponent(r) new GUI::RectComponent(r)
     ##define new_Rect(v, s) new Rect(v, s)
-    ##define new_SceneContext(rect) new SceneContext(rect)
     ##define new_GraphicContextState new GraphicContextState
     ##define new_Server(a) new Server(a)
     ##define new_TimeDisplay(s) new TimeDisplay(s)
@@ -72,7 +71,8 @@ native/pre do
 end
 
 native @pure _new_PingusCounter(), _new_GUI_Component(), _new_RectComponent(), _new_Server(),
-             _new_Rect(), _new_SceneContext(), _new_GraphicContextState(), _new_TimeDisplay(), _new_Result(), _new_Savegame(),
+             _new_Rect(), _new_GraphicContextState(), _new_TimeDisplay(), 
+             _new_Result(), _new_Savegame(),
              _SavegameManager__instance(), _ScreenManager__instance(), _get_demostream(),
              _std__make_shared_ResultScreen(), _toSStatus(), _Display__get_width(), _Display__get_height();
 

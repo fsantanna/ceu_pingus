@@ -4,7 +4,9 @@
 #include "../../c.ceu"
 #include "../../sdl.ceu"
 #include "screen.ceu"
+#ifdef XXX_NO
 #include "../../pingus/fps_counter.ceu"
+#endif
 #include "../../pingus/global_interface.ceu"
 
 native/pre do
@@ -20,25 +22,23 @@ native/pre do
     ##define globals__software_cursor globals::software_cursor
     ##define globals__print_fps globals::print_fps
     ##define globals__developer_mode globals::developer_mode
-    ##define Display__get_framebuffer() Display::get_framebuffer()
-    ##define Display__flip_display() Display::flip_display()
     ##define Input__POINTER_EVENT_TYPE Input::POINTER_EVENT_TYPE
     ##define Input__STANDARD_POINTER Input::STANDARD_POINTER
     ##define Fonts__pingus_small Fonts::pingus_small
 end
-
-native @pure _Display__get_framebuffer(), _Display__flip_display(), _Display__get_width(), _Display__get_height();
 
 input _ScreenManagerUpdatePackage&& SCREEN_MANAGER_UPDATE;
 input _ScreenManager&& DELETE_SCREEN_MANAGER;
 
 class ScreenManager with
     //interface IScreenManager;
-    var _ScreenManager&&? screen_manager;
+    var _ScreenManager&? screen_manager;
 
     event (_Screen&&, _Screen&&) fade_over;
 do
+#ifdef XXX_NO
     var FPSCounter fps_counter;
+#endif
     var Vector2i mouse_pos;
 
     par/or do
@@ -112,7 +112,9 @@ do
             // Draw FPS Counter
             var int y_pos = 35;
             if _globals__print_fps then
+#ifdef XXX_NO
                 fps_counter.draw();
+#endif
                 y_pos = 60;
             end
 
@@ -171,7 +173,7 @@ do
             screen_manager!.input_manager.refresh();
         end
     with
-        var _ScreenManager&& e = await DELETE_SCREEN_MANAGER until (e == (screen_manager!));
+        var _ScreenManager&& e = await DELETE_SCREEN_MANAGER until (e == (&&screen_manager!));
     end
 end
 

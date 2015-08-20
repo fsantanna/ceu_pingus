@@ -32,16 +32,13 @@ native/pre do
     ##define new_GUI_Component() new GUI::Component()
     ##define ScreenManager__instance() ScreenManager::instance()
     ##define std__make_shared_GameSession std::make_shared<GameSession>
-    ##define Display__get_width() Display::get_width()
-    ##define Display__get_height() Display::get_height()
     ##define SU2str(x) StringUtil::to_string(x)
     ##define Fonts__chalk_large Fonts::chalk_large
     ##define Fonts__chalk_normal Fonts::chalk_normal
 end
 
-native @pure _new_GUI_Component(), _ScreenManager__instance(), _std__make_shared_GameScreen(),
-             _Display__get_width(), _Display__get_height(),
-             _SU2str();
+native @pure _new_GUI_Component(), _ScreenManager__instance(), 
+             _std__make_shared_GameScreen();
 
 input _ResultScreen&& DELETE_RESULT_SCREEN;
 

@@ -71,14 +71,13 @@ native/pre do
 
     ##define std__make_shared_StoryScreen std::make_shared<StoryScreen>
     ##define Pathname__DATA_PATH Pathname::DATA_PATH
-    ##define StatManager__instance StatManager::instance
 end
 
 native @pure _new_GUI_Component(), _ScreenManager__instance(), _std__make_shared_GameScreen(),
              _Display__get_width(), _Display__get_height(),
              _SU2str(), _StringFormat__break_line(), _std__make_shared_OptionMenu(), _std__make_shared_LevelMenu(),
              _std__make_shared_Editor__EditorScreen(), _new_LayerManager(), _Resource__load_surface(), _make_Sprite2(),
-             _std__make_shared_StoryScreen(), _StatManager__instance(), __();
+             _std__make_shared_StoryScreen(), __();
 
 input _ScreenUpdatePackage&& PINGUS_MENU_UPDATE;
 input _PingusMenu&& DELETE_PINGUS_MENU;
@@ -241,7 +240,7 @@ do
     var Sprite logo;
     call/rec logo.reload_by_name("core/misc/logo");
 
-    help! = &__("..:: Ctrl-g: mouse grab   ::   F10: fps counter   ::   F11: fullscreen   ::   F12: screenshot ::..");
+    help! = "..:: Ctrl-g: mouse grab   ::   F10: fps counter   ::   F11: fullscreen   ::   F12: screenshot ::..";
 
     _Sound__PingusSound__play_music("pingus-1.wav");
 
@@ -267,20 +266,23 @@ do
             // We only need to scale the background main menu images if the screen
             // resolution is not default
             if width != _globals__default_screen_width or height != _globals__default_screen_height then
-                layer1! = &_PTR2REF(layer1!.scale(width, 185 * height / _globals__default_screen_height));
-                layer2! = &_PTR2REF(layer2!.scale(width, 362 * height / _globals__default_screen_height));
-                layer3! = &_PTR2REF(layer3!.scale(width, 306 * height / _globals__default_screen_height));
-                layer4! = &_PTR2REF(layer4!.scale(width, 171 * height / _globals__default_screen_height));
-                layer5! = &_PTR2REF(layer5!.scale(302 * width / _globals__default_screen_width, 104 * height /
-_globals__default_screen_height));
-                emit background.add_layer => (&&layer1!, 0, 0, 12, 0);
-                emit background.add_layer => (&&layer2!, 0, 150 * 
-((float)height) / ((float)_globals__default_screen_height), 25, 0);
-                emit background.add_layer => (&&layer3!, 0, 200 * 
-((float)height) / ((float)_globals__default_screen_height), 50, 0);
-                emit background.add_layer => (&&layer4!, 0, 429 * 
-((float)height) / ((float)_globals__default_screen_height), 100, 0);
-                emit background.add_layer => (&&layer5!, 0, 500 * ((float)height) / ((float)_globals__default_screen_height), 200, 0);
+
+                layer1! = _XXX_PURE_ID(layer1!.scale(width, 185 * height / _globals__default_screen_height));
+                layer2! = _XXX_PURE_ID(layer2!.scale(width, 362 * height / _globals__default_screen_height));
+                layer3! = _XXX_PURE_ID(layer3!.scale(width, 306 * height / _globals__default_screen_height));
+                layer4! = _XXX_PURE_ID(layer4!.scale(width, 171 * height / _globals__default_screen_height));
+                layer5! = _XXX_PURE_ID(layer5!.scale(302 * width / _globals__default_screen_width, 104 * height / _globals__default_screen_height));
+
+                emit background.add_layer =>
+                        (&&layer1!, 0, 0, 12, 0);
+                emit background.add_layer =>
+                        (&&layer2!, 0, 150 * ((float)height) / ((float)_globals__default_screen_height), 25, 0);
+                emit background.add_layer =>
+                        (&&layer3!, 0, 200 * ((float)height) / ((float)_globals__default_screen_height), 50, 0);
+                emit background.add_layer =>
+                        (&&layer4!, 0, 429 * ((float)height) / ((float)_globals__default_screen_height), 100, 0);
+                emit background.add_layer =>
+                        (&&layer5!, 0, 500 * ((float)height) / ((float)_globals__default_screen_height), 200, 0);
             else
                 emit background.add_layer => (&&layer1!, 0, 0, 12, 0);
                 emit background.add_layer => (&&layer2!, 0, 150, 25, 0);

@@ -8,10 +8,6 @@
 #include "../ipingu_holder.ceu"
 #include "../global_interface.ceu"
 
-native/pre do
-    ##define globals__static_graphics globals::static_graphics
-end
-
 class SurfaceBackground with
     interface IWorldObj;
     var float para_x;

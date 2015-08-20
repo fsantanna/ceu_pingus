@@ -5,6 +5,7 @@ end
 
 #include "c.ceu"
 #include "sdl.ceu"
+#ifdef XXX_NO
 #include "pingus/colliders/pingu_collider.ceu"
 #include "pingus/screens/demo_session.ceu"
 #include "pingus/screens/game_session.ceu"
@@ -12,20 +13,30 @@ end
 #include "pingus/screens/start_screen.ceu"
 #include "pingus/screens/story_screen.ceu"
 #include "pingus/screens/result_screen.ceu"
+#endif
 #include "pingus/screens/pingus_menu.ceu"
+#ifdef XXX_NO
 #include "pingus/screens/level_menu.ceu"
 #include "pingus/screens/option_menu.ceu"
+#endif
 #include "pingus/screens/credits.ceu"
+#ifdef XXX_NO
 #include "pingus/worldmap/worldmap_screen.ceu"
 #include "pingus/pingu_holder.ceu"
 #include "pingus/pingu_events.ceu"
 #include "pingus/global_interface.ceu"
 #include "pingus/server_event.ceu"
+#endif
 #include "pingus/iworld.ceu"
+#ifdef XXX_NO
 #include "proxies/proxyeventlist.ceu"
+#endif
 #include "engine/screen/screen_manager.ceu"
 
 native/pre do
+#ifdef XXX_YES
+    ##include "../src/pingus/action_name.hpp"
+#endif
     ##define new_OptionMenu new OptionMenu
     ##define new_Pathname new Pathname
     ##define make_std__shared_ptr_Screen(x) std::shared_ptr<Screen>(x)
@@ -44,19 +55,23 @@ event float update;
 event void push_option_menu;
 event void push_worldmap_tutorial_screen;
 
+#ifdef XXX_NO
 input _DemoSession&& NEW_DEMO_SESSION;
 input _GameSession&& NEW_GAME_SESSION;
 input _StartScreen&& NEW_START_SCREEN;
 input _StoryScreen&& NEW_STORY_SCREEN;
 input _ResultScreen&& NEW_RESULT_SCREEN;
 input _WorldmapNS__WorldmapScreen&& NEW_WORLDMAP_SCREEN;
+#endif
 input _PingusMenu&& NEW_PINGUS_MENU;
-input _Credits&& NEW_CREDITS;
+input _Credits&&    NEW_CREDITS;
+#ifdef XXX_NO
 input _LevelMenu&& NEW_LEVEL_MENU;
 input _Pathname&& PUSH_FONT_TEST_SCREEN;
+#endif
 input _ScreenManager&& NEW_SCREEN_MANAGER;
 
-#define WITH_SCREEN_CEU(CClassName, ClassName, Event) with \
+#define SCREEN_CEU(CClassName, ClassName, Event) \
     loop do \
         var CClassName&& p = await Event; \
         spawn ClassName with \
@@ -67,16 +82,22 @@ input _ScreenManager&& NEW_SCREEN_MANAGER;
 
 var IWorld&& world = null;
 
+
 par/or do
     await SDL_QUIT;
+#ifdef XXX_NO
 WITH_SCREEN_CEU(_DemoSession, DemoSession, NEW_DEMO_SESSION)
 WITH_SCREEN_CEU(_GameSession, GameSession, NEW_GAME_SESSION)
 WITH_SCREEN_CEU(_StartScreen, StartScreen, NEW_START_SCREEN)
 WITH_SCREEN_CEU(_StoryScreen, StoryScreen, NEW_STORY_SCREEN)
 WITH_SCREEN_CEU(_ResultScreen, ResultScreen, NEW_RESULT_SCREEN)
 WITH_SCREEN_CEU(_WorldmapNS__WorldmapScreen, WorldmapScreen, NEW_WORLDMAP_SCREEN)
-WITH_SCREEN_CEU(_PingusMenu, PingusMenu, NEW_PINGUS_MENU)
-WITH_SCREEN_CEU(_Credits, Credits, NEW_CREDITS)
+#endif
+with
+    SCREEN_CEU(_PingusMenu, PingusMenu, NEW_PINGUS_MENU)
+with
+    SCREEN_CEU(_Credits, Credits, NEW_CREDITS)
+#ifdef XXX_NO
 WITH_SCREEN_CEU(_LevelMenu, LevelMenu, NEW_LEVEL_MENU)
 with
     every push_worldmap_tutorial_screen do
@@ -118,12 +139,14 @@ with
             this.me = &_PTR2REF(new_se);
         end;
     end
+#endif
 with
     every new_sm in NEW_SCREEN_MANAGER do
         spawn ScreenManager with
             this.screen_manager = &_PTR2REF(new_sm);
         end;
     end
+#ifdef XXX_NO
 with
     loop do
         await SDL_REDRAW;
@@ -141,6 +164,7 @@ with
         end
         _printf("[FPS=%d]\n", c);
     end
+#endif
 end
 
 escape 0;

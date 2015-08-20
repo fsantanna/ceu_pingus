@@ -1,6 +1,8 @@
 #ifndef _C_CEU
 #define _C_CEU
 
+#define XXX_YES
+
 native _assert(),
        _malloc();
 
@@ -55,7 +57,6 @@ native @nohold __();
         _delete_obj(&& id !);   \
     end
 
-
 #define AWAIT_N(e, n)       \
     loop i in n do          \
         await e;            \
@@ -65,5 +66,36 @@ native @nohold __();
     if not (c) then \
         await e until (c); \
     end
+
+native/pre do
+    ##define globals__static_graphics globals::static_graphics
+
+    ##define XXX_ERROR(msg) printf(msg); assert(0)
+    ##define XXX_PURE_ID(v) v
+end
+
+native do
+    ##define Display__get_framebuffer() Display::get_framebuffer()
+    ##define Display__get_width() Display::get_width()
+    ##define Display__get_height() Display::get_height()
+    ##define Display__get_framebuffer() Display::get_framebuffer()
+    ##define Display__flip_display() Display::flip_display()
+
+    ##define StatManager__instance StatManager::instance
+    ##define new_SceneContext(rect) new SceneContext(rect)
+    ##define new_SceneContextDrawingRequest(a, b, c) new SceneContextDrawingRequest(a, b, c)
+
+    ##define new_Vector_String new std::vector<std::string>
+    ##define std__vector_String std::vector<std::string>
+end
+native @pure _Display__get_framebuffer(), _Display__flip_display(),
+             _Display__get_width(), _Display__get_height();
+native @pure _new_SceneContext(), _new_SceneContextDrawingRequest(), _StatManager__instance();
+
+native @pure _SU2str();
+
+native @pure _new_Vector_String();
+native @pure _XXX_PURE_ID();
+
 
 #endif
