@@ -28,10 +28,9 @@ end
 #include "pingus/server_event.ceu"
 #endif
 #include "pingus/iworld.ceu"
-#ifdef XXX_NO
 #include "proxies/proxyeventlist.ceu"
-#endif
 #include "engine/screen/screen_manager.ceu"
+#include "engine/gui/gui_manager.ceu"
 
 native/pre do
 #ifdef XXX_YES
